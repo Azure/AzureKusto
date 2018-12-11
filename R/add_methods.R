@@ -15,13 +15,13 @@
     function(name)
     {
         az_kusto$new(self$token, self$subscription, self$name,
-                       type="Microsoft.Kusto/clusters", name=name)
+                     type="Microsoft.Kusto/clusters", name=name)
     })
 
 
     AzureRMR::az_resource_group$set("public", "delete_data_explorer", overwrite=TRUE,
     function(name, confirm=TRUE, wait=FALSE)
     {
-        self$get_data_explorer(name, deployed_parms=list())$delete(confirm=confirm, wait=wait)
+        self$get_data_explorer(name)$delete(confirm=confirm, wait=wait)
     })
 }
