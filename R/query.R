@@ -44,8 +44,7 @@ execute_query <- function(token, server, db, query)
                     body=body_list, encode="json")
 
     content <- httr::content(r, simplifyValues=TRUE)
-    httr::stop_for_status(r)
-    content
+
     #if(r$status_code != 200)
     #{
         #if(!is.null(content$Message))
@@ -94,6 +93,8 @@ execute_query <- function(token, server, db, query)
         #rows[[row]]=lapply(rows[[row]], function(x) ifelse(is.null(x), NA, x))
     #}
 
+    #rows <- t(sapply(rows, function(x) unlist(x)))
+    #df <- data.frame(rows, stringsAsFactors=FALSE)
     #names(df) <- colnames
     #convert_types(df, coltypes)
 }
