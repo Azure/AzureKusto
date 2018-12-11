@@ -6,7 +6,7 @@
     function(name, location=self$location, compute="D13_v2", ...)
     {
         az_kusto$new(self$token, self$subscription, self$name,
-                     type="Microsoft.Kusto/cluster", name=name, location=location,
+                     type="Microsoft.Kusto/clusters", name=name, location=location,
                      sku=list(name=compute, tier="Standard"), ...)
     })
 
@@ -15,7 +15,7 @@
     function(name)
     {
         az_kusto$new(self$token, self$subscription, self$name,
-                       type="Microsoft.Kusto/cluster", name=name)
+                       type="Microsoft.Kusto/clusters", name=name)
     })
 
 
