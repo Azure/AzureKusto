@@ -18,8 +18,8 @@ Imports:
     httr (>= 1.3),
     jsonlite,
     R6,
-    bit64,
-    AzureRMR
+    bit64
+Remotes: cloudyr/AzureRMR
 Suggests:
     knitr,
     testthat
