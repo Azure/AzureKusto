@@ -1,0 +1,27 @@
+Package: AzureDataExplorer
+Title: Interface to 'Azure Data Explorer'
+Version: 0.0.1
+Authors@R: c(
+    person("Hong", "Ooi", , "hongooi@microsoft.com", role = c("aut", "cre")),
+    person("Alex", "Kyllo", , "jekyllo@microsoft.com", role = "aut"),
+    person("Microsoft", role = "cph")
+    )
+Description: Interface to 'Azure Data Explorer'
+URL: https://github.com/cloudyr/AzureDataExplorer
+BugReports: https://github.com/cloudyr/AzureDataExplorer/issues
+License: MIT + file LICENSE
+VignetteBuilder: knitr
+Depends: 
+    R (>= 3.3)
+Imports: 
+    utils,
+    httr (>= 1.3),
+    jsonlite,
+    R6,
+    bit64,
+    AzureRMR
+Suggests:
+    knitr,
+    testthat
+Roxygen: list(markdown=TRUE)
+RoxygenNote: 6.1.0.9000
