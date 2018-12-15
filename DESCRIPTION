@@ -19,7 +19,9 @@ Imports:
     jsonlite,
     R6,
     bit64,
-    AzureRMR
+    AzureRMR,
+    dbplyr,
+    dplyr
 Suggests:
     knitr,
     testthat
