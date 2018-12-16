@@ -31,24 +31,27 @@ convert_types <- function(df, coltypes)
 }
 
 
-execute_query <- function(token, server, db, query)
+execute_query <- function(token, server, db, query,
+    http_status_handler=c("stop", "warn", "message", "pass"))
 {
     body_list <- list(
         db=db,
-        properties="{\"Options\":{\"queryconsistency\":\"weakconsistency\"}}",
+        properties=list(Options=list(queryconsistency="weakconsistency")),
         csl=query
     )
-    body_json=jsonlite::toJSON(body_list, auto_unbox=TRUE)
-    uri <- sprintf("https://%s.kusto.windows.net:443/v1/rest/query", server)
+    uri <- sprintf("https://%s.kusto.windows.net/v1/rest/query", server)
     auth_str <- paste("Bearer", token)
-    r <- httr::POST(
-        uri,
-        httr::content_type_json(),
-        body=body_json,
-        httr::add_headers(
-          Authorization=auth_str
-        )
-    )
+
+    res <- httr::POST(uri, httr::add_headers(Authorization=auth_str), body=body_list, encode="json")
+    
+    http_status_handler <- match.arg(http_status_handler)
+    if(http_status_handler != "pass")
+    {
+        handler <- get(paste0(http_status_handler, "_for_status"), getNamespace("httr"))
+        handler(res)
+        httr::content(res, simplifyVector=TRUE)
+    }
+    else res
 }
 
 
