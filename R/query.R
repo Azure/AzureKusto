@@ -35,15 +35,37 @@ execute_query <- function(token, server, db, query)
 {
     body_list <- list(
         db=db,
-        properties=list(Options=list(queryconsistency="weakconsistency")),
+        properties="{\"Options\":{\"queryconsistency\":\"weakconsistency\"}}",
         csl=query
     )
+    body_json=jsonlite::toJSON(body_list, auto_unbox=TRUE)
     uri <- sprintf("https://%s.kusto.windows.net:443/v1/rest/query", server)
     auth_str <- paste("Bearer", token)
-    r <- httr::POST(uri, httr::add_headers(Authorization=auth_str),
-                    body=body_list, encode="json")
+    r <- httr::POST(
+        uri,
+        httr::content_type_json(),
+        body=body_json,
+        httr::add_headers(
+          Authorization=auth_str
+        )
+    )
+}
 
-    content <- httr::content(r, simplifyValues=TRUE)
+
+
+
+    #body_list <- list(
+        #db=db,
+        #properties=list(Options=list(queryconsistency="weakconsistency")),
+        #csl=query
+    #)
+    #uri <- sprintf("https://%s.kusto.windows.net:443/v1/rest/query", server)
+    #auth_str <- paste("Bearer", token)
+    #r <- httr::POST(uri, httr::add_headers(Authorization=auth_str),
+                    #body=body_list, encode="json")
+
+    #return(r)
+    #content <- httr::content(r, simplifyValues=TRUE)
 
     #if(r$status_code != 200)
     #{
@@ -97,4 +119,4 @@ execute_query <- function(token, server, db, query)
     #df <- data.frame(rows, stringsAsFactors=FALSE)
     #names(df) <- colnames
     #convert_types(df, coltypes)
-}
+#}
