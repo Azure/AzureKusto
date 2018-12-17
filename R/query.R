@@ -45,16 +45,27 @@ execute_query <- function(token, server, db, query,
     res <- httr::POST(uri, httr::add_headers(Authorization=auth_str), body=body_list, encode="json")
     
     http_status_handler <- match.arg(http_status_handler)
-    if(http_status_handler != "pass")
-    {
-        handler <- get(paste0(http_status_handler, "_for_status"), getNamespace("httr"))
-        handler(res)
-        httr::content(res, simplifyVector=TRUE)
-    }
-    else res
+    if(http_status_handler == "pass")
+        return(res)
+
+    cont <- httr::content(res, simplifyVector=TRUE)
+    handler <- get(paste0(http_status_handler, "_for_status"), getNamespace("httr"))
+    handler(res, make_error_message(cont))
+    cont
 }
 
-
+make_error_message <- function(content)
+{
+    msg <- if(!is.null(content$Message))
+        content$Message
+    else if(!is.null(content$error))
+    {
+        err <- content$error
+        sprintf("%s\n%s", err$message, err$`@message`)
+    }
+    else ""
+    paste0("complete Data Explorer operation. Message:\n", msg)
+}
 
 
     #body_list <- list(
