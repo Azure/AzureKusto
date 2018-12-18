@@ -33,7 +33,21 @@ convert_types <- function(df, coltypes_df)
 }
 
 
-execute_query <- function(token, server, db, query,
+run_query <- function(token, server, db, query, ...)
+{
+    uri <- sprintf("https://%s.kusto.windows.net/v1/rest/query", server)
+    call_kusto(token, uri, db, query, ...)
+}
+
+
+run_command <- function(token, server, db, query, ...)
+{
+    uri <- sprintf("https://%s.kusto.windows.net/v1/rest/mgmt", server)
+    call_kusto(token, uri, db, query, ...)
+}
+
+
+call_kusto <- function(token, uri, db, query,
     http_status_handler=c("stop", "warn", "message", "pass"))
 {
     body_list <- list(
@@ -41,7 +55,6 @@ execute_query <- function(token, server, db, query,
         properties=list(Options=list(queryconsistency="weakconsistency")),
         csl=query
     )
-    uri <- sprintf("https://%s.kusto.windows.net/v1/rest/query", server)
     auth_str <- paste("Bearer", token)
 
     res <- httr::POST(uri, httr::add_headers(Authorization=auth_str), body=body_list, encode="json")
