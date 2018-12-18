@@ -1,5 +1,22 @@
 .kusto_app_id <- 'db662dc1-0cfe-4e1c-a843-19a68e65be58'
 
+
+#' @export
+run_query <- function(token, server, db, query, ...)
+{
+    uri <- sprintf("https://%s.kusto.windows.net/v1/rest/query", server)
+    call_kusto(token, uri, db, query, ...)
+}
+
+
+#' @export
+run_command <- function(token, server, db, query, ...)
+{
+    uri <- sprintf("https://%s.kusto.windows.net/v1/rest/mgmt", server)
+    call_kusto(token, uri, db, query, ...)
+}
+
+
 convert_kusto_datatype <- function(column, kusto_type)
 {
     if(kusto_type == 'long')
@@ -30,20 +47,6 @@ convert_types <- function(df, coltypes_df)
     names(df) <- coltypes_df$ColumnName
     df[] <- mapply(convert_kusto_datatype, df, coltypes_df$ColumnType, SIMPLIFY=FALSE)
     df
-}
-
-
-run_query <- function(token, server, db, query, ...)
-{
-    uri <- sprintf("https://%s.kusto.windows.net/v1/rest/query", server)
-    call_kusto(token, uri, db, query, ...)
-}
-
-
-run_command <- function(token, server, db, query, ...)
-{
-    uri <- sprintf("https://%s.kusto.windows.net/v1/rest/mgmt", server)
-    call_kusto(token, uri, db, query, ...)
 }
 
 

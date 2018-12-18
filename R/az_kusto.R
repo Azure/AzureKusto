@@ -1,3 +1,4 @@
+#' @export
 az_data_explorer <- R6::R6Class("az_data_explorer", inherit=AzureRMR::az_resource,
 public=list(
 
@@ -21,7 +22,15 @@ ade_cluster <- R6::R6Class("ade_cluster",
 public=list(
 
     uri=NULL,
+    ingest_uri=NULL,
     token=NULL,
+
+    initialize=function(uri, ingest_uri)
+    {
+        self$uri <- uri
+        self$ingest_uri <- ingest_uri
+        NULL
+    },
 
     create_database=function() {},
     get_database=function() {},
