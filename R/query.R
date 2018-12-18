@@ -10,57 +10,24 @@ run_query <- function(token, server, db, query, ...)
 
 
 #' @export
-run_command <- function(token, server, db, query, ...)
+run_command <- function(token, server, db, command, ...)
 {
     uri <- sprintf("https://%s.kusto.windows.net/v1/rest/mgmt", server)
-    call_kusto(token, uri, db, query, ...)
+    call_kusto(token, uri, db, command, ...)
 }
 
 
-convert_kusto_datatype <- function(column, kusto_type)
-{
-    if(kusto_type == 'long')
-    {
-        return(bit64::as.integer64(column))
-    } else if(kusto_type %in% c('int', 'integer'))
-    {
-        return(as.integer(column))
-    } else if(kusto_type == 'datetime')
-    {
-        return(as.POSIXct(strptime(column, format='%Y-%m-%dT%H:%M:%OSZ', tz='UTC')))
-    } else if(kusto_type %in% c('real', 'float'))
-    {
-        return(as.numeric(column))
-    } else if(kusto_type == 'bool')
-    {
-        return(as.logical(column))
-    } else
-    {
-        return(as.character(column))
-    }
-}
-
-
-convert_types <- function(df, coltypes_df)
-{
-    df <- as.data.frame(df, stringsAsFactors=FALSE)
-    names(df) <- coltypes_df$ColumnName
-    df[] <- mapply(convert_kusto_datatype, df, coltypes_df$ColumnType, SIMPLIFY=FALSE)
-    df
-}
-
-
-call_kusto <- function(token, uri, db, query,
+call_kusto <- function(token, uri, db, qry_cmd,
     http_status_handler=c("stop", "warn", "message", "pass"))
 {
-    body_list <- list(
+    body <- list(
         db=db,
         properties=list(Options=list(queryconsistency="weakconsistency")),
-        csl=query
+        csl=qry_cmd
     )
     auth_str <- paste("Bearer", token)
 
-    res <- httr::POST(uri, httr::add_headers(Authorization=auth_str), body=body_list, encode="json")
+    res <- httr::POST(uri, httr::add_headers(Authorization=auth_str), body=body, encode="json")
     
     http_status_handler <- match.arg(http_status_handler)
     if(http_status_handler == "pass")
@@ -101,6 +68,41 @@ parse_tables <- function(tables)
         res[[1]]
     else res
 }
+
+
+convert_kusto_datatype <- function(column, kusto_type)
+{
+    if(kusto_type == 'long')
+    {
+        return(bit64::as.integer64(column))
+    } else if(kusto_type %in% c('int', 'integer'))
+    {
+        return(as.integer(column))
+    } else if(kusto_type == 'datetime')
+    {
+        return(as.POSIXct(strptime(column, format='%Y-%m-%dT%H:%M:%OSZ', tz='UTC')))
+    } else if(kusto_type %in% c('real', 'float'))
+    {
+        return(as.numeric(column))
+    } else if(kusto_type == 'bool')
+    {
+        return(as.logical(column))
+    } else
+    {
+        return(as.character(column))
+    }
+}
+
+
+convert_types <- function(df, coltypes_df)
+{
+    df <- as.data.frame(df, stringsAsFactors=FALSE)
+    names(df) <- coltypes_df$ColumnName
+    df[] <- mapply(convert_kusto_datatype, df, coltypes_df$ColumnType, SIMPLIFY=FALSE)
+    df
+}
+
+
 
     #body_list <- list(
         #db=db,
