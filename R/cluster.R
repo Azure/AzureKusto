@@ -1,7 +1,7 @@
 .kusto_app_id <- 'db662dc1-0cfe-4e1c-a843-19a68e65be58'
 
 
-#' @export
+# don't export this
 create_ade_cluster <- function(cluster, location=NULL, tenant, ...)
 {
     tenant <- normalize_tenant(tenant)

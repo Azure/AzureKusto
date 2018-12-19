@@ -3,7 +3,6 @@
 S3method(ade_database,ade_cluster)
 export(ade_database)
 export(az_data_explorer)
-export(create_ade_cluster)
 export(delete_cluster_credentials)
 export(get_ade_cluster)
 export(run_command)
