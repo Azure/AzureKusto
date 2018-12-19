@@ -1,8 +1,7 @@
 .kusto_app_id <- 'db662dc1-0cfe-4e1c-a843-19a68e65be58'
 
 
-# don't export this
-create_ade_cluster <- function(cluster, location=NULL, tenant, ...)
+get_cluster_credentials <- function(cluster, location=NULL, tenant, ...)
 {
     tenant <- normalize_tenant(tenant)
     cluster <- normalize_cluster(cluster, location)
@@ -24,13 +23,13 @@ create_ade_cluster <- function(cluster, location=NULL, tenant, ...)
 
 
 #' @export
-get_ade_cluster <- function(cluster, location=NULL, ..., refresh=TRUE)
+ade_cluster <- function(cluster, location=NULL, ..., refresh=TRUE)
 {
     cluster <- normalize_cluster(cluster, location)
     file <- file.path(config_dir(), cluster)
     creds_exist <- file.exists(file)
     if(!creds_exist)
-        return(create_ade_cluster(cluster, ...))
+        return(get_cluster_credentials(cluster, ...))
 
     clus <- readRDS(file)
     if(refresh)

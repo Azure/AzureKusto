@@ -7,7 +7,7 @@ public=list(
         clus_name <- sub(".kusto.windows.net$", "", httr::parse_url(self$properties$queryUri)$host)
         if(is.null(tenant))
             tenant <- self$properties$trustedExternalTenants[[1]]$value
-        get_ade_cluster(clus_name, tenant=tenant)
+        ade_cluster(clus_name, tenant=tenant)
     }
 ))
 
