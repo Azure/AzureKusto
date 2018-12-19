@@ -82,7 +82,7 @@ parse_command_result <- function(tables)
 convert_kusto_datatype <- function(column, kusto_type)
 {
     switch(kusto_type,
-        long, Int64=bit64::as.integer64(column),
+        long=, Int64=bit64::as.integer64(column),
         int=, integer=, Int32=as.integer(column),
         datetime=, DateTime=as.POSIXct(strptime(column, format='%Y-%m-%dT%H:%M:%OSZ', tz='UTC')),
         real=, float=as.numeric(column),
