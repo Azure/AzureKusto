@@ -1,16 +1,20 @@
 #' @export
-run_query <- function(token, server, db, query, ...)
+run_query <- function(database, query, ...)
 {
-    uri <- sprintf("https://%s.kusto.windows.net/v1/rest/query", server)
-    parse_query_result(call_kusto(token, uri, db, query, ...))
+    server <- database$cluster$host
+    token <- database$cluster$token$credentials$access_token
+    uri <- paste0(server, "/v1/rest/query")
+    parse_query_result(call_kusto(token, uri, database$db, query, ...))
 }
 
 
 #' @export
-run_command <- function(token, server, db, command, ...)
+run_command <- function(database, command, ...)
 {
-    uri <- sprintf("https://%s.kusto.windows.net/v1/rest/mgmt", server)
-    parse_command_result(call_kusto(token, uri, db, command, ...))
+    server <- database$cluster$host
+    token <- database$cluster$token$credentials$access_token
+    uri <- paste0(server, "/v1/rest/mgmt")
+    parse_command_result(call_kusto(token, uri, database$db, command, ...))
 }
 
 
