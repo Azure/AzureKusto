@@ -2,9 +2,10 @@
 
 
 #' @export
-create_ade_cluster <- function(cluster, tenant, ...)
+create_ade_cluster <- function(cluster, location=NULL, tenant, ...)
 {
     tenant <- normalize_tenant(tenant)
+    cluster <- normalize_cluster(cluster, location)
     host <- paste0("https://", cluster, ".kusto.windows.net")
 
     token <- AzureRMR::get_azure_token("https://login.microsoftonline.com",
@@ -23,8 +24,9 @@ create_ade_cluster <- function(cluster, tenant, ...)
 
 
 #' @export
-get_ade_cluster <- function(cluster, ..., refresh=TRUE)
+get_ade_cluster <- function(cluster, location=NULL, ..., refresh=TRUE)
 {
+    cluster <- normalize_cluster(cluster, location)
     file <- file.path(config_dir(), cluster)
     creds_exist <- file.exists(file)
     if(!creds_exist)
@@ -41,9 +43,9 @@ get_ade_cluster <- function(cluster, ..., refresh=TRUE)
 
 
 #' @export
-delete_cluster_credentials <- function(cluster, confirm=TRUE)
+delete_cluster_credentials <- function(cluster, location=NULL, confirm=TRUE)
 {
-    file <- file.path(config_dir(), cluster)
+    cluster <- normalize_cluster(cluster, location)
     if(confirm && interactive())
     {
         yn <- readline(paste0("Do you really want to delete the credentials for Data Explorer cluster ",
@@ -51,8 +53,24 @@ delete_cluster_credentials <- function(cluster, confirm=TRUE)
         if(tolower(substr(yn, 1, 1)) != "y")
             return(invisible(NULL))
     }
-    file.remove(file)
+
+    file.remove(file.path(config_dir(), cluster))
     invisible(NULL)
+}
+
+
+normalize_cluster <- function(cluster, location=NULL)
+{
+    if(is.null(location))
+    {
+        if(!grepl("\\..+", cluster))
+            stop("Must supply cluster location")
+        return(cluster)
+    }
+    
+    if(!grepl("\\..+", cluster))
+        paste0(cluster, ".", location)
+    else cluster
 }
 
 
