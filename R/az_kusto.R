@@ -4,7 +4,7 @@ public=list(
 
     get_cluster=function(login=TRUE)
     {
-        clus <- ade_cluster$new(self$properties$queryUri, self$properties$dataIngestionUri)
+        clus <- ade_cluster(self$properties$queryUri, self$properties$dataIngestionUri)
         if(login)
         {
             tenant <- sub("/.*$", "", httr::parse_url(self$token$endpoint$authorize)$path)
@@ -36,3 +36,4 @@ public=list(
     get_database=function() {},
     delete_database=function() {}
 ))
+

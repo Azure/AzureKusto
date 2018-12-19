@@ -5,7 +5,7 @@
 run_query <- function(token, server, db, query, ...)
 {
     uri <- sprintf("https://%s.kusto.windows.net/v1/rest/query", server)
-    call_kusto(token, uri, db, query, ...)
+    parse_query_result(call_kusto(token, uri, db, query, ...))
 }
 
 
@@ -13,7 +13,7 @@ run_query <- function(token, server, db, query, ...)
 run_command <- function(token, server, db, command, ...)
 {
     uri <- sprintf("https://%s.kusto.windows.net/v1/rest/mgmt", server)
-    call_kusto(token, uri, db, command, ...)
+    parse_command_result(call_kusto(token, uri, db, command, ...))
 }
 
 
@@ -36,7 +36,7 @@ call_kusto <- function(token, uri, db, qry_cmd,
     cont <- httr::content(res, simplifyVector=TRUE)
     handler <- get(paste0(http_status_handler, "_for_status"), getNamespace("httr"))
     handler(res, make_error_message(cont))
-    parse_tables(cont$Tables)
+    cont$Tables
 }
 
 
@@ -54,15 +54,14 @@ make_error_message <- function(content)
 }
 
 
-parse_tables <- function(tables)
+parse_query_result <- function(tables)
 {
     # load TOC table
     n <- nrow(tables)
     toc <- convert_types(tables$Rows[[n]], tables$Columns[[n]])
     result_tables <- which(toc$Name == "PrimaryResult")
 
-    res <- mapply(convert_types, tables$Rows[result_tables], tables$Columns[result_tables],
-        SIMPLIFY=FALSE)
+    res <- Map(convert_types, tables$Rows[result_tables], tables$Columns[result_tables])
 
     if(length(res) == 1)
         res[[1]]
@@ -70,27 +69,26 @@ parse_tables <- function(tables)
 }
 
 
+parse_command_result <- function(tables)
+{
+    res <- lapply(tables$Rows, convert_types, coltypes_df=tables$Columns[[1]])
+
+    if(length(res) == 1)
+        res[[1]]
+    else res    
+}
+
+
 convert_kusto_datatype <- function(column, kusto_type)
 {
-    if(kusto_type == 'long')
-    {
-        return(bit64::as.integer64(column))
-    } else if(kusto_type %in% c('int', 'integer'))
-    {
-        return(as.integer(column))
-    } else if(kusto_type == 'datetime')
-    {
-        return(as.POSIXct(strptime(column, format='%Y-%m-%dT%H:%M:%OSZ', tz='UTC')))
-    } else if(kusto_type %in% c('real', 'float'))
-    {
-        return(as.numeric(column))
-    } else if(kusto_type == 'bool')
-    {
-        return(as.logical(column))
-    } else
-    {
-        return(as.character(column))
-    }
+    switch(kusto_type,
+        long, Int64=bit64::as.integer64(column),
+        int=, integer=, Int32=as.integer(column),
+        datetime=, DateTime=as.POSIXct(strptime(column, format='%Y-%m-%dT%H:%M:%OSZ', tz='UTC')),
+        real=, float=as.numeric(column),
+        bool=, Boolean=as.logical(column),
+        as.character(column)
+    )
 }
 
 
@@ -98,75 +96,7 @@ convert_types <- function(df, coltypes_df)
 {
     df <- as.data.frame(df, stringsAsFactors=FALSE)
     names(df) <- coltypes_df$ColumnName
-    df[] <- mapply(convert_kusto_datatype, df, coltypes_df$ColumnType, SIMPLIFY=FALSE)
+    df[] <- Map(convert_kusto_datatype, df, coltypes_df$DataType)
     df
 }
 
-
-
-    #body_list <- list(
-        #db=db,
-        #properties=list(Options=list(queryconsistency="weakconsistency")),
-        #csl=query
-    #)
-    #uri <- sprintf("https://%s.kusto.windows.net:443/v1/rest/query", server)
-    #auth_str <- paste("Bearer", token)
-    #r <- httr::POST(uri, httr::add_headers(Authorization=auth_str),
-                    #body=body_list, encode="json")
-
-    #return(r)
-    #content <- httr::content(r, simplifyValues=TRUE)
-
-    #if(r$status_code != 200)
-    #{
-        #if(!is.null(content$Message))
-        #{
-            #stop(sprintf("HTTP %d %s",
-          #r$status_code,
-          #content$Message))
-        #}
-        #else if(!is.null(content$error$innererror))
-        #{
-            #stop(
-                #sprintf(
-                  #"HTTP %d %s\n%s\n%s\n%s",
-                  #r$status_code,
-                  #content$error$code,
-                  #content$error$message,
-                  #content$error$innererror$code,
-                  #content$error$innererror$message
-                #)
-            #)
-        #} else
-        #{
-            #stop(
-                #sprintf(
-                  #"HTTP %d %s\n%s",
-                  #r$status_code,
-                  #content$error$code,
-                  #content$error$message
-                #)
-            #)
-        #}
-    #} else if(!is.null(content$Exceptions))
-    #{
-        #stop(sprintf("HTTP %d %s",
-             #r$status_code,
-             #content$Exceptions[[1]]))
-    #}
-
-    #table <- content$Tables[[1]]
-    #colnames <- sapply(table$Columns, function(x) x$ColumnName)
-    #coltypes <- sapply(table$Columns, function(x) x$ColumnType)
-    #rows <- table$Rows
-
-    #for(row in 1:length(rows))
-    #{
-        #rows[[row]]=lapply(rows[[row]], function(x) ifelse(is.null(x), NA, x))
-    #}
-
-    #rows <- t(sapply(rows, function(x) unlist(x)))
-    #df <- data.frame(rows, stringsAsFactors=FALSE)
-    #names(df) <- colnames
-    #convert_types(df, coltypes)
-#}
