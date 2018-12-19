@@ -1,6 +1,3 @@
-.kusto_app_id <- 'db662dc1-0cfe-4e1c-a843-19a68e65be58'
-
-
 #' @export
 run_query <- function(token, server, db, query, ...)
 {

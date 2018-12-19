@@ -1,4 +1,4 @@
-.onLoad <- function(libname, pkgname)
+add_methods <- function()
 {
     ## extending AzureRMR classes
 

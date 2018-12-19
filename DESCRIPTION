@@ -20,6 +20,7 @@ Imports:
     R6,
     bit64,
     AzureRMR,
+    rappdirs,
     dbplyr,
     dplyr
 Suggests:
