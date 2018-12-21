@@ -44,7 +44,7 @@ public=list(
     add_database_principal=function(database, name, role="User", type="User", fqn="", email="", app_id="")
     {
         op <- file.path("databases", database, "addPrincipals")
-        principal_array <- list(c(
+        principal_array <- list(list(
             name=name,
             role=role,
             type=type,
@@ -52,14 +52,13 @@ public=list(
             email=email,
             appId=app_id
         ))
-
         self$do_operation(op, body=list(value=principal_array), encode="json", http_verb="POST")
     },
 
-    remove_database_principal=function(database, principal, role="User", type="User", fqn="", email="", app_id="")
+    remove_database_principal=function(database, name, role="User", type="User", fqn="", email="", app_id="")
     {
         op <- file.path("databases", database, "removePrincipals")
-        principal_array <- list(c(
+        principal_array <- list(list(
             name=name,
             role=role,
             type=type,
@@ -67,7 +66,6 @@ public=list(
             email=email,
             appId=app_id
         ))
-
         self$do_operation(op, body=list(value=principal_array), encode="json", http_verb="POST")
     },
 
