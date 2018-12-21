@@ -12,7 +12,7 @@ public=list(
         self$do_operation("stop", http_verb="POST")
     },
 
-    create_database=function(database, retention_period=3650, cache_period=31, admin_user=NULL)
+    create_database=function(database, retention_period=3650, cache_period=31)
     {
         op <- file.path("databases", database)
         properties <- list(
