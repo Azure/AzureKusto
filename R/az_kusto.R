@@ -12,7 +12,7 @@ public=list(
         self$do_operation("stop", http_verb="POST")
     },
 
-    create_database=function(database, retention_period=3650, cache_period=31)
+    create_database=function(database, retention_period=3650, cache_period=31, admin_user=NULL)
     {
         op <- file.path("databases", database)
         properties <- list(
@@ -39,6 +39,20 @@ public=list(
 
         op <- file.path("databases", database)
         self$do_operation(op, http_verb="DELETE")
+    },
+
+    add_database_principal=function(database, name, role, type, email, app_id)
+    {
+    },
+
+    delete_database_principal=function(database, principal, role)
+    {
+    },
+
+    list_database_principals=function(database)
+    {
+        op <- file.path("databases", database, "listPrincipals")
+        self$do_operation(op, http_verb="POST")
     },
 
     get_ade_cluster=function(tenant=NULL)
