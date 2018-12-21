@@ -12,8 +12,6 @@ get_cluster_credentials <- function(cluster, location=NULL, tenant, ...)
         app=.kusto_app_id,
         auth_type="device_code",
         resource_host=host)
-    if(is.null(token$app$secret))
-        token$app$secret <- ""
 
     out <- list(host=host, token=token)
     class(out) <- "ade_cluster"
