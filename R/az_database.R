@@ -43,7 +43,7 @@ public=list(
 
     get_ade_database=function(tenant=NULL)
     {
-        clus <- ade_cluster(self$cluster$name, self$cluster$location, self$tenant)
-        ade_database(clus, database)
+        clus <- self$cluster$get_ade_cluster(tenant=tenant)
+        ade_database(clus, basename(db$name))
     }
 ))
