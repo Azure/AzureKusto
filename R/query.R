@@ -72,7 +72,7 @@ parse_query_result <- function(tables)
 
 parse_command_result <- function(tables)
 {
-    res <- lapply(tables$Rows, convert_types, coltypes_df=tables$Columns[[1]])
+    res <- Map(convert_types, tables$Rows, coltypes_df=tables$Columns)
 
     if(length(res) == 1)
         res[[1]]
@@ -86,7 +86,7 @@ convert_kusto_datatype <- function(column, kusto_type)
         long=, Int64=bit64::as.integer64(column),
         int=, integer=, Int32=as.integer(column),
         datetime=, DateTime=as.POSIXct(strptime(column, format='%Y-%m-%dT%H:%M:%OSZ', tz='UTC')),
-        real=, float=as.numeric(column),
+        real=, Double=, Float=as.numeric(column),
         bool=, Boolean=as.logical(column),
         as.character(column)
     )
@@ -95,6 +95,8 @@ convert_kusto_datatype <- function(column, kusto_type)
 
 convert_types <- function(df, coltypes_df)
 {
+    if(is_empty(df))
+        return(list())
     df <- as.data.frame(df, stringsAsFactors=FALSE)
     names(df) <- coltypes_df$ColumnName
     df[] <- Map(convert_kusto_datatype, df, coltypes_df$DataType)
