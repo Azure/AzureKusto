@@ -1,3 +1,7 @@
+#' @import AzureRMR
+NULL
+
+
 .onLoad <- function(libname, pkgname)
 {
     config_dir <- config_dir()

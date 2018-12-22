@@ -12,22 +12,32 @@ public=list(
         self$do_operation("stop", http_verb="POST")
     },
 
-    create_database=function(database, retention_period=3650, cache_period=31)
+    create_database_resource=function(database, retention_period=3650, cache_period=31)
     {
-        op <- file.path("databases", database)
         properties <- list(
             softDeletePeriodInDays=retention_period,
             hotCachePeriodInDays=cache_period
         )
-        body <- list(
-            properties=properties,
-            location=self$location
-        )
 
-        self$do_operation(op, body=body, encode="json", http_verb="PUT")
+        az_data_explorer_database$new(self$token, self$subscription, self$resource_group,
+            type="Microsoft.Kusto/clusters",
+            name=file.path(self$name, "databases", database),
+            location=self$location,
+            properties=properties,
+            wait=TRUE,
+            data_explorer_cluster=self)
     },
 
-    delete_database=function(database, confirm=TRUE)
+    get_database_resource=function(database)
+    {
+        name <- file.path(self$name, "databases", database)
+        az_data_explorer_database$new(self$token, self$subscription, self$resource_group,
+            type="Microsoft.Kusto/clusters",
+            name=file.path(self$name, "databases", database),
+            data_explorer_cluster=self)
+    },
+
+    delete_database_resource=function(database, confirm=TRUE)
     {
         if(confirm && interactive())
         {
@@ -37,53 +47,28 @@ public=list(
                 return(invisible(NULL))
         }
 
-        op <- file.path("databases", database)
-        self$do_operation(op, http_verb="DELETE")
+        self$get_database_resource(database)$delete(confirm=confirm)
     },
 
-    add_database_principal=function(database, name, role="User", type="User", fqn="", email="", app_id="")
+    list_database_resources=function()
     {
-        op <- file.path("databases", database, "addPrincipals")
-        principal_array <- list(list(
-            name=name,
-            role=role,
-            type=type,
-            fqn=fqn,
-            email=email,
-            appId=app_id
-        ))
-        self$do_operation(op, body=list(value=principal_array), encode="json", http_verb="POST")
-    },
-
-    remove_database_principal=function(database, name, role="User", type="User", fqn="", email="", app_id="")
-    {
-        op <- file.path("databases", database, "removePrincipals")
-        principal_array <- list(list(
-            name=name,
-            role=role,
-            type=type,
-            fqn=fqn,
-            email=email,
-            appId=app_id
-        ))
-        self$do_operation(op, body=list(value=principal_array), encode="json", http_verb="POST")
-    },
-
-    list_database_principals=function(database)
-    {
-        op <- file.path("databases", database, "listPrincipals")
-        self$do_operation(op, http_verb="POST")
+        self$do_operation("databases")$value
     },
 
     get_ade_cluster=function(tenant=NULL)
     {
-        clus_name <- sub(".kusto.windows.net$", "", httr::parse_url(self$properties$queryUri)$host)
-        if(is.null(tenant))
+        # step through possibilities for setting tenant:
+        # 1. via argument
+        # 2. cluster trusted external tenant
+        # 3. from login token
+        if(is.null(tenant) && !is_empty(self$properties$trustedExternalTenants))
             tenant <- self$properties$trustedExternalTenants[[1]]$value
+        if(is.null(tenant))
+            tenant <- sub("/.+$", "", httr::parse_url(self$token$endpoint$access)$path)
         if(is.null(tenant))
             stop("Must provide a tenant", call.=FALSE)
 
-        ade_cluster(clus_name, tenant=tenant)
+        ade_cluster(self$name, normalize_location(self$location), tenant=tenant)
     }
 ))
 

@@ -4,6 +4,7 @@
 get_cluster_credentials <- function(cluster, location=NULL, tenant, ...)
 {
     tenant <- normalize_tenant(tenant)
+    location <- normalize_location(tenant)
     cluster <- normalize_cluster(cluster, location)
     host <- paste0("https://", cluster, ".kusto.windows.net")
 
@@ -56,23 +57,9 @@ delete_cluster_credentials <- function(cluster, location=NULL, confirm=TRUE)
 }
 
 
-normalize_cluster <- function(cluster, location=NULL)
-{
-    if(is.null(location))
-    {
-        if(!grepl("\\..+", cluster))
-            stop("Must supply cluster location")
-        return(cluster)
-    }
-    
-    if(!grepl("\\..+", cluster))
-        paste0(cluster, ".", location)
-    else cluster
-}
-
-
 normalize_tenant <- function(tenant)
 {
+    tenant <- tolower(tenant)
     is_guid <- function(x)
     {
         grepl("^[0-9a-f]{32}$", x) ||
@@ -86,3 +73,27 @@ normalize_tenant <- function(tenant)
         tenant <- paste(tenant, "onmicrosoft.com", sep=".")
     tenant
 }
+
+
+normalize_location <- function(location)
+{
+    tolower(gsub(" ", "", location))
+}
+
+
+normalize_cluster <- function(cluster, location=NULL)
+{
+    if(is.null(location))
+    {
+        if(!grepl("\\..+", cluster))
+            stop("Must supply cluster location")
+        return(cluster)
+    }
+    
+    cluster <- tolower(cluster)
+    if(!grepl("\\..+", cluster))
+        paste0(cluster, ".", location)
+    else cluster
+}
+
+
