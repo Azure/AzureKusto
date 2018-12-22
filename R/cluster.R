@@ -15,14 +15,14 @@ get_cluster_credentials <- function(cluster, location=NULL, tenant, ...)
         resource_host=host)
 
     out <- list(host=host, token=token)
-    class(out) <- "ade_cluster"
+    class(out) <- "ade_cluster_endpoint"
     saveRDS(out, file.path(config_dir(), cluster))
     out
 }
 
 
 #' @export
-ade_cluster <- function(cluster, location=NULL, ..., refresh=TRUE)
+ade_cluster_endpoint <- function(cluster, location=NULL, ..., refresh=TRUE)
 {
     cluster <- normalize_cluster(cluster, location)
     file <- file.path(config_dir(), cluster)

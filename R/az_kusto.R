@@ -55,7 +55,7 @@ public=list(
         self$do_operation("databases")$value
     },
 
-    get_ade_cluster=function(tenant=NULL)
+    get_cluster_endpoint=function(tenant=NULL)
     {
         # step through possibilities for setting tenant:
         # 1. via argument
@@ -68,7 +68,7 @@ public=list(
         if(is.null(tenant))
             stop("Must provide a tenant", call.=FALSE)
 
-        ade_cluster(self$name, normalize_location(self$location), tenant=tenant)
+        ade_cluster_endpoint(self$name, normalize_location(self$location), tenant=tenant)
     }
 ))
 

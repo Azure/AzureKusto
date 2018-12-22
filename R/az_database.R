@@ -41,9 +41,9 @@ public=list(
         self$do_operation("listPrincipals", http_verb="POST")
     },
 
-    get_ade_database=function(tenant=NULL)
+    get_database_endpoint=function(tenant=NULL)
     {
-        clus <- self$cluster$get_ade_cluster(tenant=tenant)
-        ade_database(clus, basename(db$name))
+        clus <- self$cluster$get_cluster_endpoint(tenant=tenant)
+        ade_database_endpoint(clus, basename(db$name))
     }
 ))
