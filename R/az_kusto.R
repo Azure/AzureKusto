@@ -39,14 +39,6 @@ public=list(
 
     delete_database_resource=function(database, confirm=TRUE)
     {
-        if(confirm && interactive())
-        {
-            yn <- readline(paste0("Do you really want to delete the Data Explorer database ",
-                database, "? (y/N) "))
-            if(tolower(substr(yn, 1, 1)) != "y")
-                return(invisible(NULL))
-        }
-
         self$get_database_resource(database)$delete(confirm=confirm)
     },
 

@@ -10,6 +10,18 @@ public=list(
         self$cluster <- data_explorer_cluster
     },
 
+    delete=function(..., confirm=TRUE)
+    {
+        if(confirm && interactive())
+        {
+            yn <- readline(paste0("Do you really want to delete the Data Explorer database '",
+                basename(self$name), "'? (y/N) "))
+            if(tolower(substr(yn, 1, 1)) != "y")
+                return(invisible(NULL))
+        }
+        super$delete(..., confirm=FALSE)
+    },
+
     add_principal=function(name, role="User", type="User", fqn="", email="", app_id="")
     {
         principal_array <- list(list(
