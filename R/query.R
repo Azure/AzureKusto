@@ -1,5 +1,12 @@
 #' @export
-run_query <- function(database, query, ...)
+run_query <- function(database, ...)
+{
+    UseMethod("run_query")
+}
+
+
+#' @export
+run_query.ade_database_endpoint <- function(database, query, ...)
 {
     server <- database$cluster$host
     token <- database$cluster$token$credentials$access_token
@@ -9,7 +16,24 @@ run_query <- function(database, query, ...)
 
 
 #' @export
-run_command <- function(database, command, ...)
+run_command <- function(database, ...)
+{
+    UseMethod("run_command")
+}
+
+
+#' @export
+run_command.ade_cluster_endpoint <- function(database, command, ...)
+{
+    server <- database$host
+    token <- database$token$credentials$access_token
+    uri <- paste0(server, "/v1/rest/mgmt")
+    parse_command_result(call_kusto(token, uri, NULL, command, ...))
+}
+
+
+#' @export
+run_command.ade_database_endpoint <- function(database, command, ...)
 {
     server <- database$cluster$host
     token <- database$cluster$token$credentials$access_token
@@ -22,10 +46,11 @@ call_kusto <- function(token, uri, db, qry_cmd,
     http_status_handler=c("stop", "warn", "message", "pass"))
 {
     body <- list(
-        db=db,
         properties=list(Options=list(queryconsistency="weakconsistency")),
         csl=qry_cmd
     )
+    if(!is.null(db))
+        body <- c(body, db=db)
     auth_str <- paste("Bearer", token)
 
     res <- httr::POST(uri, httr::add_headers(Authorization=auth_str), body=body, encode="json")
