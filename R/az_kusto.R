@@ -44,7 +44,17 @@ public=list(
 
     list_database_resources=function()
     {
-        self$do_operation("databases")$value
+        res <- named_list(self$do_operation("databases")$value)
+        names(res) <- basename(names(res))
+        lapply(res, function(parms)
+        {
+            # hack to deal with etag parameter, not part of a regular ARM object
+            etag <- parms$etag
+            parms$etag <- NULL
+            obj <- az_resource$new(self$token, self$subscription, deployed_properties=parms)
+            attr(obj, "etag") <- etag
+            obj
+        })
     },
 
     get_cluster_endpoint=function(tenant=NULL)
