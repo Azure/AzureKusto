@@ -1,6 +1,7 @@
 #' @import AzureRMR
 NULL
 
+utils::globalVariables("self")
 
 .onLoad <- function(libname, pkgname)
 {
