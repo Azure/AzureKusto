@@ -11,7 +11,8 @@ get_cluster_credentials <- function(cluster, location=NULL, tenant, ...)
     token <- AzureRMR::get_azure_token(resource_host=host,
         tenant=tenant,
         app=.kusto_app_id,
-        auth_type="device_code")
+        auth_type="device_code",
+        aad_host="https://login.microsoftonline.com/")
 
     out <- list(host=host, token=token)
     class(out) <- "ade_cluster_endpoint"
