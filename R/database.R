@@ -19,3 +19,11 @@ ade_database_endpoint.ade_database_resource <- function(object, ...)
 {
     object$get_database_endpoint(...)
 }
+
+
+#' @export
+ade_database_endpoint.character <- function(object, database, tenant, ...)
+{
+    clus <- ade_cluster_endpoint(object, tenant=tenant, ...)
+    ade_database(clus, database=database)
+}
