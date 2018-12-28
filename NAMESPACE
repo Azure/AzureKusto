@@ -2,6 +2,7 @@
 
 S3method(ade_database_endpoint,ade_cluster_endpoint)
 S3method(ade_database_endpoint,ade_database_resource)
+S3method(ade_database_endpoint,character)
 S3method(run_command,ade_cluster_endpoint)
 S3method(run_command,ade_database_endpoint)
 S3method(run_query,ade_database_endpoint)
