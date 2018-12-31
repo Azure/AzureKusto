@@ -4,6 +4,10 @@ tbl <- function(object, ...)
     UseMethod("tbl")
 }
 
+new_tbl <- function(data) {
+  structure(data, class = "tbl")
+}
+
 
 #' @export
 tbl.ade_database <- function(object, table, ...)
@@ -12,6 +16,8 @@ tbl.ade_database <- function(object, table, ...)
     class(out) <- "tbl"
     out
 }
+
+
 
 #' @export
 select.tbl <- function(.data, ...)
@@ -50,4 +56,38 @@ op_single <- function(name, x, dots = list(), args = list()) {
     ),
     class = c(paste0("op_", name), "op_single", "op")
   )
+}
+
+#' @export
+show_query.tbl <- function(x, ...){
+    qry <- kql_build(x, con=x$src, ...)
+    kql_render(qry, con = x$src, ...)
+}
+
+#' @export
+kql_render <- function(query, con = NULL, ...)
+{
+    UseMethod("kql_render")
+}
+
+#' @export
+kql_render.tbl <- function(query, con = query$con, ...)
+{
+    q <- kql_build(query$ops, con = con, ...)
+}
+
+#' @export
+kql_build <- function(op, con = NULL, ...) {
+    UseMethod("kql_build")
+}
+
+#' @export
+kql_build.tbl <- function(op, con = NULL, ...){
+    q <- kql_build(op$ops, con = con, ...)
+}
+
+#' @export
+sql_build.op_select <- function(op, con, ...) {
+  vars <- tidyselect::vars_select(op_vars(op$x), !!! op$dots, .include = op_grps(op$x))
+  select_query(sql_build(op$x, con), ident(vars))
 }
