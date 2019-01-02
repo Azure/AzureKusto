@@ -31,7 +31,7 @@ op <- function(name, dots = list(), args = list())
 }
 
 #' @export
-show_query.tbl_ade <- function(tbl, ...)
+show_query.tbl <- function(tbl, ...)
 {
     ops <- lapply(tbl$ops, function(x) render(x, tbl$table))
     tblname <- sprintf("database(%s).%s", tbl$db$db, tbl$name)
@@ -50,7 +50,7 @@ render <- function(query, con = NULL, ...)
 render.op_select <- function(op, tbl)
 {
     cols <- tidyselect::vars_select(names(tbl), !!! op$dots)
-    cols <- paste(cols, sep=", ")
+    cols <- paste(cols, collapse=", ")
     paste0("project ", cols)
 }
 

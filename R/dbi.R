@@ -2,8 +2,8 @@
 #'
 #' @keywords internal
 #' @export
-#' @import DBI
-#' @import methods
+#' @import methods DBI
+#' @importClassesFrom DBI DBIDriver DBIConnection
 setClass("AzureDataExplorerDriver", contains = "DBIDriver")
 
 #' @export

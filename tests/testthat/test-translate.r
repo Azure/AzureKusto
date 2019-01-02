@@ -1,19 +1,20 @@
 context("translate")
 library(dplyr)
 
-test_that("select statement with one column is translated to project",
+test_that("select statement is translated to project",
 {
 
     tbl_iris <- tibble::as.tibble(iris)
+    names(tbl_iris) <- c("SepalLength", "SepalWidth", "PetalLength", "PetalWidth", "Species")
     tbl_iris <- tbl(tbl_iris, "iris")
     q <- tbl_iris %>%
-        select(Species) %>%
+        select(Species, SepalLength) %>%
         show_query()
 
-    expect_equal(q, "database(local_df).iris\n| project Species")
+    expect_equal(q, "database(local_df).iris\n| project Species, SepalLength")
 })
 
-test_that("distinct statement with one column is translated to distinct",
+test_that("distinct statement is translated to distinct",
 {
 
     tbl_iris <- tibble::as.tibble(iris)
