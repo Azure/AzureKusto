@@ -212,9 +212,10 @@ unknown_op <- function(op) {
 #' @export
 show_query.tbl <- function(tbl, ...)
 {
-    ops <- lapply(tbl$ops, function(x) render(x, tbl$table))
+    ops <- unlist(lapply(tbl$ops, function(x) render(x, tbl$table)))
     tblname <- sprintf("database(%s).%s", tbl$db$db, tbl$name)
-    q_str <- paste(tblname, ops, sep = "\n| ")
+    q_str <- paste(ops, collapse = "\n| ")
+    q_str <- paste(tblname, q_str, sep="\n| ")
     cat(q_str, "\n")
     invisible(q_str)
 }
