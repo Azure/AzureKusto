@@ -6,8 +6,9 @@ tbl <- function(object, ...)
 
 tbl_ade <- function(object, table, ...)
 {
-    ops <- list(x = table, vars = names(table))
-    dplyr::make_tbl("ade", db = object, ops = ops)
+    table <- list(x = table, vars = names(table))
+    ops <- list()
+    dplyr::make_tbl("ade", db = object, table = table, ops = ops)
 }
 
 #' Create a dummy tbl from a data frame.
