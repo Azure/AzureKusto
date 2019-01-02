@@ -10,7 +10,7 @@ test_that("select statement with one column is translated to project",
         select(Species) %>%
         show_query()
 
-    expect_equal(q, "database(local_df).iris\n| select Species")
+    expect_equal(q, "database(local_df).iris\n| project Species")
 })
 
 test_that("distinct statement with one column is translated to distinct",

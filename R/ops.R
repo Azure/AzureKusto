@@ -51,7 +51,7 @@ render.op_select <- function(op, tbl)
 {
     cols <- tidyselect::vars_select(names(tbl), !!! op$dots)
     cols <- paste(cols, sep=", ")
-    paste0("select ", cols)
+    paste0("project ", cols)
 }
 
 #' @export
