@@ -23,7 +23,8 @@ tbl.tbl_df <- function(table, name, object=simulate_ade())
 #' @export
 tbl.ade_database_endpoint <- function(object, table, ...)
 {
-    # TODO Not Implemented
+    # Not Implemented
+    # Need to create a tbl object that queries a remote Kusto endpoint to populate its column names upon initialization.
 }
 
 simulate_ade <- function()

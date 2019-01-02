@@ -68,6 +68,7 @@ operator_env <- rlang::child_env(
   `>`     = infix(">"),
   `>=`    = infix(">="),
   sum     = prefix("sum")
+  # TODO: add more operators / function names
 )
 
 kql_env <- function(expr, data)
@@ -91,7 +92,8 @@ to_kql <- function(x, data)
     kql(out)
 }
 
-kql_quote <- function(x, quote="'") {
+kql_quote <- function(x, quote="'")
+{
   if (length(x) == 0) {
     return(x)
   }
@@ -113,7 +115,8 @@ print.kql <- function(x)
 
 expr_type <- function(x)
 {
-    if (rlang::is_syntactic_literal(x)) {
+    if (rlang::is_syntactic_literal(x))
+    {
         if (is.character(x))
         {
             "string"
@@ -142,22 +145,6 @@ switch_expr <- function(x, ...)
            ...,
            stop("Don't know how to handle type ", typeof(x), call. = FALSE)
            )
-}
-
-all_names_rec <- function(x)
-{
-    switch_expr(x,
-                constant = character(),
-                literal = character(),
-                string = character(),
-                symbol = as.character(x),
-                call = purrr::flatten_chr(purrr::map(as.list(x[-1]), all_names))
-                )
-}
-
-all_names <- function(x)
-{
-    unique(all_names_rec(x))
 }
 
 all_calls_rec <- function(x)
@@ -200,7 +187,8 @@ quote_strings <- function(x)
     quote_strings_rec(x)
 }
 
-unknown_op <- function(op) {
+unknown_op <- function(op)
+{
   rlang::new_function(
     rlang::exprs(... = ),
     rlang::expr({
