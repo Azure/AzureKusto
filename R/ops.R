@@ -58,6 +58,6 @@ render.op_select <- function(op, tbl)
 render.op_distinct <- function(op, tbl)
 {
     cols <- tidyselect::vars_select(names(tbl), !!! op$dots)
-    cols <- paste(cols, sep=", ")
+    cols <- paste(cols, collapse=", ")
     paste0("distinct ", cols)
 }
