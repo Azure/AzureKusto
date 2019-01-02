@@ -13,7 +13,10 @@ License: MIT + file LICENSE
 VignetteBuilder: knitr
 Depends: 
     R (>= 3.3)
-Imports: 
+Imports:
+    assertthat,
+    DBI (>= 0.3.0),
+    methods,
     utils,
     httr (>= 1.3),
     jsonlite,
@@ -23,9 +26,11 @@ Imports:
     rappdirs,
     dbplyr,
     dplyr,
+    purrr,
     tidyselect (>= 0.2.4)
 Suggests:
     knitr,
+    DBItest,
     testthat
 Roxygen: list(markdown=TRUE)
 RoxygenNote: 6.1.0.9000
