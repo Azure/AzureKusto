@@ -4,24 +4,26 @@ tbl <- function(object, ...)
     UseMethod("tbl")
 }
 
-tbl_ade <- function(object, table, ...)
-{
-    table <- list(x = table, vars = names(table))
-    ops <- list()
-    dplyr::make_tbl("ade", db = object, table = table, ops = ops)
-}
-
 #' Create a dummy tbl from a data frame.
 #' Useful for testing KQL generation without a remote connection.
-tbl.tbl_df <- function(table, object=simulate_ade())
+tbl.tbl_df <- function(table, name, object=simulate_ade())
 {
-    tbl_ade(object, table)
+    vars = names(table)
+    ops = list()
+    dplyr::make_tbl(
+               "ade",
+               db = object,
+               table = table,
+               vars = vars,
+               ops = ops,
+               name = name
+           )
 }
 
 #' @export
 tbl.ade_database_endpoint <- function(object, table, ...)
 {
-    tbl_ade(object, table)
+    # TODO Not Implemented
 }
 
 simulate_ade <- function()
