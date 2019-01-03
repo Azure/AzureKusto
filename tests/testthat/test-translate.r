@@ -92,3 +92,42 @@ test_that("select and filter can be combined", {
 
     expect_equal(q_str, "database(local_df).iris\n| where Species == 'setosa'\n| project Species, SepalLength")
 })
+
+test_that("select errors on column after selected away", {
+    tbl_iris <- tibble::as.tibble(iris)
+    names(tbl_iris) <- c("SepalLength", "SepalWidth", "PetalLength", "PetalWidth", "Species")
+    tbl_iris <- tbl(tbl_iris, "iris")
+    q <- tbl_iris %>%
+        select(Species) %>%
+        select(SepalLength)
+
+    expect_error(show_query(q), "object 'SepalLength' not found")
+})
+
+test_that("mutate translates to extend", {
+
+    tbl_iris <- tibble::as.tibble(iris)
+    names(tbl_iris) <- c("SepalLength", "SepalWidth", "PetalLength", "PetalWidth", "Species")
+    tbl_iris <- tbl(tbl_iris, "iris")
+    q <- tbl_iris %>%
+        mutate(Species2 = Species)
+
+    q_str <- q %>%
+        show_query()
+
+    expect_equal(q_str, "database(local_df).iris\n| extend Species2 = Species")
+})
+
+test_that("multiple arguments to mutate() become multiple extend clauses", {
+
+    tbl_iris <- tibble::as.tibble(iris)
+    names(tbl_iris) <- c("SepalLength", "SepalWidth", "PetalLength", "PetalWidth", "Species")
+    tbl_iris <- tbl(tbl_iris, "iris")
+    q <- tbl_iris %>%
+        mutate(Species2 = Species, Species3 = Species2, Foo = 1 + 2)
+
+    q_str <- q %>%
+        show_query()
+
+    expect_equal(q_str, "database(local_df).iris\n| extend Species2 = Species\n| extend Species3 = Species2\n| extend Foo = 1 + 2")
+})

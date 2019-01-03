@@ -17,6 +17,12 @@ filter.tbl <- function(.data, ...)
     add_op("filter", .data, dots = dots)
 }
 
+mutate.tbl <- function(.data, ...)
+{
+    dots <- quos(..., .named=TRUE)
+    add_op("mutate", .data, dots = dots)
+}
+
 #' @export
 add_op <- function(name, .data, dots = list(), args = list())
 {
@@ -67,14 +73,17 @@ operator_env <- rlang::child_env(
   `<=`    = infix("<="),
   `>`     = infix(">"),
   `>=`    = infix(">="),
+  `+`     = infix("+"),
+  `-`     = infix("-"),
+  `*`     = infix("*"),
+  `/`     = infix("/"),
   sum     = prefix("sum")
   # TODO: add more operators / function names
 )
 
-kql_env <- function(expr, data)
+kql_env <- function(expr, vars)
 {
-    data_names = names(data)
-    data_env <- rlang::as_environment(rlang::set_names(data_names))
+    data_env <- rlang::as_environment(rlang::set_names(vars))
 
     calls <- all_calls(expr)
     call_list <- purrr::map(rlang::set_names(calls), unknown_op)
@@ -85,10 +94,10 @@ kql_env <- function(expr, data)
 
 }
 
-to_kql <- function(x, data)
+to_kql <- function(x, vars)
 {
     expr <- rlang::enexpr(x)
-    out <- rlang::eval_bare(quote_strings(expr), kql_env(expr, data))
+    out <- rlang::eval_bare(quote_strings(expr), kql_env(expr, vars))
     kql(out)
 }
 
@@ -200,7 +209,7 @@ unknown_op <- function(op)
 #' @export
 show_query.tbl <- function(tbl, ...)
 {
-    ops <- unlist(lapply(tbl$ops, function(x) render(x, tbl$table)))
+    ops <- unlist(lapply(tbl$ops, function(x) render(x, names(tbl$table))))
     tblname <- sprintf("database(%s).%s", tbl$db$db, tbl$name)
     q_str <- paste(ops, collapse = "\n| ")
     q_str <- paste(tblname, q_str, sep="\n| ")
@@ -215,25 +224,35 @@ render <- function(query, con = NULL, ...)
 }
 
 #' @export
-render.op_select <- function(op, tbl)
+render.op_select <- function(op, vars)
 {
-    cols <- tidyselect::vars_select(names(tbl), !!! op$dots)
+    cols <- tidyselect::vars_select(vars, !!! op$dots)
     cols <- paste(cols, collapse=", ")
     paste0("project ", cols)
 }
 
 #' @export
-render.op_distinct <- function(op, tbl)
+render.op_distinct <- function(op, vars)
 {
-    cols <- tidyselect::vars_select(names(tbl), !!! op$dots)
+    cols <- tidyselect::vars_select(vars, !!! op$dots)
     cols <- paste(cols, collapse=", ")
     paste0("distinct ", cols)
 }
 
 #' @export
-render.op_filter <- function(op, tbl)
+render.op_filter <- function(op, vars)
 {
     dots <- purrr::map(op$dots, rlang::get_expr)
-    translated_dots <- purrr::map(dots, to_kql, data=tbl)
+    translated_dots <- purrr::map(dots, to_kql, vars = vars)
     paste0("where ", translated_dots)
+}
+
+render.op_mutate <- function(op, vars)
+{
+    #assigned_names <- names(op$dots)
+    assigned_exprs <- purrr::map(op$dots, rlang::get_expr)
+    vars <- append(vars, names(assigned_exprs))
+    stmts <- purrr::map(assigned_exprs, to_kql, vars = vars)
+    pieces <- lapply(seq_along(assigned_exprs), function(i) sprintf("%s = %s", names(assigned_exprs)[i], stmts[i]))
+    paste0("extend ", pieces)
 }
