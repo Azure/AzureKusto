@@ -36,19 +36,6 @@ public=list(
         self$do_operation("addPrincipals", body=list(value=principals), encode="json", http_verb="POST")
     },
 
-    add_principal=function(name, role="User", type="User", fqn="", email="", app_id="")
-    {
-        principal_array <- list(list(
-            name=name,
-            role=role,
-            type=type,
-            fqn=fqn,
-            email=email,
-            appId=app_id
-        ))
-        self$do_operation("addPrincipals", body=list(value=principal_array), encode="json", http_verb="POST")
-    },
-
     remove_principals=function(name, role="User", type="User", fqn="", email="", app_id="")
     {
         principals <- data.frame(
@@ -61,19 +48,6 @@ public=list(
             stringsAsFactors=FALSE
         )
         self$do_operation("removePrincipals", body=list(value=principals), encode="json", http_verb="POST")
-    },
-
-    remove_principal=function(name, role="User", type="User", fqn="", email="", app_id="")
-    {
-        principal_array <- list(list(
-            name=name,
-            role=role,
-            type=type,
-            fqn=fqn,
-            email=email,
-            appId=app_id
-        ))
-        self$do_operation("removePrincipals", body=list(value=principal_array), encode="json", http_verb="POST")
     },
 
     list_principals=function(database)
