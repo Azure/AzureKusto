@@ -74,15 +74,16 @@ setMethod("dbClearResult", "AzureDataExplorerResult", function(res, ...)
     TRUE
 })
 
-#' Retrieve records from query
-#' @export
-setMethod("dbFetch", "AzureDataExplorerResult", function(res, n = -1, ...)
-{
-    #TODO
-})
+##' Retrieve records from query
+##' @export
+#setMethod("dbFetch", "AzureDataExplorerResult", function(res, n = -1, ...)
+#{
+    ##TODO
+#})
 
-#' @export
-setMethod("dbHasCompleted", "AzureDataExplorerResult", function(res, ...)
-{
-    #TODO
-})
+##' @export
+#setMethod("dbHasCompleted", "AzureDataExplorerResult", function(res, ...)
+#{
+    ##TODO
+#})
+
