@@ -1,5 +1,5 @@
 #' @export
-ade_query_endpoint <- function(..., .connection_string=NULL, .azure_token=NULL)
+kusto_query_endpoint <- function(..., .connection_string=NULL, .azure_token=NULL)
 {
     props <- list(...)
     names(props) <- tolower(names(props))
@@ -35,10 +35,10 @@ ade_query_endpoint <- function(..., .connection_string=NULL, .azure_token=NULL)
 
         url <- httr::parse_url(props$server)
         subnames <- strsplit(url$host, ".", fixed=TRUE)[[1]]
-        props$token <- get_ade_token(cluster=subnames[1], location=subnames[2], tenant=props$tenantid)
+        props$token <- get_kusto_token(cluster=subnames[1], location=subnames[2], tenant=props$tenantid)
     }
 
-    class(props) <- "ade_database_endpoint"
+    class(props) <- "kusto_database_endpoint"
     props
 }
 

@@ -1,74 +1,74 @@
-#' Driver for Azure Data Explorer
+#' Driver for Azure Kusto
 #'
 #' @keywords internal
 #' @export
 #' @import methods DBI
 #' @importClassesFrom DBI DBIDriver DBIConnection
-setClass("AzureDataExplorerDriver", contains = "DBIDriver")
+setClass("AzureKustoDriver", contains = "DBIDriver")
 
 #' @export
-#' @rdname AzureDataExplorer-class
-setMethod("dbUnloadDriver", "AzureDataExplorerDriver", function(drv, ...)
+#' @rdname AzureKusto-class
+setMethod("dbUnloadDriver", "AzureKustoDriver", function(drv, ...)
 {
     TRUE
 })
 
-setMethod("show", "AzureDataExplorerDriver", function(object){
-    cat("<AzureDataExplorerDriver>\n")
+setMethod("show", "AzureKustoDriver", function(object){
+    cat("<AzureKustoDriver>\n")
 })
 
-AzureDataExplorer <- function()
+AzureKusto <- function()
 {
-    new("AzureDataExplorerDriver")
+    new("AzureKustoDriver")
 }
 
-#' AzureDataExplorer connection class.
+#' AzureKusto connection class.
 #'
 #' @export
 #' @keywords internal
-setClass("AzureDataExplorerConnection",
+setClass("AzureKustoConnection",
          contains = "DBIConnection",
          slots = list(
              host = "character",
              ptr = "externalptr"
          ))
 
-#' @param drv An object created by AzureDataExplorer
-#' @rdname AzureDataExplorer
+#' @param drv An object created by AzureKusto
+#' @rdname AzureKusto
 #' @export
 #' @examples
 #' \dontrun{
-#' db <- dbConnect(AzureDataExplorer::AzureDataExplorer())
+#' db <- dbConnect(AzureKusto::AzureKusto())
 #' dbWriteTable(db, "mtcars", mtcars)
 #' dbGetQuery(db, "mtcars | where cyl == 4")
 #' }
-setMethod("dbConnect", "AzureDataExplorerDriver", function(drv, ...)
+setMethod("dbConnect", "AzureKustoDriver", function(drv, ...)
 {
-    new("AzureDataExplorerConnection", host=host, ...)
+    new("AzureKustoConnection", host=host, ...)
 })
 
-#' AzureDataExplorer results class
+#' AzureKusto results class
 #'
 #' @keywords internal
 #' @export
-setClass("AzureDataExplorerResult",
+setClass("AzureKustoResult",
          contains="DBIResult",
          slots = list(ptr = "externalptr")
          )
 
-#' Send a query to AzureDataExplorer.
+#' Send a query to AzureKusto.
 #'
 #' @export
 #' @examples
 #'
-setMethod("dbSendQuery", "AzureDataExplorerConnection", function(conn, statement, ...)
+setMethod("dbSendQuery", "AzureKustoConnection", function(conn, statement, ...)
 {
     # TODO
-    new("AzureDataExplorerResult", ...)
+    new("AzureKustoResult", ...)
 })
 
 #' @export
-setMethod("dbClearResult", "AzureDataExplorerResult", function(res, ...)
+setMethod("dbClearResult", "AzureKustoResult", function(res, ...)
 {
     # TODO: free resources
     TRUE
@@ -76,13 +76,13 @@ setMethod("dbClearResult", "AzureDataExplorerResult", function(res, ...)
 
 ##' Retrieve records from query
 ##' @export
-#setMethod("dbFetch", "AzureDataExplorerResult", function(res, n = -1, ...)
+#setMethod("dbFetch", "AzureKustoResult", function(res, n = -1, ...)
 #{
     ##TODO
 #})
 
 ##' @export
-#setMethod("dbHasCompleted", "AzureDataExplorerResult", function(res, ...)
+#setMethod("dbHasCompleted", "AzureKustoResult", function(res, ...)
 #{
     ##TODO
 #})

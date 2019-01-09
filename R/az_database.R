@@ -1,20 +1,20 @@
 #' @export
-az_data_explorer_database <- R6::R6Class("az_data_explorer_database", inherit=AzureRMR::az_resource,
+az_kusto_database <- R6::R6Class("az_kusto_database", inherit=AzureRMR::az_resource,
 public=list(
 
     cluster=NULL,
 
-    initialize=function(..., data_explorer_cluster=self$cluster)
+    initialize=function(..., kusto_cluster=self$cluster)
     {
         super$initialize(...)
-        self$cluster <- data_explorer_cluster
+        self$cluster <- kusto_cluster
     },
 
     delete=function(..., confirm=TRUE)
     {
         if(confirm && interactive())
         {
-            yn <- readline(paste0("Do you really want to delete the Data Explorer database '",
+            yn <- readline(paste0("Do you really want to delete the Kusto database '",
                 basename(self$name), "'? (y/N) "))
             if(tolower(substr(yn, 1, 1)) != "y")
                 return(invisible(NULL))
@@ -74,6 +74,6 @@ public=list(
         token <- self$cluster$get_token(tenant)
         server <- self$cluster$properties$queryUri
         database <- basename(self$name)
-        ade_query_endpoint(server=server, database=database, tenantid=tenant, fed=TRUE, .azure_token=token)
+        kusto_query_endpoint(server=server, database=database, tenantid=tenant, fed=TRUE, .azure_token=token)
     }
 ))
