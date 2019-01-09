@@ -1,14 +1,14 @@
-Package: AzureDataExplorer
-Title: Interface to 'Azure Data Explorer'
+Package: AzureKusto
+Title: Interface to 'Kusto'/'Azure Data Explorer'
 Version: 0.0.1
 Authors@R: c(
     person("Hong", "Ooi", , "hongooi@microsoft.com", role = c("aut", "cre")),
     person("Alex", "Kyllo", , "jekyllo@microsoft.com", role = "aut"),
     person("Microsoft", role = "cph")
     )
-Description: Interface to 'Azure Data Explorer'
-URL: https://github.com/cloudyr/AzureDataExplorer
-BugReports: https://github.com/cloudyr/AzureDataExplorer/issues
+Description: Interface to 'Kusto'/'Azure Data Explorer'
+URL: https://github.com/cloudyr/AzureKusto
+BugReports: https://github.com/cloudyr/AzureKusto/issues
 License: MIT + file LICENSE
 VignetteBuilder: knitr
 Depends:
