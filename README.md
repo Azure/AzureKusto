@@ -1,3 +1,3 @@
-# AzureDataExplorer
+# AzureKusto
 
-R interface to Azure Data Explorer (previously known as Kusto)
+R interface to Kusto, also known as Azure Data Explorer
