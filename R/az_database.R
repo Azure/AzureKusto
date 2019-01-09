@@ -33,7 +33,10 @@ public=list(
             appId=app_id,
             stringsAsFactors=FALSE
         )
-        self$do_operation("addPrincipals", body=list(value=principals), encode="json", http_verb="POST")
+        val <- self$
+            do_operation("addPrincipals", body=list(value=principals), encode="json", http_verb="POST")$
+            value
+        do.call(rbind, lapply(val, as.data.frame, stringsAsFactors=FALSE))
     },
 
     remove_principals=function(name, role="User", type="User", fqn="", email="", app_id="")
@@ -47,17 +50,30 @@ public=list(
             appId=app_id,
             stringsAsFactors=FALSE
         )
-        self$do_operation("removePrincipals", body=list(value=principals), encode="json", http_verb="POST")
+        val <- self$
+            do_operation("removePrincipals", body=list(value=principals), encode="json", http_verb="POST")$
+            value
+        do.call(rbind, lapply(val, as.data.frame, stringsAsFactors=FALSE))
     },
 
     list_principals=function(database)
     {
-        self$do_operation("listPrincipals", http_verb="POST")
+        val <- self$do_operation("listPrincipals", http_verb="POST")$value
+        do.call(rbind, lapply(val, as.data.frame, stringsAsFactors=FALSE))
     },
 
-    get_database_endpoint=function(tenant=NULL)
+    get_query_endpoint=function(tenant=NULL, user=NULL, pwd=NULL)
     {
-        clus <- self$cluster$get_cluster_endpoint(tenant=tenant)
-        ade_database_endpoint(clus, basename(db$name))
+        # basicauth not (yet) exposed for customer-created clusters
+        if(!is.null(user) && !is.null(pwd))
+            stop("Basic user authentication not supported")
+
+        if(is.null(tenant))
+            tenant <- self$cluster$get_default_tenant()
+
+        token <- self$cluster$get_token(tenant)
+        server <- self$cluster$properties$queryUri
+        database <- basename(self$name)
+        ade_query_endpoint(server=server, database=database, tenantid=tenant, fed=TRUE, .azure_token=token)
     }
 ))

@@ -8,10 +8,15 @@ run_query <- function(database, ...)
 #' @export
 run_query.ade_database_endpoint <- function(database, query, ...)
 {
-    server <- database$cluster$host
-    token <- database$cluster$token$credentials$access_token
+    server <- database$server
+    user <- database$user
+    password <- database$pwd
+
+    # obtain token: note priority order
+    token <- coalesce(database$token$credentials$access_token, database$usertoken, database$apptoken)
+
     uri <- paste0(server, "/v1/rest/query")
-    parse_query_result(call_kusto(token, uri, database$db, query, ...))
+    parse_query_result(call_kusto(token, user, password, uri, database$database, query, ...))
 }
 
 
@@ -23,26 +28,21 @@ run_command <- function(database, ...)
 
 
 #' @export
-run_command.ade_cluster_endpoint <- function(database, command, ...)
-{
-    server <- database$host
-    token <- database$token$credentials$access_token
-    uri <- paste0(server, "/v1/rest/mgmt")
-    parse_command_result(call_kusto(token, uri, NULL, command, ...))
-}
-
-
-#' @export
 run_command.ade_database_endpoint <- function(database, command, ...)
 {
-    server <- database$cluster$host
-    token <- database$cluster$token$credentials$access_token
+    server <- database$server
+    user <- database$user
+    password <- database$pwd
+
+    # obtain token: note priority order
+    token <- coalesce(database$token$credentials$access_token, database$usertoken, database$apptoken)
+
     uri <- paste0(server, "/v1/rest/mgmt")
-    parse_command_result(call_kusto(token, uri, database$db, command, ...))
+    parse_command_result(call_kusto(token, user, password, uri, database$database, command, ...))
 }
 
 
-call_kusto <- function(token, uri, db, qry_cmd,
+call_kusto <- function(token=NULL, user=NULL, password=NULL, uri, db, qry_cmd,
     http_status_handler=c("stop", "warn", "message", "pass"))
 {
     body <- list(
@@ -51,7 +51,12 @@ call_kusto <- function(token, uri, db, qry_cmd,
     )
     if(!is.null(db))
         body <- c(body, db=db)
-    auth_str <- paste("Bearer", token)
+
+    auth_str <- if(!is.null(token))
+        paste("Bearer", token)
+    else if(!is.null(user) && !is.null(password))
+        paste("Basic", openssl::base64_encode(paste(user, password, sep=":")))
+    else stop("Must provide authentication details")
 
     res <- httr::POST(uri, httr::add_headers(Authorization=auth_str), body=body, encode="json")
     
@@ -126,5 +131,20 @@ convert_types <- function(df, coltypes_df)
     names(df) <- coltypes_df$ColumnName
     df[] <- Map(convert_kusto_datatype, df, coltypes_df$DataType)
     df
+}
+
+
+# get first non-NULL value from a list of candidate values
+coalesce <- function(...)
+{
+    args <- list(...)
+    val <- NULL
+    for(i in seq_along(args))
+    {
+        val <- args[[i]]
+        if(!is.null(val))
+            break
+    }
+    val
 }
 

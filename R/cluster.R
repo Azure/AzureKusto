@@ -1,10 +1,35 @@
+# Azure Active Directory app used to talk to Kusto
 .kusto_app_id <- 'db662dc1-0cfe-4e1c-a843-19a68e65be58'
 
 
-get_cluster_credentials <- function(cluster, location=NULL, tenant, ...)
+#' Obtain an AAD authentication token for the given Kusto cluster and tenant
+#' @export
+get_ade_token <- function(cluster, location=NULL, tenant, refresh=TRUE)
 {
     tenant <- normalize_tenant(tenant)
-    location <- normalize_location(tenant)
+    location <- normalize_location(location)
+    cluster <- normalize_cluster(cluster, location)
+    host <- paste0("https://", cluster, ".kusto.windows.net")
+
+    filename <- file.path(config_dir(), paste(cluster, "-", tenant))
+    if(!file.exists(filename))
+        return(create_ade_token(cluster, location, tenant))
+
+    token <- readRDS(filename)
+    if(refresh)
+    {
+        token$refresh()
+        saveRDS(token, filename)
+    }
+    token
+}
+
+
+#' @export
+create_ade_token <- function(cluster, location=NULL, tenant)
+{
+    tenant <- normalize_tenant(tenant)
+    location <- normalize_location(location)
     cluster <- normalize_cluster(cluster, location)
     host <- paste0("https://", cluster, ".kusto.windows.net")
 
@@ -14,46 +39,39 @@ get_cluster_credentials <- function(cluster, location=NULL, tenant, ...)
         auth_type="device_code",
         aad_host="https://login.microsoftonline.com/")
 
-    out <- list(host=host, token=token)
-    class(out) <- "ade_cluster_endpoint"
-    saveRDS(out, file.path(config_dir(), cluster))
-    out
+    filename <- file.path(config_dir(), paste(cluster, "-", tenant))
+    saveRDS(token, filename)
+    token
 }
 
 
 #' @export
-ade_cluster_endpoint <- function(cluster, location=NULL, ..., refresh=TRUE)
+delete_ade_token <- function(cluster, location=NULL, tenant, confirm=TRUE)
 {
-    cluster <- normalize_cluster(cluster, location)
-    file <- file.path(config_dir(), cluster)
-    creds_exist <- file.exists(file)
-    if(!creds_exist)
-        return(get_cluster_credentials(cluster, ...))
-
-    clus <- readRDS(file)
-    if(refresh)
-    {
-        clus$token$refresh()
-        saveRDS(clus, file)
-    }
-    clus
-}
-
-
-#' @export
-delete_cluster_credentials <- function(cluster, location=NULL, confirm=TRUE)
-{
+    tenant <- normalize_tenant(tenant)
+    location <- normalize_location(location)
     cluster <- normalize_cluster(cluster, location)
     if(confirm && interactive())
     {
-        yn <- readline(paste0("Do you really want to delete the credentials for Data Explorer cluster ",
+        yn <- readline(paste0("Do you really want to delete the authentication token for Data Explorer cluster ",
             cluster, "? (y/N) "))
         if(tolower(substr(yn, 1, 1)) != "y")
             return(invisible(NULL))
     }
 
-    file.remove(file.path(config_dir(), cluster))
+    filename <- file.path(config_dir(), paste(cluster, "-", tenant))
+    file.remove(filename)
     invisible(NULL)
+}
+
+
+#' @export
+list_ade_tokens <- function()
+{
+    files <- dir(config_dir(), full.names=TRUE)
+    objs <- lapply(files, readRDS)
+    names(objs) <- basename(files)
+    objs
 }
 
 
@@ -75,6 +93,7 @@ normalize_tenant <- function(tenant)
 }
 
 
+# Kusto prettifies location eg "West US" instead of "westus", unprettify it to be on the safe side
 normalize_location <- function(location)
 {
     tolower(gsub(" ", "", location))

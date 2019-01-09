@@ -12,7 +12,7 @@ public=list(
         self$do_operation("stop", http_verb="POST")
     },
 
-    create_database_resource=function(database, retention_period=3650, cache_period=31)
+    create_database=function(database, retention_period=3650, cache_period=31)
     {
         properties <- list(
             softDeletePeriodInDays=retention_period,
@@ -28,7 +28,7 @@ public=list(
             data_explorer_cluster=self)
     },
 
-    get_database_resource=function(database)
+    get_database=function(database)
     {
         name <- file.path(self$name, "databases", database)
         az_data_explorer_database$new(self$token, self$subscription, self$resource_group,
@@ -37,32 +37,35 @@ public=list(
             data_explorer_cluster=self)
     },
 
-    delete_database_resource=function(database, confirm=TRUE)
+    delete_database=function(database, confirm=TRUE)
     {
         self$get_database_resource(database)$delete(confirm=confirm)
     },
 
-    list_database_resources=function()
+    list_databases=function()
     {
         res <- named_list(self$do_operation("databases")$value)
         names(res) <- basename(names(res))
         lapply(res, function(parms) az_resource$new(self$token, self$subscription, deployed_properties=parms))
     },
 
-    get_cluster_endpoint=function(tenant=NULL)
+    get_default_tenant=function()
     {
-        # step through possibilities for setting tenant:
-        # 1. via argument
-        # 2. cluster trusted external tenant
-        # 3. from login token
-        if(is.null(tenant) && !is_empty(self$properties$trustedExternalTenants))
+        # obtain a default tenant for this cluster:
+        # either from the trusted external tenant property, or if blank, from login token
+        tenant <- NULL
+        if(!is_empty(self$properties$trustedExternalTenants))
             tenant <- self$properties$trustedExternalTenants[[1]]$value
         if(is.null(tenant))
             tenant <- sub("/.+$", "", httr::parse_url(self$token$endpoint$access)$path)
         if(is.null(tenant))
-            stop("Must provide a tenant", call.=FALSE)
+            stop("Unable to find default tenant", call.=FALSE)
+        tenant
+    },
 
-        ade_cluster_endpoint(self$name, normalize_location(self$location), tenant=tenant)
+    get_token=function(tenant=self$get_default_tenant())
+    {
+        get_ade_token(self$name, normalize_location(self$location), tenant=tenant)
     }
 ))
 
