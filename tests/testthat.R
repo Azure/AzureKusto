@@ -1,4 +1,4 @@
 library(testthat)
-library(AzureDataExplorer)
+library(AzureKusto)
 
-test_check('AzureDataExplorer')
+test_check('AzureKusto')

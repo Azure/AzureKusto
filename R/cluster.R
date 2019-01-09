@@ -4,7 +4,7 @@
 
 #' Obtain an AAD authentication token for the given Kusto cluster and tenant
 #' @export
-get_ade_token <- function(cluster, location=NULL, tenant, refresh=TRUE)
+get_kusto_token <- function(cluster, location=NULL, tenant, refresh=TRUE)
 {
     tenant <- normalize_tenant(tenant)
     location <- normalize_location(location)
@@ -13,7 +13,7 @@ get_ade_token <- function(cluster, location=NULL, tenant, refresh=TRUE)
 
     filename <- file.path(config_dir(), paste(cluster, "-", tenant))
     if(!file.exists(filename))
-        return(create_ade_token(cluster, location, tenant))
+        return(create_kusto_token(cluster, location, tenant))
 
     token <- readRDS(filename)
     if(refresh)
@@ -26,7 +26,7 @@ get_ade_token <- function(cluster, location=NULL, tenant, refresh=TRUE)
 
 
 #' @export
-create_ade_token <- function(cluster, location=NULL, tenant)
+create_kusto_token <- function(cluster, location=NULL, tenant)
 {
     tenant <- normalize_tenant(tenant)
     location <- normalize_location(location)
@@ -46,14 +46,14 @@ create_ade_token <- function(cluster, location=NULL, tenant)
 
 
 #' @export
-delete_ade_token <- function(cluster, location=NULL, tenant, confirm=TRUE)
+delete_kusto_token <- function(cluster, location=NULL, tenant, confirm=TRUE)
 {
     tenant <- normalize_tenant(tenant)
     location <- normalize_location(location)
     cluster <- normalize_cluster(cluster, location)
     if(confirm && interactive())
     {
-        yn <- readline(paste0("Do you really want to delete the authentication token for Data Explorer cluster ",
+        yn <- readline(paste0("Do you really want to delete the authentication token for Kusto cluster ",
             cluster, "? (y/N) "))
         if(tolower(substr(yn, 1, 1)) != "y")
             return(invisible(NULL))
@@ -66,7 +66,7 @@ delete_ade_token <- function(cluster, location=NULL, tenant, confirm=TRUE)
 
 
 #' @export
-list_ade_tokens <- function()
+list_kusto_tokens <- function()
 {
     files <- dir(config_dir(), full.names=TRUE)
     objs <- lapply(files, readRDS)

@@ -1,5 +1,5 @@
 #' @export
-az_data_explorer <- R6::R6Class("az_data_explorer", inherit=AzureRMR::az_resource,
+az_kusto <- R6::R6Class("az_kusto", inherit=AzureRMR::az_resource,
 public=list(
 
     start=function()
@@ -19,22 +19,22 @@ public=list(
             hotCachePeriodInDays=cache_period
         )
 
-        az_data_explorer_database$new(self$token, self$subscription, self$resource_group,
+        az_kusto_database$new(self$token, self$subscription, self$resource_group,
             type="Microsoft.Kusto/clusters",
             name=file.path(self$name, "databases", database),
             location=self$location,
             properties=properties,
             wait=TRUE,
-            data_explorer_cluster=self)
+            kusto_cluster=self)
     },
 
     get_database=function(database)
     {
         name <- file.path(self$name, "databases", database)
-        az_data_explorer_database$new(self$token, self$subscription, self$resource_group,
+        az_kusto_database$new(self$token, self$subscription, self$resource_group,
             type="Microsoft.Kusto/clusters",
             name=file.path(self$name, "databases", database),
-            data_explorer_cluster=self)
+            kusto_cluster=self)
     },
 
     delete_database=function(database, confirm=TRUE)
@@ -65,7 +65,7 @@ public=list(
 
     get_token=function(tenant=self$get_default_tenant())
     {
-        get_ade_token(self$name, normalize_location(self$location), tenant=tenant)
+        get_kusto_token(self$name, normalize_location(self$location), tenant=tenant)
     }
 ))
 

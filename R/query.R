@@ -6,7 +6,7 @@ run_query <- function(database, ...)
 
 
 #' @export
-run_query.ade_database_endpoint <- function(database, query, ...)
+run_query.kusto_database_endpoint <- function(database, query, ...)
 {
     server <- database$server
     user <- database$user
@@ -28,7 +28,7 @@ run_command <- function(database, ...)
 
 
 #' @export
-run_command.ade_database_endpoint <- function(database, command, ...)
+run_command.kusto_database_endpoint <- function(database, command, ...)
 {
     server <- database$server
     user <- database$user
@@ -81,7 +81,7 @@ make_error_message <- function(content)
         sprintf("%s\n%s", err$message, err$`@message`)
     }
     else ""
-    paste0("complete Data Explorer operation. Message:\n", msg)
+    paste0("complete Kusto operation. Message:\n", msg)
 }
 
 

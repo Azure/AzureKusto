@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.168
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{DA7A21FA-8162-4350-AD77-A8D1B671F3ED}") = "AzureKusto", "AzureKusto.rxproj", "{CAF1D08F-33FB-454B-BBB9-0B97B043E00D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CAF1D08F-33FB-454B-BBB9-0B97B043E00D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CAF1D08F-33FB-454B-BBB9-0B97B043E00D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CAF1D08F-33FB-454B-BBB9-0B97B043E00D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CAF1D08F-33FB-454B-BBB9-0B97B043E00D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {60C56766-8CB6-455F-BE01-3961BE513985}
+	EndGlobalSection
+EndGlobal
