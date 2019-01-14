@@ -96,22 +96,20 @@ normalize_tenant <- function(tenant)
 # Kusto prettifies location eg "West US" instead of "westus", unprettify it to be on the safe side
 normalize_location <- function(location)
 {
-    tolower(gsub(" ", "", location))
+    if(is.null(location))
+        return(NULL)
+    else
+        tolower(gsub(" ", "", location))
 }
 
 
 normalize_cluster <- function(cluster, location=NULL)
 {
-    if(is.null(location))
-    {
-        if(!grepl("\\..+", cluster))
-            stop("Must supply cluster location")
-        return(cluster)
-    }
-    
     cluster <- tolower(cluster)
-    if(!grepl("\\..+", cluster))
-        paste0(cluster, ".", location)
+    if (!is.null(location))
+        if(!grepl("\\..+", cluster))
+            paste0(cluster, ".", location)
+        else cluster
     else cluster
 }
 
