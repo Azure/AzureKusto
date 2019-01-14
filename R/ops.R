@@ -1,258 +1,265 @@
 #' @export
-select.tbl <- function(.data, ...)
+op_base <- function(x, vars, class = character())
 {
-    dots <- quos(...)
-    add_op("select", .data, dots = dots)
+    stopifnot(is.character(vars))
+
+    structure(
+        list(
+            x = x,
+            vars = vars
+        ),
+        class = c(paste0("op_base_", class), "op_base", "op")
+    )
 }
 
-distinct.tbl <- function(.data, ...)
+op_base_local <- function(df)
 {
-    dots <- quos(...)
-    add_op("distinct", .data, dots = dots)
+    op_base(df, names(df), class = "local")
 }
 
-filter.tbl <- function(.data, ...)
+op_base_remote <- function(x, vars)
 {
-    dots <- quos(...)
-    add_op("filter", .data, dots = dots)
-}
-
-mutate.tbl <- function(.data, ...)
-{
-    dots <- quos(..., .named=TRUE)
-    add_op("mutate", .data, dots = dots)
-}
-
-#' @export
-add_op <- function(name, .data, dots = list(), args = list())
-{
-    .data$ops <- append(.data$ops, list(op(name, dots = dots, args = args)))
-    return(.data)
+    op_base(x, vars, class = "remote")
 }
 
 #' @export
-op <- function(name, dots = list(), args = list())
+op_single <- function(name, x, dots = list(), args = list())
 {
-  structure(
-    list(
-      name = name,
-      dots = dots,
-      args = args
-    ),
-    class = c(paste0("op_", name), "op")
-  )
+    structure(
+        list(
+            name = name,
+            x = x,
+            dots = dots,
+            args = args
+        ),
+        class = c(paste0("op_", name), "op_single", "op")
+    )
 }
 
 #' @export
-infix <- function(f)
+add_op_single <- function(name, .data, dots = list(), args = list())
 {
-    assertthat::assert_that(rlang::is_string(f))
-    function(x, y)
+    .data$ops <- op_single(name, x = .data$ops, dots = dots, args = args)
+    .data
+}
+
+#' @export
+op_double <- function(name, x, y, args = list())
+{
+    structure(
+        list(
+            name = name,
+            x = x,
+            y = y,
+            args = args
+        ),
+        class = c(paste0("op_", name), "op_double", "op")
+    )
+}
+
+#' @export
+add_op_join <- function(type, x, y, by = NULL, suffix = NULL, ...)
+{
+    by <- common_by(by, x, y)
+    vars <- join_vars(op_vars(x), op_vars(y), type = type, by = by, suffix = suffix)
+    x$ops <- op_double("join", x, y,
+                       args = list(
+                           vars = vars,
+                           type = type,
+                           by = by,
+                           suffix = suffix
+                       ))
+    x
+}
+
+add_op_set_op <- function(x, y, type, ...)
+{
+    x$ops <- op_double("set_op", x, y, args = list(type = type))
+    x
+}
+
+join_vars <- function(x_names, y_names, type, by, suffix = c(".x", ".y"))
+{
+    # Remove join keys from y's names
+    y_names <- setdiff(y_names, by$y)
+
+    if(!is.character(suffix) || length(suffix) != 2)
+        stop("`suffix` must be a character vector of length 2.", call. = FALSE)
+
+    suffix <- list(x = suffix[1], y = suffix[2])
+    x_new <- add_suffixes(x_names, y_names, suffix$x)
+    y_new <- add_suffixes(y_names, x_names, suffix$y)
+
+    # In left and inner joins, return key values only from x
+    # In right joins, return key values only from y
+     # In full joins, return key values by coalescing values from x and y
+    x_x <- x_names
+    x_y <- by$y[match(x_names, by$x)]
+    x_y[type == "left_join" | type == "inner_join"] <- NA
+    x_x[type == "right_join" & !is.na(x_y)] <- NA
+    y_x <- rep_len(NA, length(y_names))
+    y_y <- y_names
+
+    # Return a list with 3 parallel vectors
+    # At each position, values in the 3 vectors represent
+    #  alias - name of column in join result
+    #  x - name of column from left table or NA if only from right table
+    #  y - name of column from right table or NA if only from left table
+    list(alias = c(x_new, y_new), x = c(x_x, y_x), y = c(x_y, y_y))
+}
+
+add_suffixes <- function(x, y, suffix)
+{
+    if (identical(suffix, "")) return(x)
+
+    out <- chr_along(x)
+    for (i in seq_along(x))
     {
-        paste(x, f, y, collapse=" ")
+        nm <- x[[i]]
+        while (nm %in% y || nm %in% out)
+            nm <- paste0(nm, suffix)
+
+        out[[i]] <- nm
     }
+    out
 }
 
 #' @export
-prefix <- function(f)
-{
-    assertthat::assert_that(rlang::is_string(f))
-    function(...)
-    {
-        arglist <- paste(..., sep = ", ")
-        paste0(f, "(", arglist ,")")
-    }
-}
+op_grps <- function(op) UseMethod("op_grps")
 
 #' @export
-operator_env <- rlang::child_env(
-  .parent = rlang::empty_env(),
-  `!=`    = infix("!="),
-  `==`    = infix("=="),
-  `<`     = infix("<"),
-  `<=`    = infix("<="),
-  `>`     = infix(">"),
-  `>=`    = infix(">="),
-  `+`     = infix("+"),
-  `-`     = infix("-"),
-  `*`     = infix("*"),
-  `/`     = infix("/"),
-  sum     = prefix("sum")
-  # TODO: add more operators / function names
-)
+op_grps.op_base <- function(op) character()
 
-kql_env <- function(expr, vars)
+#' @export
+op_grps.op_group_by <- function(op)
 {
-    data_env <- rlang::as_environment(rlang::set_names(vars))
-
-    calls <- all_calls(expr)
-    call_list <- purrr::map(rlang::set_names(calls), unknown_op)
-    call_env <- rlang::as_environment(call_list, parent = data_env)
-
-    op_env <- rlang::env_clone(operator_env, call_env)
-    op_env
-
-}
-
-to_kql <- function(x, vars)
-{
-    expr <- rlang::enexpr(x)
-    out <- rlang::eval_bare(quote_strings(expr), kql_env(expr, vars))
-    kql(out)
-}
-
-kql_quote <- function(x, quote="'")
-{
-  if (length(x) == 0) {
-    return(x)
-  }
-
-  y <- gsub(quote, paste0(quote, quote), x, fixed = TRUE)
-  y <- paste0(quote, y, quote)
-  y[is.na(x)] <- "NULL"
-  names(y) <- names(x)
-
-  y
-}
-
-kql <- function(x) structure(x, class = "kql")
-
-print.kql <- function(x)
-{
-    cat("<KQL> ", x, "\n", sep = "")
-}
-
-expr_type <- function(x)
-{
-    if (rlang::is_syntactic_literal(x))
-    {
-        if (is.character(x))
-        {
-            "string"
-        } else
-        {
-            "literal"
-        }
-    } else if (is.symbol(x))
-    {
-        "symbol"
-    } else if (is.call(x))
-    {
-        "call"
-    } else if (is.pairlist(x))
-    {
-        "pairlist"
-    } else
-    {
-        typeof(x)
-    }
-}
-
-switch_expr <- function(x, ...)
-{
-    switch(expr_type(x),
-           ...,
-           stop("Don't know how to handle type ", typeof(x), call. = FALSE)
-           )
-}
-
-all_calls_rec <- function(x)
-{
-    switch_expr(x,
-                constant = ,
-                literal = ,
-                string = ,
-                symbol = character(),
-                call = {
-                    fname <- as.character(x[[1]])
-                    children <- purrr::flatten_chr(purrr::map(as.list(x[-1]), all_calls))
-                    c(fname, children)
-                }
-                )
-}
-
-all_calls <- function(x)
-{
-    unique(all_calls_rec(x))
-}
-
-quote_strings_rec <- function(x)
-{
-    if (expr_type(x) == "string")
-    {
-        kql_quote(x, "'")
-    } else if (expr_type(x) == "call")
-    {
-        as.call(lapply(x, quote_strings))
-    }
+    if (isTRUE(op$args$add))
+        union(op_grps(op$x), names(op$dots))
     else
-    {
-        x
-    }
-}
-
-quote_strings <- function(x)
-{
-    quote_strings_rec(x)
-}
-
-unknown_op <- function(op)
-{
-  rlang::new_function(
-    rlang::exprs(... = ),
-    rlang::expr({
-      prefix(op)(...)
-    })
-  )
+        names(op$dots)
 }
 
 #' @export
-show_query.tbl <- function(tbl, ...)
+op_grps.op_ungroup <- function(op)
 {
-    ops <- unlist(lapply(tbl$ops, function(x) render(x, names(tbl$table))))
-    tblname <- sprintf("database(%s).%s", tbl$db$db, tbl$name)
-    q_str <- paste(ops, collapse = "\n| ")
-    q_str <- paste(tblname, q_str, sep="\n| ")
-    cat(q_str, "\n")
-    invisible(q_str)
+    character()
 }
 
 #' @export
-render <- function(query, con = NULL, ...)
+op_grps.op_summarise <- function(op)
 {
-    UseMethod("render")
+    grps <- op_grps(op$x)
 }
 
 #' @export
-render.op_select <- function(op, vars)
+op_grps.op_rename <- function(op)
 {
-    cols <- tidyselect::vars_select(vars, !!! op$dots)
-    cols <- paste(cols, collapse=", ")
-    paste0("project ", cols)
+    names(tidyselect::vars_rename(op_grps(op$x), !!! op$dots, .strict = FALSE))
 }
 
 #' @export
-render.op_distinct <- function(op, vars)
+op_grps.op_single <- function(op)
 {
-    cols <- tidyselect::vars_select(vars, !!! op$dots)
-    cols <- paste(cols, collapse=", ")
-    paste0("distinct ", cols)
+    op_grps(op$x)
+}
+#' @export
+op_grps.op_double <- function(op)
+{
+    op_grps(op$x)
 }
 
 #' @export
-render.op_filter <- function(op, vars)
+op_grps.tbl_kusto_abstract <- function(op)
 {
-    dots <- purrr::map(op$dots, rlang::get_expr)
-    translated_dots <- purrr::map(dots, to_kql, vars = vars)
-    paste0("where ", translated_dots)
+    op_grps(op$ops)
 }
 
-render.op_mutate <- function(op, vars)
+#' @export
+op_grps.tbl_df <- function(op)
 {
-    #assigned_names <- names(op$dots)
-    assigned_exprs <- purrr::map(op$dots, rlang::get_expr)
-    vars <- append(vars, names(assigned_exprs))
-    stmts <- purrr::map(assigned_exprs, to_kql, vars = vars)
-    pieces <- lapply(seq_along(assigned_exprs), function(i) sprintf("%s = %s", names(assigned_exprs)[i], stmts[i]))
-    paste0("extend ", pieces)
+    character()
+}
+
+#' @export
+op_vars <- function(op) UseMethod("op_vars")
+
+#' @export
+op_vars.op_base <- function(op)
+{
+    op$vars
+}
+
+#' @export
+op_vars.op_select <- function(op)
+{
+    names(tidyselect::vars_select(op_vars(op$x), !!! op$dots, .include = op_grps(op$x)))
+}
+
+#' @export
+op_vars.op_rename <- function(op)
+{
+    names(rename_vars(op_vars(op$x), !!! op$dots))
+}
+
+#' @export
+op_vars.op_summarise <- function(op)
+{
+    c(op_grps(op$x), names(op$dots))
+}
+
+#' @export
+op_vars.op_distinct <- function(op)
+{
+    if (is_empty(op$dots))
+        op_vars(op$x)
+    else
+        unique(c(op_vars(op$x), names(op$dots)))
+}
+
+#' @export
+op_vars.op_mutate <- function(op)
+{
+    unique(c(op_vars(op$x), names(op$dots)))
+}
+
+#' @export
+op_vars.op_single <- function(op)
+{
+    op_vars(op$x)
+}
+
+#' @export
+op_vars.op_join <- function(op)
+{
+    op$args$vars$alias
+}
+
+#' @export
+op_vars.op_join <- function(op)
+{
+    op$args$vars$alias
+}
+
+#' @export
+op_vars.op_semi_join <- function(op)
+{
+    op_vars(op$x)
+}
+
+#' @export
+op_vars.op_set_op <- function(op)
+{
+    union(op_vars(op$x), op_vars(op$y))
+}
+
+#' @export
+op_vars.tbl_kusto_abstract <- function(op)
+{
+    op_vars(op$ops)
+}
+
+#' @export
+op_vars.tbl_df <- function(op)
+{
+    names(op)
 }

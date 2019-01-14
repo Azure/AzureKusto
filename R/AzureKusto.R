@@ -1,4 +1,6 @@
-#' @import AzureRMR
+#' @import rlang
+#' @import dplyr
+#' @import DBI
 NULL
 
 utils::globalVariables("self")
