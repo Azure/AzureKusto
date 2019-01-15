@@ -370,7 +370,7 @@ base_symbols <- kql_translator(
 
 #' @export
 base_agg <- kql_translator(
-    n          = function() kql("count"),
+    n          = function() kql("count()"),
     mean       = kql_aggregate("avg"),
     var        = kql_aggregate("variance"),
     sum        = kql_aggregate("sum"),
