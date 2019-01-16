@@ -34,27 +34,27 @@ test_that("Resource access functions work",
     expect_true(is_kusto_database(db))
 
     endp1 <- db$get_query_endpoint()
-    expect_is(endp1, "kusto_query_endpoint")
+    expect_is(endp1, "kusto_database_endpoint")
 
     server <- srv$properties$queryUri
     endp2 <- kusto_query_endpoint(server=server, database=dbname, tenantid=tenant)
-    expect_is(endp2, "kusto_query_endpoint")
+    expect_is(endp2, "kusto_database_endpoint")
 
     endp3 <- kusto_query_endpoint(server=server, database=dbname,
         .azure_token=get_kusto_token(cluster=srvname, location=srv$location, tenant=tenant))
-    expect_is(endp3, "kusto_query_endpoint")
+    expect_is(endp3, "kusto_database_endpoint")
 
     conn_str <- sprintf("server=%s;database=%s;tenantid=%s", server, dbname, tenant)
     endp4 <- kusto_query_endpoint(.connection_string=conn_str)
-    expect_is(endp4, "kusto_query_endpoint")
+    expect_is(endp4, "kusto_database_endpoint")
 
     expect_identical(endp1$token$hash(), endp2$token$hash())
     expect_identical(endp1$token$hash(), endp3$token$hash())
     expect_identical(endp1$token$hash(), endp4$token$hash())
 
-    endp5 <- kusto_query_endpoint(server=server, database=dbname,
+    endp5 <- kusto_query_endpoint(server=server, database=dbname, tenantid=tenant,
         appclientid=app, appkey=password)
-    expect_is(endp5, "kusto_query_endpoint")
+    expect_is(endp5, "kusto_database_endpoint")
 
     # no trailing / on server should trigger warning
     expect_warning(kusto_query_endpoint(
