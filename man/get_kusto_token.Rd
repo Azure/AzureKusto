@@ -2,10 +2,23 @@
 % Please edit documentation in R/cluster.R
 \name{get_kusto_token}
 \alias{get_kusto_token}
-\title{Obtain an AAD authentication token for the given Kusto cluster and tenant}
+\title{Manage AAD authentication tokens for Kusto clusters}
 \usage{
-get_kusto_token(cluster, location = NULL, tenant, refresh = TRUE)
+get_kusto_token(cluster, location = NULL, tenant)
+}
+\arguments{
+\item{cluster}{The cluster name.}
+
+\item{location}{The cluster location. Leave this blank for a Microsoft-internal Kusto cluster like "help".}
+
+\item{tenant}{Your Azure Active Directory (AAD) tenant. Can be a GUID, a name ("myaadtenant") or a fully qualified domain name ("myaadtenant.com").}
+}
+\value{
+\code{get_kusto_token} returns an object of class AzureRMR::AzureToken representing the authentication token. \code{delete_azure_token} returns NULL on a successful delete.
 }
 \description{
-Obtain an AAD authentication token for the given Kusto cluster and tenant
+Manage AAD authentication tokens for Kusto clusters
+}
+\details{
+These functions are for working with authentication tokens obtained from the main KustoClient Active Directory app. This app can be used to authenticate with any Kusto cluster (assuming, of course, you have the proper credentials).
 }

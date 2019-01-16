@@ -12,8 +12,12 @@ run_query.kusto_database_endpoint <- function(database, query, ...)
     user <- database$user
     password <- database$pwd
 
-    # obtain token: note priority order
-    token <- coalesce(database$token$credentials$access_token, database$usertoken, database$apptoken)
+    # token can be a string or an object of class AzureRMR::AzureToken
+    token <- if(AzureRMR::is_azure_token(database$token))
+        database$token$credentials$access_token
+    else if(is.character(database$token))
+        database$token
+    else stop("Invalid authentication token in database endpoint", call.=FALSE)
 
     uri <- paste0(server, "/v1/rest/query")
     parse_query_result(call_kusto(token, user, password, uri, database$database, query, ...))
@@ -34,8 +38,12 @@ run_command.kusto_database_endpoint <- function(database, command, ...)
     user <- database$user
     password <- database$pwd
 
-    # obtain token: note priority order
-    token <- coalesce(database$token$credentials$access_token, database$usertoken, database$apptoken)
+    # token can be a string or an object of class AzureRMR::AzureToken
+    token <- if(AzureRMR::is_azure_token(database$token))
+        database$token$credentials$access_token
+    else if(is.character(database$token))
+        database$token
+    else stop("Invalid authentication token in database endpoint", call.=FALSE)
 
     uri <- paste0(server, "/v1/rest/mgmt")
     parse_command_result(call_kusto(token, user, password, uri, database$database, command, ...))
@@ -51,6 +59,13 @@ call_kusto <- function(token=NULL, user=NULL, password=NULL, uri, db, qry_cmd,
     )
     if(!is.null(db))
         body <- c(body, db=db)
+
+    # if this is an AzureToken object, refresh if necessary
+    if(AzureRMR::is_azure_token(token) && !token$validate())
+    {
+        message("Access token has expired or is no longer valid; refreshing")
+        token$refresh()
+    }
 
     auth_str <- if(!is.null(token))
         paste("Bearer", token)
@@ -81,7 +96,7 @@ make_error_message <- function(content)
         sprintf("%s\n%s", err$message, err$`@message`)
     }
     else ""
-    paste0("complete Kusto operation. Message:\n", msg)
+    paste0("complete Kusto operation. Message:\n", sub("\\.$", "", msg))
 }
 
 
@@ -133,18 +148,4 @@ convert_types <- function(df, coltypes_df)
     df
 }
 
-
-# get first non-NULL value from a list of candidate values
-coalesce <- function(...)
-{
-    args <- list(...)
-    val <- NULL
-    for(i in seq_along(args))
-    {
-        val <- args[[i]]
-        if(!is.null(val))
-            break
-    }
-    val
-}
 

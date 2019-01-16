@@ -7,16 +7,12 @@ utils::globalVariables("self")
 
 .onLoad <- function(libname, pkgname)
 {
-    config_dir <- config_dir()
-    if(!dir.exists(config_dir))
-        dir.create(config_dir, recursive=TRUE)
-
     add_methods()
     invisible(NULL)
 }
 
 
-config_dir <- function()
-{
-    rappdirs::user_config_dir(appname="AzureKusto", appauthor="AzureR", roaming=FALSE)
-}
+#config_dir <- function()
+#{
+    #rappdirs::user_config_dir(appname="AzureKusto", appauthor="AzureR", roaming=FALSE)
+#}

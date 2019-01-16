@@ -18,12 +18,12 @@ library(AzureKusto)
 
 Samples <- kusto_query_endpoint(server="https://help.kusto.windows.net",
     database="Samples",
-    fed=TRUE,
-    .azure_token=get_kusto_token("help", tenant="microsoft"))
+    .azure_token=get_kusto_token(clustername="help", tenant="microsoft"))
 
 # To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code FPD8GZPY9 to authenticate.
-# AADSTS70016: Pending end-user authorization. 
-
+# Waiting for device code in browser...
+# Press Esc/Ctrl + C to abort
+# Authentication complete.
 ```
 
 Now you can issue queries to the Kusto database with `run_query` and get the results back as a data.frame.
