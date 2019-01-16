@@ -52,6 +52,7 @@ test_that("Resource access functions work",
     expect_identical(endp1$token$hash(), endp3$token$hash())
     expect_identical(endp1$token$hash(), endp4$token$hash())
 
+    # using our own app
     endp5 <- kusto_query_endpoint(server=server, database=dbname, tenantid=tenant,
         appclientid=app, appkey=password)
     expect_is(endp5, "kusto_database_endpoint")
@@ -64,6 +65,17 @@ test_that("Resource access functions work",
 
     # invalid property
     expect_error(kusto_property_endpoint(badproperty="foo"))
+
+    # unsupported property (change this if/when federated auth is supported)
+    expect_warning(kusto_query_endpoint(server=server, database=dbname, tenantid=tenant, fed=TRUE))
+
+    # quote stripping
+    endp6 <- kusto_query_endpoint(server=sprintf("'%s'", server), database=dbname, tenantid=tenant)
+    expect_identical(endp6$server, endp1$server)
+
+    # connection string type handling (change this if/when federated auth is supported)
+    conn_str2 <- sprintf("server=%s;database=%s;tenantid=%s;fed=true", server, dbname, tenant)
+    expect_warning(kusto_query_endpoint(.connection_string=conn_str2))
 })
 
 

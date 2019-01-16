@@ -74,7 +74,7 @@ public=list(
         token <- self$cluster$get_aad_token(tenant)
         server <- self$cluster$properties$queryUri
         database <- basename(self$name)
-        kusto_query_endpoint(server=server, database=database, tenantid=tenant, fed=TRUE, .azure_token=token)
+        kusto_query_endpoint(server=server, database=database, tenantid=tenant, .azure_token=token)
     }
 ))
 

@@ -9,8 +9,11 @@ kusto_query_endpoint <- function(..., .connection_string=NULL, .azure_token=NULL
         # simplified connection string handling: ignores quoting issues
         conn_props <- strsplit(.connection_string, ";")[[1]]
         names(conn_props) <- tolower(sapply(conn_props, function(x) sub("[ ]*=.+$", "", x)))
-        conn_props <- lapply(conn_props, function(x) sub("^[^=]+=[ ]*", "", x))
-
+        conn_props <- lapply(conn_props, function(x)
+        {
+            x <- sub("^[^=]+=[ ]*", "", x)
+            find_type_from_connstring(x)
+        })
         props <- utils::modifyList(props, conn_props)
     }
 
@@ -81,11 +84,26 @@ normalize_properties <- function(properties)
 
     strip_quotes <- function(x)
     {
-        sub("^['\"](.+)['\"]$", "\\1", x)
+        if(is.character(x))
+            sub("^['\"](.+)['\"]$", "\\1", x)
+        else x
     }
 
     names(properties) <- sapply(names(properties), normalize_name)
     lapply(properties, strip_quotes)
+}
+
+
+# for a property obtained from a connection string, convert to a type other than char if possible
+find_type_from_connstring <- function(string)
+{
+    if(identical(string, "NA"))
+        return(NA)
+    if(!is.na(x <- suppressWarnings(as.numeric(string)))) # assign inside comparison!
+        return(x)
+    if(!is.na(l <- as.logical(string)))
+        return(l)
+    string
 }
 
 
