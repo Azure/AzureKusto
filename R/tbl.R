@@ -187,7 +187,7 @@ show_query.tbl_kusto_abstract <- function(tbl)
     kql_render(qry)
 }
 
-# ' A tbl object representing a table in a Kusto database.
+#' A tbl object representing a table in a Kusto database.
 #' @export
 #' @param subclass name of subclass
 #' @param ... needed for agreement with generic. Not otherwise used.
