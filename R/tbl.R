@@ -187,10 +187,10 @@ show_query.tbl_kusto_abstract <- function(tbl)
     kql_render(qry)
 }
 
-## #' A tbl object representing a table in a Kusto database.
-## #' @export
-## #' @param subclass name of subclass
-## #' @param ... needed for agreement with generic. Not otherwise used.
+# ' A tbl object representing a table in a Kusto database.
+#' @export
+#' @param subclass name of subclass
+#' @param ... needed for agreement with generic. Not otherwise used.
 tbl_kusto <- function(kusto_database, table_name, ...)
 {
     stopifnot(inherits(kusto_database, "kusto_database_endpoint"))
