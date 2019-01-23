@@ -11,8 +11,3 @@ utils::globalVariables("self")
     invisible(NULL)
 }
 
-
-#config_dir <- function()
-#{
-    #rappdirs::user_config_dir(appname="AzureKusto", appauthor="AzureR", roaming=FALSE)
-#}

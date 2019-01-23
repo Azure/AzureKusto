@@ -22,12 +22,11 @@ Imports:
     jsonlite,
     R6,
     openssl,
-    bit64,
     AzureRMR (>= 1.0.0.9000),
-    rappdirs,
     dplyr,
     tidyselect (>= 0.2.4)
 Suggests:
+    bit64,
     knitr,
     testthat
 Roxygen: list(markdown=TRUE)

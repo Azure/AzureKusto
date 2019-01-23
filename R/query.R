@@ -1,3 +1,22 @@
+.qry_opt_names <- c(
+    "queryconsistency",
+    "response_dynamic_serialization",
+    "response_dynamic_serialization_2"
+)
+
+
+#' Run a query or command against a Kusto database
+#'
+#' @param database A Kusto database endpoint object, as returned by `kusto_query_endpoint`.
+#' @param query,command A string containing the query or command. Note that database management commands in KQL are distinct from queries.
+#' @param ... Other arguments passed to lower-level functions, and ultimately to `httr::POST`.
+#'
+#' @details
+#' These functions are the workhorses of the AzureKusto package. They communicate with the Kusto server and return the query or command results, as data frames.
+#'
+#' @seealso
+#' [kusto_query_endpoint]
+#' @rdname query
 #' @export
 run_query <- function(database, ...)
 {
@@ -5,6 +24,7 @@ run_query <- function(database, ...)
 }
 
 
+#' @rdname query
 #' @export
 run_query.kusto_database_endpoint <- function(database, query, ...)
 {
@@ -12,18 +32,16 @@ run_query.kusto_database_endpoint <- function(database, query, ...)
     user <- database$user
     password <- database$pwd
 
-    # token can be a string or an object of class AzureRMR::AzureToken
-    token <- if(AzureRMR::is_azure_token(database$token))
-        database$token$credentials$access_token
-    else if(is.character(database$token))
-        database$token
-    else stop("Invalid authentication token in database endpoint", call.=FALSE)
+    qry_opts <- database[names(database) %in% .qry_opt_names]
 
     uri <- paste0(server, "/v1/rest/query")
-    parse_query_result(call_kusto(token, user, password, uri, database$database, query, ...))
+    parse_query_result(call_kusto(database$token, user, password, uri, database$database, query,
+                                  query_options=qry_opts, ...),
+                       database$use_integer64)
 }
 
 
+#' @rdname query
 #' @export
 run_command <- function(database, ...)
 {
@@ -31,6 +49,7 @@ run_command <- function(database, ...)
 }
 
 
+#' @rdname query
 #' @export
 run_command.kusto_database_endpoint <- function(database, command, ...)
 {
@@ -38,34 +57,30 @@ run_command.kusto_database_endpoint <- function(database, command, ...)
     user <- database$user
     password <- database$pwd
 
-    # token can be a string or an object of class AzureRMR::AzureToken
-    token <- if(AzureRMR::is_azure_token(database$token))
-        database$token$credentials$access_token
-    else if(is.character(database$token))
-        database$token
-    else stop("Invalid authentication token in database endpoint", call.=FALSE)
+    qry_opts <- database[names(database) %in% .qry_opt_names]
 
     uri <- paste0(server, "/v1/rest/mgmt")
-    parse_command_result(call_kusto(token, user, password, uri, database$database, command, ...))
+    parse_command_result(call_kusto(database$token, user, password, uri, database$database, command,
+                                    query_options=qry_opts, ...),
+                         database$use_integer64)
 }
 
 
 call_kusto <- function(token=NULL, user=NULL, password=NULL, uri, db, qry_cmd,
-    http_status_handler=c("stop", "warn", "message", "pass"))
+                       query_options=list(),
+                       http_status_handler=c("stop", "warn", "message", "pass"))
 {
+    default_query_options <- list(queryconsistency="weakconsistency")
+    query_options <- utils::modifyList(default_query_options, query_options)
+
+    token <- validate_kusto_token(token)
+
     body <- list(
-        properties=list(Options=list(queryconsistency="weakconsistency")),
+        properties=list(Options=query_options),
         csl=qry_cmd
     )
     if(!is.null(db))
         body <- c(body, db=db)
-
-    # if this is an AzureToken object, refresh if necessary
-    if(AzureRMR::is_azure_token(token) && !token$validate())
-    {
-        message("Access token has expired or is no longer valid; refreshing")
-        token$refresh()
-    }
 
     auth_str <- if(!is.null(token))
         paste("Bearer", token)
@@ -74,7 +89,7 @@ call_kusto <- function(token=NULL, user=NULL, password=NULL, uri, db, qry_cmd,
     else stop("Must provide authentication details")
 
     res <- httr::POST(uri, httr::add_headers(Authorization=auth_str), body=body, encode="json")
-    
+
     http_status_handler <- match.arg(http_status_handler)
     if(http_status_handler == "pass")
         return(res)
@@ -100,14 +115,19 @@ make_error_message <- function(content)
 }
 
 
-parse_query_result <- function(tables)
+parse_query_result <- function(tables, .use_integer64)
 {
+    # if raw http response, pass through unchanged  
+    if(inherits(tables, "response"))
+        return(tables)
+
     # load TOC table
     n <- nrow(tables)
-    toc <- convert_types(tables$Rows[[n]], tables$Columns[[n]])
+    toc <- convert_types(tables$Rows[[n]], tables$Columns[[n]], .use_integer64)
     result_tables <- which(toc$Name == "PrimaryResult")
 
-    res <- Map(convert_types, tables$Rows[result_tables], tables$Columns[result_tables])
+    res <- Map(convert_types, tables$Rows[result_tables], tables$Columns[result_tables],
+               MoreArgs=list(.use_integer64=.use_integer64))
 
     if(length(res) == 1)
         res[[1]]
@@ -115,9 +135,14 @@ parse_query_result <- function(tables)
 }
 
 
-parse_command_result <- function(tables)
+parse_command_result <- function(tables, .use_integer64)
 {
-    res <- Map(convert_types, tables$Rows, coltypes_df=tables$Columns)
+    # if raw http response, pass through unchanged  
+    if(inherits(tables, "response"))
+        return(tables)
+
+    res <- Map(convert_types, tables$Rows, coltypes_df=tables$Columns,
+               MoreArgs=list(.use_integer64=.use_integer64))
 
     if(length(res) == 1)
         res[[1]]
@@ -125,10 +150,10 @@ parse_command_result <- function(tables)
 }
 
 
-convert_kusto_datatype <- function(column, kusto_type)
+convert_kusto_datatype <- function(column, kusto_type, .use_integer64)
 {
     switch(kusto_type,
-        long=, Int64=bit64::as.integer64(column),
+        long=, Int64=if(.use_integer64) bit64::as.integer64(column) else as.numeric(column),
         int=, integer=, Int32=as.integer(column),
         datetime=, DateTime=as.POSIXct(strptime(column, format='%Y-%m-%dT%H:%M:%OSZ', tz='UTC')),
         real=, Double=, Float=as.numeric(column),
@@ -138,14 +163,30 @@ convert_kusto_datatype <- function(column, kusto_type)
 }
 
 
-convert_types <- function(df, coltypes_df)
+convert_types <- function(df, coltypes_df, .use_integer64)
 {
     if(is_empty(df))
         return(list())
     df <- as.data.frame(df, stringsAsFactors=FALSE)
     names(df) <- coltypes_df$ColumnName
-    df[] <- Map(convert_kusto_datatype, df, coltypes_df$DataType)
+    df[] <- Map(convert_kusto_datatype, df, coltypes_df$DataType, MoreArgs=list(.use_integer64=.use_integer64))
     df
 }
 
 
+validate_kusto_token <- function(token)
+{
+    # token can be a string or an object of class AzureRMR::AzureToken
+    if(AzureRMR::is_azure_token(token))
+    {
+        if(!token$validate()) # refresh if needed
+        {
+            message("Access token has expired or is no longer valid; refreshing")
+            token$refresh()
+        }
+        token <- token$credentials$access_token
+    }
+    else if(!is.character(token))
+        stop("Invalid authentication token in database endpoint", call.=FALSE)
+    token
+}

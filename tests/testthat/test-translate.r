@@ -1,5 +1,5 @@
 context("translate")
-library(dplyr)
+
 
 tbl_iris <- tibble::as.tibble(iris)
 names(tbl_iris) <- c("SepalLength", "SepalWidth", "PetalLength", "PetalWidth", "Species")
@@ -8,7 +8,7 @@ tbl_iris <- tbl_kusto_abstract(tbl_iris, "iris", src = simulate_kusto())
 test_that("select is translated to project",
 {
     q <- tbl_iris %>%
-        select(Species, SepalLength) %>%
+        dplyr::select(Species, SepalLength) %>%
         show_query()
 
     expect_equal(q, kql("database('local_df').iris\n| project Species, SepalLength"))
@@ -17,7 +17,7 @@ test_that("select is translated to project",
 test_that("distinct is translated to distinct",
 {
     q <- tbl_iris %>%
-        distinct(Species, SepalLength) %>%
+        dplyr::distinct(Species, SepalLength) %>%
         show_query()
 
     expect_equal(q, kql("database('local_df').iris\n| distinct Species, SepalLength"))
@@ -40,7 +40,7 @@ test_that("kql_prefix formats correctly",
 test_that("filter is translated to where with a single expression",
 {
     q <- tbl_iris %>%
-        filter(Species == "setosa")
+        dplyr::filter(Species == "setosa")
 
     q_str <- q %>%
         show_query()
@@ -51,7 +51,7 @@ test_that("filter is translated to where with a single expression",
 test_that("multiple arguments to filter() become multiple where clauses",
 {
     q <- tbl_iris %>%
-        filter(Species == "setosa", SepalLength > 4.1)
+        dplyr::filter(Species == "setosa", SepalLength > 4.1)
 
     q_str <- q %>%
         show_query()
@@ -62,7 +62,7 @@ test_that("multiple arguments to filter() become multiple where clauses",
 test_that("filter errors on missing symbols",
 {
     q <- tbl_iris %>%
-        filter(Speciess == "setosa")
+        dplyr::filter(Speciess == "setosa")
 
     expect_error(show_query(q), "Unknown column `Speciess` ")
     #expect_error(show_query(q), "object 'Speciess' not found")
@@ -71,8 +71,8 @@ test_that("filter errors on missing symbols",
 test_that("select and filter can be combined",
 {
     q <- tbl_iris %>%
-        filter(Species == "setosa") %>%
-        select(Species, SepalLength)
+        dplyr::filter(Species == "setosa") %>%
+        dplyr::select(Species, SepalLength)
 
     q_str <- q %>%
         show_query()
@@ -83,8 +83,8 @@ test_that("select and filter can be combined",
 test_that("select errors on column after selected away",
 {
     q <- tbl_iris %>%
-        select(Species) %>%
-        select(SepalLength)
+        dplyr::select(Species) %>%
+        dplyr::select(SepalLength)
 
     expect_error(show_query(q), "object 'SepalLength' not found")
 })
@@ -92,7 +92,7 @@ test_that("select errors on column after selected away",
 test_that("mutate translates to extend",
 {
     q <- tbl_iris %>%
-        mutate(Species2 = Species)
+        dplyr::mutate(Species2 = Species)
 
     q_str <- q %>%
         show_query()
@@ -103,7 +103,7 @@ test_that("mutate translates to extend",
 test_that("multiple arguments to mutate() become multiple extend clauses",
 {
     q <- tbl_iris %>%
-        mutate(Species2 = Species, Species3 = Species2, Foo = 1 + 2)
+        dplyr::mutate(Species2 = Species, Species3 = Species2, Foo = 1 + 2)
 
     q_str <- q %>%
         show_query()
@@ -121,7 +121,7 @@ test_that("sum() translated correctly",
 test_that("arrange() generates order by ",
 {
     q <- tbl_iris %>%
-        arrange(Species, desc(SepalLength))
+        dplyr::arrange(Species, desc(SepalLength))
 
     q_str <- q %>%
         show_query()
@@ -133,8 +133,8 @@ test_that("group_by() followed by summarize() generates summarize clause",
 {
 
     q <- tbl_iris %>%
-        group_by(Species) %>%
-        summarize(MaxSepalLength = max(SepalLength, na.rm = TRUE))
+        dplyr::group_by(Species) %>%
+        dplyr::summarize(MaxSepalLength = max(SepalLength, na.rm = TRUE))
 
     q_str <- q %>% show_query()
 
@@ -145,10 +145,10 @@ test_that("group_by() followed by ungroup() followed by summarize() generates su
 {
 
     q <- tbl_iris %>%
-        group_by(Species) %>%
-        summarize(MaxSepalLength = max(SepalLength, na.rm = TRUE)) %>%
-        ungroup() %>%
-        summarize(MeanOfMaxSepalLength = mean(MaxSepalLength, na.rm = TRUE))
+        dplyr::group_by(Species) %>%
+        dplyr::summarize(MaxSepalLength = max(SepalLength, na.rm = TRUE)) %>%
+        dplyr::ungroup() %>%
+        dplyr::summarize(MeanOfMaxSepalLength = mean(MaxSepalLength, na.rm = TRUE))
 
     q_str <- q %>% show_query()
 
@@ -159,8 +159,8 @@ test_that("group_by() followed by mutate() partitions the mutation by the groupi
 {
 
     q <- tbl_iris %>%
-        group_by(Species) %>%
-        mutate(SpeciesMaxSepalLength = max(SepalLength, na.rm = TRUE))
+        dplyr::group_by(Species) %>%
+        dplyr::mutate(SpeciesMaxSepalLength = max(SepalLength, na.rm = TRUE))
 
     q_str <- q %>% show_query()
 
@@ -170,7 +170,7 @@ test_that("group_by() followed by mutate() partitions the mutation by the groupi
 test_that("mutate() with an agg function and no group_by() groups by all other columns",
 {
     q <- tbl_iris %>%
-        mutate(MaxSepalLength = max(SepalLength, na.rm = TRUE))
+        dplyr::mutate(MaxSepalLength = max(SepalLength, na.rm = TRUE))
 
     q_str <- q %>% show_query()
 
@@ -191,7 +191,7 @@ test_that("is_agg works with symbols and strings",
 test_that("rename() renames variables",
 {
     q <- tbl_iris %>%
-        rename(Species2 = Species, SepalLength2 = SepalLength)
+        dplyr::rename(Species2 = Species, SepalLength2 = SepalLength)
 
     q_str <- q %>% show_query()
 
@@ -201,7 +201,7 @@ test_that("rename() renames variables",
 test_that("rename() errors when given a nonexistent column",
 {
     q <- tbl_iris %>%
-        rename(Species2 = Species1)
+        dplyr::rename(Species2 = Species1)
 
     expect_error(show_query(q), "object 'Species1' not found")
 })
@@ -229,15 +229,15 @@ test_that("head() translates to take 6 (the default)",
 left <- tbl_iris
 
 right <- iris %>%
-    group_by(Species) %>%
-    summarize(MaxSepalLength = max(Sepal.Length, na.rm = TRUE))
+    dplyr::group_by(Species) %>%
+    dplyr::summarize(MaxSepalLength = max(Sepal.Length, na.rm = TRUE))
 
 right2 <- iris %>%
-    rename(SepalWidth = Sepal.Width) %>%
-    group_by(Species, SepalWidth) %>%
-    summarize(MaxSepalLength = max(Sepal.Length, na.rm = TRUE))
+    dplyr::rename(SepalWidth = Sepal.Width) %>%
+    dplyr::group_by(Species, SepalWidth) %>%
+    dplyr::summarize(MaxSepalLength = max(Sepal.Length, na.rm = TRUE))
 
-right3 <- right2 %>% rename(Species2 = Species, SepalWidth2 = SepalWidth)
+right3 <- right2 %>% dplyr::rename(Species2 = Species, SepalWidth2 = SepalWidth)
 
 right <- tbl_kusto_abstract(right, "iris2", src = simulate_kusto())
 
@@ -249,7 +249,7 @@ test_that("inner_join() on a single column translates correctly",
 {
 
     q <- left %>%
-        inner_join(right, by = c("Species"))
+        dplyr::inner_join(right, by = c("Species"))
 
     q_str <- show_query(q)
 
@@ -259,7 +259,7 @@ test_that("inner_join() on a single column translates correctly",
 test_that("inner_join() on two columns translates correctly",
 {
     q <- left %>%
-        inner_join(right2, by = c("Species", "SepalWidth"))
+        dplyr::inner_join(right2, by = c("Species", "SepalWidth"))
 
     q_str <- show_query(q)
 
@@ -269,7 +269,7 @@ test_that("inner_join() on two columns translates correctly",
 test_that("inner_join() on one differently named column translates correctly",
 {
     q <- left %>%
-        inner_join(right3, by = c("Species" = "Species2"))
+        dplyr::inner_join(right3, by = c("Species" = "Species2"))
 
     q_str <- show_query(q)
 
@@ -280,7 +280,7 @@ test_that("inner_join() on two differently named columns translates correctly",
 {
 
     q <- left %>%
-        inner_join(right3, by = c("Species" = "Species2", "SepalWidth" = "SepalWidth2"))
+        dplyr::inner_join(right3, by = c("Species" = "Species2", "SepalWidth" = "SepalWidth2"))
 
     q_str <- show_query(q)
 
@@ -291,7 +291,7 @@ test_that("left_join() on a single column translates correctly",
 {
 
     q <- left %>%
-        left_join(right, by = c("Species"))
+        dplyr::left_join(right, by = c("Species"))
 
     q_str <- show_query(q)
 
@@ -302,7 +302,7 @@ test_that("right_join() on a single column translates correctly",
 {
 
     q <- left %>%
-        right_join(right, by = c("Species"))
+        dplyr::right_join(right, by = c("Species"))
 
     q_str <- show_query(q)
 
@@ -313,7 +313,7 @@ test_that("full_join() on a single column translates correctly",
 {
 
     q <- left %>%
-        full_join(right, by = c("Species"))
+        dplyr::full_join(right, by = c("Species"))
 
     q_str <- show_query(q)
 
@@ -324,7 +324,7 @@ test_that("semi_join() on a single column translates correctly",
 {
 
     q <- left %>%
-        semi_join(right, by = c("Species"))
+        dplyr::semi_join(right, by = c("Species"))
 
     q_str <- show_query(q)
 
@@ -335,7 +335,7 @@ test_that("anti_join() on a single column translates correctly",
 {
 
     q <- left %>%
-        anti_join(right, by = c("Species"))
+        dplyr::anti_join(right, by = c("Species"))
 
     q_str <- show_query(q)
 
@@ -347,7 +347,7 @@ test_that("union_all translates correctly",
     tbl_iris_2 <- tbl_kusto_abstract(iris, "iris", src=simulate_kusto())
 
     q <- tbl_iris %>%
-        union_all(tbl_iris_2)
+        dplyr::union_all(tbl_iris_2)
 
     q_str <- show_query(q)
 
