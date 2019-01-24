@@ -6,6 +6,11 @@
 \usage{
 flatten_query(op, ops = list())
 }
+\arguments{
+\item{op}{the current operation}
+
+\item{ops}{the stack of operations to append to, recursively}
+}
 \description{
 Walks the tree of ops and builds a stack.
 }

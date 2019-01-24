@@ -7,7 +7,7 @@
 translate_kql(...)
 }
 \arguments{
-\item{..., dots}{Expressions to translate.}
+\item{...}{Expressions to translate.}
 }
 \description{
 Translate R expressions into Kusto Query Language equivalents.

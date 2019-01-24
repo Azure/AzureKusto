@@ -2,10 +2,13 @@
 % Please edit documentation in R/ident.R
 \name{ident}
 \alias{ident}
-\title{Flag a character string as an identifier}
+\title{Flag a character string as a Kusto identifier}
 \usage{
 ident(...)
 }
+\arguments{
+\item{...}{character strings to flag as Kusto identifiers}
+}
 \description{
-Flag a character string as an identifier
+Flag a character string as a Kusto identifier
 }

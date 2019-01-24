@@ -1,6 +1,6 @@
+#' @importFrom utils head
 #' @import rlang
 #' @import dplyr
-#' @import DBI
 NULL
 
 utils::globalVariables("self")

@@ -7,11 +7,8 @@
 kql_build(op)
 }
 \arguments{
-\item{op}{A sequence of operations}
-
-\item{con}{(optional) A database connection.}
+\item{op}{A nested sequence of query operations, i.e. tbl_kusto$ops}
 }
 \description{
 Build the tbl object into a data structure representing a Kusto query
 }
-\keyword{internal}

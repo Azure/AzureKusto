@@ -1,5 +1,5 @@
 #' Translate R expressions into Kusto Query Language equivalents.
-#' @param ...,dots Expressions to translate.
+#' @param ... Expressions to translate.
 #' @export
 translate_kql <- function(...)
 {
@@ -59,6 +59,8 @@ ceply <- function(x, f, ..., parent = parent.frame())
     list2env(l, parent = parent)
 }
 
+#' Build a kql_variant class out of the environments holding scalar and aggregation
+#' function definitions
 #' @export
 kql_translate_env <- function()
 {
@@ -79,6 +81,10 @@ kql_variant <- function(scalar = kql_translator(), aggregate = kql_translator())
     )
 }
 
+#' Builds an environment from a list of R -> Kusto query language translation pairs.
+#' @param ... Pairs of R call = Kusto call translations as individual arguments
+#' @param .funs Parse of R call = Kusto call translations in list format
+#' @param .parent A parent environment to attach this env onto
 #' @export
 kql_translator <- function(..., .funs = list(),
                            .parent = new.env(parent = emptyenv()))
@@ -95,6 +101,8 @@ copy_env <- function(from, to = NULL, parent = parent.env(from))
     list2env(as.list(from), envir = to, parent = parent)
 }
 
+#' Return a function representing a scalar KQL infix operator
+#' @param f Name of a Kusto infix operator / function
 #' @export
 kql_infix <- function(f)
 {
@@ -105,6 +113,9 @@ kql_infix <- function(f)
     }
 }
 
+#' Return a function representing a scalar KQL prefix function
+#' @param f Name of a Kusto infix function
+#' @param n Number of arguments accepted by the Kusto prefix function
 #' @export
 kql_prefix <- function(f, n = NULL)
 {
@@ -127,6 +138,8 @@ kql_prefix <- function(f, n = NULL)
     }
 }
 
+#' Return a function representing a KQL aggregation function
+#' @param f Name of the Kusto aggregation function
 #' @export
 kql_aggregate <- function(f)
 {
@@ -138,6 +151,8 @@ kql_aggregate <- function(f)
     }
 }
 
+#' Return a function representing a KQL window function
+#' @param f Name of the Kusto aggregation function
 #' @export
 kql_window <- function(f)
 {
@@ -206,6 +221,7 @@ default_op <- function(x)
 
 }
 
+#' Scalar operator translations (infix and prefix)
 #' @export
 base_scalar <- kql_translator(
     `+`    = kql_infix("+"),
@@ -368,6 +384,7 @@ base_symbols <- kql_translator(
     `NULL` = kql("nupll")
 )
 
+#' Aggregation function translations
 #' @export
 base_agg <- kql_translator(
     n          = function() kql("count()"),
@@ -379,6 +396,7 @@ base_agg <- kql_translator(
     n_distinct = kql_aggregate("dcount")
 )
 
+#' Window function translations
 #' @export
 base_window <- kql_translator(
     row_number = kql_window("row_number")

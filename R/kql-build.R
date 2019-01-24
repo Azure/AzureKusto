@@ -1,8 +1,6 @@
 #' Build the tbl object into a data structure representing a Kusto query
+#' @param op A nested sequence of query operations, i.e. tbl_kusto$ops
 #' @export
-#' @keywords internal
-#' @param op A sequence of operations
-#' @param con (optional) A database connection.
 kql_build <- function(op)
 {
     UseMethod("kql_build")
@@ -75,6 +73,8 @@ kql_build.op_rename <- function(op, ...)
 #' then it must emit a summarize clause grouped by all variables.
 #' If the mutate contains an aggregation and the tbl is grouped,
 #' then it must join to a subquery containing the summarize clause.
+#' @param op A nested sequence of query operations, i.e. tbl_kusto$ops
+#' @param ... Needed for agreement with generic. Not otherwise used.
 #' @export
 kql_build.op_mutate <- function(op, ...)
 {
@@ -208,7 +208,8 @@ append_asc <- function(dot)
 }
 
 #' Walks the tree of ops and builds a stack.
-#'
+#' @param op the current operation
+#' @param ops the stack of operations to append to, recursively
 #' @export
 flatten_query <- function(op, ops=list())
 {

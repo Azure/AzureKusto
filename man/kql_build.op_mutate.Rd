@@ -11,6 +11,11 @@ then it must join to a subquery containing the summarize clause.}
 \usage{
 \method{kql_build}{op_mutate}(op, ...)
 }
+\arguments{
+\item{op}{A nested sequence of query operations, i.e. tbl_kusto$ops}
+
+\item{...}{Needed for agreement with generic. Not otherwise used.}
+}
 \description{
 dplyr's mutate verb can include aggregations, but Kusto's extend verb cannot.
 If the mutate contains no aggregations, then it can emit an extend clause.
