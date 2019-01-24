@@ -3,6 +3,10 @@
 \docType{class}
 \name{az_kusto}
 \alias{az_kusto}
+\alias{create_database}
+\alias{get_database}
+\alias{delete_database}
+\alias{list_databases}
 \title{Kusto/Azure Data Explorer cluster resource class}
 \format{An object of class \code{R6ClassGenerator} of length 24.}
 \usage{

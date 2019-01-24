@@ -8,9 +8,10 @@
 #' @param clustername The cluster name.
 #' @param location The cluster location. Leave this blank for a Microsoft-internal Kusto cluster like "help".
 #' @param tenant Your Azure Active Directory (AAD) tenant. Can be a GUID, a name ("myaadtenant") or a fully qualified domain name ("myaadtenant.com").
-#' @param hash For `delete_kusto_tenant`, the MD5 hash of the token. This is used to identify the token if provided.
 #' @param app The ID of the Azure Active Directory app/service principal to authenticate with. Defaults to the ID of the KustoClient app.
 #' @param auth_type The authentication method to use. Can be one of "authorization_code", "device_code", "client_credentials" or "resource_owner". The default is to pick one based on the other arguments.
+#' @param hash For `delete_kusto_token`, the MD5 hash of the token. This is used to identify the token if provided.
+#' @param confirm For `delete_kusto_token`, whether to ask for confirmation before deleting the token.
 #' @param ... Other arguments to pass to [AzureRMR::get_azure_token].
 #'
 #' @details

@@ -102,7 +102,7 @@ NULL
 #' NULL on successful deletion.
 #'
 #' @seealso
-#' [create_kusto_cluster], [get_kusto_cluster], [az_storage]
+#' [create_kusto_cluster], [get_kusto_cluster], [az_kusto]
 #'
 #' [Kusto/Azure Data Explorer documentation](https://docs.microsoft.com/en-us/azure/data-explorer/)
 #'
@@ -115,7 +115,7 @@ NULL
 #'     get_resource_group("rgname")
 #'
 #' # delete a Kusto cluster
-#' rg$delete_kusto_cluster("mystorage")
+#' rg$delete_kusto_cluster("mycluster")
 #'
 #' }
 NULL

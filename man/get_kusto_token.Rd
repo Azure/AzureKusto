@@ -30,7 +30,9 @@ list_kusto_tokens()
 
 \item{...}{Other arguments to pass to \link[AzureRMR:get_azure_token]{AzureRMR::get_azure_token}.}
 
-\item{hash}{For \code{delete_kusto_tenant}, the MD5 hash of the token. This is used to identify the token if provided.}
+\item{hash}{For \code{delete_kusto_token}, the MD5 hash of the token. This is used to identify the token if provided.}
+
+\item{confirm}{For \code{delete_kusto_token}, whether to ask for confirmation before deleting the token.}
 }
 \value{
 \code{get_kusto_token} returns an object of class AzureRMR::AzureToken representing the authentication token, while \code{list_kusto_tokens} returns a list of such objects. \code{delete_azure_token} returns NULL on a successful delete.

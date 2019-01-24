@@ -36,12 +36,12 @@ rg <- AzureRMR::az_rm$
     get_resource_group("rgname")
 
 # delete a Kusto cluster
-rg$delete_kusto_cluster("mystorage")
+rg$delete_kusto_cluster("mycluster")
 
 }
 }
 \seealso{
-\link{create_kusto_cluster}, \link{get_kusto_cluster}, \link{az_storage}
+\link{create_kusto_cluster}, \link{get_kusto_cluster}, \link{az_kusto}
 
 \href{https://docs.microsoft.com/en-us/azure/data-explorer/}{Kusto/Azure Data Explorer documentation}
 }

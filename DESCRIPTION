@@ -6,7 +6,7 @@ Authors@R: c(
     person("Alex", "Kyllo", , "jekyllo@microsoft.com", role = "aut"),
     person("Microsoft", role = "cph")
     )
-Description: Interface to 'Kusto'/'Azure Data Explorer'
+Description: An interface to 'Kusto'/'Azure Data Explorer'.
 URL: https://github.com/cloudyr/AzureKusto
 BugReports: https://github.com/cloudyr/AzureKusto/issues
 License: MIT + file LICENSE

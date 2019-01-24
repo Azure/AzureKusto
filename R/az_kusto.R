@@ -54,6 +54,7 @@
 #' kust$get_aad_token()
 #'
 #' }
+#' @aliases create_database get_database delete_database list_databases
 #' @export
 az_kusto <- R6::R6Class("az_kusto", inherit=AzureRMR::az_resource,
 public=list(
