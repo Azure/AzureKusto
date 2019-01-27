@@ -53,7 +53,7 @@ as_tibble(res)
 
 ### dplyr Interface
 
-The package also implements a [dbplyr](https://github.com/tidyverse/dbplyr)-style interface for building a query upon a `tbl_kusto` object and then running it on the remote Kusto database and returning the result as a regular tibble object with `collect()`.
+The package also implements a [dplyr](https://github.com/tidyverse/dplyr)-style interface for building a query upon a `tbl_kusto` object and then running it on the remote Kusto database and returning the result as a regular tibble object with `collect()`.
 
 ```r
 
