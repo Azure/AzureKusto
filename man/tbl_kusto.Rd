@@ -7,9 +7,11 @@
 tbl_kusto(kusto_database, table_name, ...)
 }
 \arguments{
-\item{...}{needed for agreement with generic. Not otherwise used.}
+\item{kusto_database}{An instance of kusto_database_endpoint that this table should be queried from}
 
-\item{subclass}{name of subclass}
+\item{table_name}{The name of the table in the Kusto database}
+
+\item{...}{needed for agreement with generic. Not otherwise used.}
 }
 \description{
 A tbl object representing a table in a Kusto database.

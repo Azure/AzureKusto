@@ -13,7 +13,7 @@ Useful for testing KQL generation without a remote connection.
 library(dplyr)
 df <- data.frame(x = 1, y = 2)
 
-df <- tbl_kusto_abstract(df, src = simulate_kusto())
+df <- tbl_kusto_abstract(df, "table1", src = simulate_kusto())
 df \%>\% summarise(x = sd(x)) \%>\% show_query()
 }
 \keyword{internal}

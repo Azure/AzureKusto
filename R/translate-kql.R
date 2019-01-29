@@ -367,13 +367,17 @@ base_scalar <- kql_translator(
         )}
 )
 
+#' Tag character strings as Kusto Query Language. Assumes the string is valid and properly escaped.
+#' @param ... character strings to tag as KQL
+#' @export
 kql <- function(...)
 {
     x <- c_character(...)
     structure(x, class = c("kql", "character"))
 }
 
-print.kql <- function(x)
+#' @export
+print.kql <- function(x, ...)
 {
     cat("<KQL> ", x, "\n", sep = "")
 }

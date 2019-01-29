@@ -183,6 +183,7 @@ kql_build.op_join <- function(op, ...)
     build_kql("join kind = ", ident(kind), " (", kql(kql_render(kql_build(op$y))), ") on ", by_clause)
 }
 
+#' @export
 kql_build.op_set_op <- function(op, ...)
 {
     op_type <- op$args$type

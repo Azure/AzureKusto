@@ -10,6 +10,8 @@ op_base(x, vars, class = character())
 \item{x}{A tbl object}
 
 \item{vars}{A vector of column variables in the tbl}
+
+\item{class}{The class that op_base should inherit from, default is character()}
 }
 \description{
 The "base case" operation representing the tbl itself and its column variables
