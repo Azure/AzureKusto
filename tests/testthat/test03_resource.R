@@ -14,7 +14,7 @@ if(username == "")
 
 srvloc <- Sys.getenv("AZ_TEST_KUSTO_NEW_LOCATION")
 if(srvloc == "")
-    stop("Resource creation tests skipped: no location set")
+    skip("Resource creation tests skipped: no location set")
 
 
 sub <- AzureRMR::az_rm$new(tenant=tenant, app=app, password=password)$get_subscription(subscription)

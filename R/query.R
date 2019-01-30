@@ -9,7 +9,7 @@
 #'
 #' @param database A Kusto database endpoint object, as returned by `kusto_query_endpoint`.
 #' @param query,command A string containing the query or command. Note that database management commands in KQL are distinct from queries.
-#' @param ... Other arguments passed to lower-level functions, and ultimately to `httr::POST`.
+#' @param ... For `run_query`, named arguments to be used as parameters for a parameterized query.
 #'
 #' @details
 #' These functions are the workhorses of the AzureKusto package. They communicate with the Kusto server and return the query or command results, as data frames.
@@ -28,16 +28,20 @@ run_query <- function(database, ...)
 #' @export
 run_query.kusto_database_endpoint <- function(database, query, ...)
 {
+    query_params <- list(...)
     server <- database$server
+    db <- database$database
+    token <- database$token
     user <- database$user
     password <- database$pwd
 
     qry_opts <- database[names(database) %in% .qry_opt_names]
 
     uri <- paste0(server, "/v1/rest/query")
-    parse_query_result(call_kusto(database$token, user, password, uri, database$database, query,
-                                  query_options=qry_opts, ...),
-                       database$use_integer64)
+    body <- build_request_body(db, query, query_options=qry_opts, query_parameters=query_params)
+    auth_str <- build_auth_str(token, user, password)
+    result <- call_kusto(uri, body, auth_str)
+    parse_query_result(result, database$use_integer64)
 }
 
 
@@ -54,26 +58,49 @@ run_command <- function(database, ...)
 run_command.kusto_database_endpoint <- function(database, command, ...)
 {
     server <- database$server
+    db <- database$database
+    token <- database$token
     user <- database$user
     password <- database$pwd
 
     qry_opts <- database[names(database) %in% .qry_opt_names]
 
     uri <- paste0(server, "/v1/rest/mgmt")
-    parse_command_result(call_kusto(database$token, user, password, uri, database$database, command,
-                                    query_options=qry_opts, ...),
-                         database$use_integer64)
+    body <- build_request_body(db, command, query_options=qry_opts)
+    auth_str <- build_auth_str(token, user, password)
+    result <- call_kusto(uri, body, auth_str)
+    parse_command_result(result, database$use_integer64)
 }
 
 
-call_kusto <- function(token=NULL, user=NULL, password=NULL, uri, db, qry_cmd,
-                       query_options=list(),
-                       http_status_handler=c("stop", "warn", "message", "pass"))
+get_param_types <- function(query_params)
 {
-    default_query_options <- list(queryconsistency="weakconsistency")
-    query_options <- utils::modifyList(default_query_options, query_options)
+    ps <- mapply(function(name, value)
+    {
+        type <- switch(class(value),
+            "logical"="bool",
+            "numeric"="real",
+            "integer64"="long",
+            "integer"="int",
+            "Date"="datetime",
+            "POSIXct"="datetime",
+            "string"
+        )
+        paste(name, type, sep=":")
+    }, names(query_params), query_params)
 
-    token <- validate_kusto_token(token)
+    paste0("declare query_parameters (", paste(ps, collapse=", "), ");")
+}
+
+
+build_request_body <- function(db, qry_cmd, query_options=list(), query_parameters=list())
+{
+    default_query_options <- list(
+        queryconsistency="weakconsistency",
+        response_dynamic_serialization="string",
+        response_dynamic_serialization_2="string")
+
+    query_options <- utils::modifyList(default_query_options, query_options)
 
     body <- list(
         properties=list(Options=query_options),
@@ -82,12 +109,33 @@ call_kusto <- function(token=NULL, user=NULL, password=NULL, uri, db, qry_cmd,
     if(!is.null(db))
         body <- c(body, db=db)
 
+    if(!is_empty(query_parameters))
+    {
+        body$csl <- paste(get_param_types(query_parameters), body$csl)
+        body$properties$Parameters <- query_parameters   
+    }
+
+    body
+}
+
+
+build_auth_str <- function(token=NULL, user=NULL, password=NULL)
+{
+    token <- validate_kusto_token(token)
+
     auth_str <- if(!is.null(token))
         paste("Bearer", token)
     else if(!is.null(user) && !is.null(password))
         paste("Basic", openssl::base64_encode(paste(user, password, sep=":")))
     else stop("Must provide authentication details")
 
+    auth_str
+}
+
+
+call_kusto <- function(uri, body, auth_str,
+                       http_status_handler=c("stop", "warn", "message", "pass"))
+{
     res <- httr::POST(uri, httr::add_headers(Authorization=auth_str), body=body, encode="json")
 
     http_status_handler <- match.arg(http_status_handler)
@@ -123,10 +171,10 @@ parse_query_result <- function(tables, .use_integer64)
 
     # load TOC table
     n <- nrow(tables)
-    toc <- convert_types(tables$Rows[[n]], tables$Columns[[n]], .use_integer64)
+    toc <- convert_result_types(tables$Rows[[n]], tables$Columns[[n]], .use_integer64)
     result_tables <- which(toc$Name == "PrimaryResult")
 
-    res <- Map(convert_types, tables$Rows[result_tables], tables$Columns[result_tables],
+    res <- Map(convert_result_types, tables$Rows[result_tables], tables$Columns[result_tables],
                MoreArgs=list(.use_integer64=.use_integer64))
 
     if(length(res) == 1)
@@ -141,7 +189,7 @@ parse_command_result <- function(tables, .use_integer64)
     if(inherits(tables, "response"))
         return(tables)
 
-    res <- Map(convert_types, tables$Rows, coltypes_df=tables$Columns,
+    res <- Map(convert_result_types, tables$Rows, coltypes_df=tables$Columns,
                MoreArgs=list(.use_integer64=.use_integer64))
 
     if(length(res) == 1)
@@ -153,17 +201,22 @@ parse_command_result <- function(tables, .use_integer64)
 convert_kusto_datatype <- function(column, kusto_type, .use_integer64)
 {
     switch(kusto_type,
-        long=, Int64=if(.use_integer64) bit64::as.integer64(column) else as.numeric(column),
-        int=, integer=, Int32=as.integer(column),
-        datetime=, DateTime=as.POSIXct(strptime(column, format='%Y-%m-%dT%H:%M:%OSZ', tz='UTC')),
-        real=, Double=, Float=as.numeric(column),
-        bool=, Boolean=as.logical(column),
+        long=, Int64=
+            if(.use_integer64) bit64::as.integer64(column) else as.numeric(column),
+        int=, integer=, Int32=
+            as.integer(column),
+        datetime=, DateTime=
+            as.POSIXct(strptime(column, format='%Y-%m-%dT%H:%M:%OSZ', tz='UTC')),
+        real=, Double=, Float=
+            as.numeric(column),
+        bool=, Boolean=
+            as.logical(column),
         as.character(column)
     )
 }
 
 
-convert_types <- function(df, coltypes_df, .use_integer64)
+convert_result_types <- function(df, coltypes_df, .use_integer64)
 {
     if(is_empty(df))
         return(list())

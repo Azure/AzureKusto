@@ -195,14 +195,16 @@ show_query.tbl_kusto_abstract <- function(tbl)
 #' @export
 #' @param kusto_database An instance of kusto_database_endpoint that this table should be queried from
 #' @param table_name The name of the table in the Kusto database
-#' @param ... needed for agreement with generic. Not otherwise used.
+#' @param ... parameters to pass in case the Kusto source table is a parameterized function.
 tbl_kusto <- function(kusto_database, table_name, ...)
 {
     stopifnot(inherits(kusto_database, "kusto_database_endpoint"))
+    params <- list(...)
     kusto_database$table <- table_name
-    vars <- names(run_query(kusto_database, sprintf("%s | take 1", escape(ident(table_name)))))
+    query_str <- sprintf("%s | take 1", escape(ident(table_name)))
+    vars <- names(run_query(kusto_database, query_str, ...))
     ops <- op_base_remote(table_name, vars)
-    make_tbl(c("kusto", "kusto_abstract"), src = kusto_database, ops = ops)
+    make_tbl(c("kusto", "kusto_abstract"), src = kusto_database, ops = ops, params = params)
 }
 
 #' Compile the preceding dplyr oprations into a kusto query, execute it on the remote server,
@@ -214,5 +216,9 @@ collect.tbl_kusto <- function(tbl, ...)
 {
     q <- kql_build(tbl)
     q_str <- kql_render(q)
-    as_tibble(run_query(tbl$src, q_str))
+    params <- c(tbl$params, list(...))
+    params$database <- tbl$src
+    params$query <- q_str
+    res <- do.call(run_query, params)
+    as_tibble(res)
 }

@@ -18,7 +18,7 @@ run_command(database, ...)
 \arguments{
 \item{database}{A Kusto database endpoint object, as returned by \code{kusto_query_endpoint}.}
 
-\item{...}{Other arguments passed to lower-level functions, and ultimately to \code{httr::POST}.}
+\item{...}{For \code{run_query}, named arguments to be used as parameters for a parameterized query.}
 
 \item{query, command}{A string containing the query or command. Note that database management commands in KQL are distinct from queries.}
 }
