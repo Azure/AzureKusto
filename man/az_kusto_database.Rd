@@ -20,6 +20,7 @@ The following methods are available, in addition to those provided by the \link[
 \item \code{remove_principals(...)}: Remove database principals.
 \item \code{list_principals()}: Retrieve all database principals, as a data frame.
 \item \code{get_query_endpoint()}: Get a query endpoint object for interacting with the database.
+\item \code{get_ingestion_endpoint()}: Get an ingestion endpoint object for interacting with the database.
 }
 }
 
@@ -37,7 +38,7 @@ This class provides methods for managing the principals of a database.
 \item \code{name}: The name of the principal to create.
 \item \code{role}: The roleo of the principal, for example "Admin" or "User".
 \item \code{type}: The type of principal, either "User" or "App".
-\item \code{fqn}: The fully qualified name of the principal, for example "aaduser=username@mydomain". If supplied, the other details will be obtained from this.
+\item \code{fqn}: The fully qualified name of the principal, for example "aaduser=username@mydomain" for an Azure Active Directory account. If supplied, the other details will be obtained from this.
 \item \code{email}: For a user principal, the email address.
 \item \code{app_id}: For an application principal, the ID.
 }
@@ -59,17 +60,15 @@ db$list_principals()
 # add a new principal
 db$add_principal("New User", role="User", fqn="aaduser=username@mydomain")
 
-# get a query endpoint
-db$get_query_endpoint()
+# get the endpoint
+db$get_database_endpoint(use_integer64=FALSE)
 
 }
 }
 \seealso{
-\link{az_kusto}, \link{kusto_query_endpoint},
+\link{az_kusto}, \link{kusto_database_endpoint},
 \link{create_database}, \link{get_database}, \link{delete_database}
 
 \href{https://docs.microsoft.com/en-us/azure/data-explorer/}{Kusto/Azure Data Explorer documentation},
-
-\link{az_kusto}, \link{create_database}, \link{get_database}, \link{delete_database}, \link{list_databases}, \link{kusto_query_endpoint}
 }
 \keyword{datasets}

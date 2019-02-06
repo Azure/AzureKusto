@@ -3,7 +3,7 @@
 #' @import dplyr
 NULL
 
-utils::globalVariables(c("self", "asc"))
+utils::globalVariables(c("self", "asc", "con"))
 
 .onLoad <- function(libname, pkgname)
 {

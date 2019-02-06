@@ -10,15 +10,15 @@ You can install the development version from GitHub, via `devtools::install_gith
 
 ### Kusto Endpoint Interface
 
-Connect to a Kusto cluster by instantiating a `kusto_query_endpoint` object with the cluster URI, database name, and an `AzureRMR::AzureToken` object, which you can obtain via the `get_kusto_token` helper function.
+Connect to a Kusto cluster by instantiating a `kusto_database_endpoint` object with the cluster URI, database name, and an `AzureRMR::AzureToken` object, which you can obtain via the `get_kusto_token` helper function.
 
 ```r
 
 library(AzureKusto)
 
-Samples <- kusto_query_endpoint(server="https://help.kusto.windows.net",
+Samples <- kusto_database_endpoint(server="https://help.kusto.windows.net",
     database="Samples",
-    .azure_token=get_kusto_token(clustername="help", tenant="microsoft"))
+    .query_token=get_kusto_token(clustername="help", tenant="microsoft"))
 
 # To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code FPD8GZPY9 to authenticate.
 # Waiting for device code in browser...
@@ -52,12 +52,11 @@ res <- run_query(Samples, "MyFunction(lim)", lim=10L)
 
 ```
 
-Command statements can be run with `run_command()`.
-Note that commands do not accept parameters.
+Command statements work much the same way, except that they do not accept parameters.
 
 ```r
 
-res <- run_command(Samples, ".show tables | count")
+res <- run_query(Samples, ".show tables | count")
 
 ```
 

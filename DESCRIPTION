@@ -28,8 +28,10 @@ Imports:
 Suggests:
     bit64,
     knitr,
-    testthat
+    testthat,
+    AzureStor (>= 1.0.0.9000)
 Roxygen: list(markdown=TRUE)
 RoxygenNote: 6.1.0.9000
 Remotes:
-    cloudyr/AzureRMR
+    cloudyr/AzureRMR,
+    cloudyr/AzureStor

@@ -218,7 +218,7 @@ collect.tbl_kusto <- function(tbl, ...)
     q_str <- kql_render(q)
     params <- c(tbl$params, list(...))
     params$database <- tbl$src
-    params$query <- q_str
+    params$qry_cmd <- q_str
     res <- do.call(run_query, params)
     as_tibble(res)
 }

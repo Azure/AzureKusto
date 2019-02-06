@@ -23,7 +23,7 @@
 #' `get_kusto_token` returns an object of class AzureRMR::AzureToken representing the authentication token, while `list_kusto_tokens` returns a list of such objects. `delete_azure_token` returns NULL on a successful delete.
 #'
 #' @seealso
-#' [kusto_query_endpoint], [AzureRMR::get_azure_token]
+#' [kusto_database_endpoint], [AzureRMR::get_azure_token]
 #' @export
 get_kusto_token <- function(server=NULL, clustername, location=NULL, tenant, app=.kusto_app_id, auth_type=NULL, ...)
 {

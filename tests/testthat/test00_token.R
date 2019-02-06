@@ -33,6 +33,8 @@ srvloc <- Sys.getenv("AZ_TEST_KUSTO_SERVER_LOCATION")
 if(srvname == "" || srvloc == "")
     skip("Token acquisition tests skipped: server info not set")
 
+if(!interactive())
+    skip("Token acquisition tests skipped: must be an interactive session")
 
 # remove all cached Kusto tokens before testing
 lapply(AzureRMR::list_azure_tokens(), function(token)

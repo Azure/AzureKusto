@@ -17,8 +17,8 @@ if(srvname == "" || srvloc == "" || dbname == "")
 
 server <- sprintf("https://%s.%s.kusto.windows.net", srvname, srvloc)
 
-db <- kusto_query_endpoint(server=server, database=dbname, tenantid=tenant)
-db2 <- kusto_query_endpoint(server=server, database=dbname, tenantid=tenant,
+db <- kusto_database_endpoint(server=server, database=dbname, tenantid=tenant)
+db2 <- kusto_database_endpoint(server=server, database=dbname, tenantid=tenant,
     appclientid=app, appkey=password)
 
 test_that("Queries work",
@@ -33,12 +33,12 @@ test_that("Queries work",
 
 test_that("Commands work",
 {
-    out <- run_command(db2, ".show cluster")
+    out <- run_query(db, ".show cluster")
     expect_is(out, "data.frame")
 
     dberr <- db
     dberr$token <- NULL
-    expect_error(run_command(dberr, ".show cluster"))
+    expect_error(run_query(dberr, ".show cluster"))
 })
 
 test_that("Queries work with own app",
@@ -53,10 +53,10 @@ test_that("Queries work with own app",
 
 test_that("Commands work with own app",
 {
-    out <- run_command(db2, ".show cluster")
+    out <- run_query(db2, ".show cluster")
     expect_is(out, "data.frame")
 
     dberr <- db2
     dberr$token <- NULL
-    expect_error(run_command(dberr, ".show cluster"))
+    expect_error(run_query(dberr, ".show cluster"))
 })

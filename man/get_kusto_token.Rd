@@ -46,5 +46,5 @@ Manage AAD authentication tokens for Kusto clusters
 By default, authentication tokens will be obtained using the main KustoClient Active Directory app. This app can be used to authenticate with any Kusto cluster (assuming, of course, you have the proper credentials).
 }
 \seealso{
-\link{kusto_query_endpoint}, \link[AzureRMR:get_azure_token]{AzureRMR::get_azure_token}
+\link{kusto_database_endpoint}, \link[AzureRMR:get_azure_token]{AzureRMR::get_azure_token}
 }
