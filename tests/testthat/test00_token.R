@@ -37,11 +37,11 @@ if(!interactive())
     skip("Token acquisition tests skipped: must be an interactive session")
 
 # remove all cached Kusto tokens before testing
-lapply(AzureRMR::list_azure_tokens(), function(token)
+lapply(AzureAuth::list_azure_tokens(), function(token)
 {
     hash <- token$hash()
     if(grepl("kusto\\.windows\\.net", token$credentials$resource))
-        file.remove(file.path(AzureRMR::AzureRMR_dir(), hash))
+        file.remove(file.path(AzureAuth::AzureR_dir(), hash))
 })
 
 
@@ -49,11 +49,11 @@ lapply(AzureRMR::list_azure_tokens(), function(token)
 test_that("Obtaining token from KustoClient works",
 {
     tok1 <- get_kusto_token(clustername=srvname, location=srvloc, tenant=tenant)
-    expect_true(AzureRMR::is_azure_token(tok1))
+    expect_true(AzureAuth::is_azure_token(tok1))
 
     srvuri <- sprintf("https://%s.%s.kusto.windows.net", srvname, srvloc)
     tok2 <- get_kusto_token(srvuri, tenant=tenant)
-    expect_true(AzureRMR::is_azure_token(tok2))
+    expect_true(AzureAuth::is_azure_token(tok2))
 
     expect_identical(tok1$hash(), tok2$hash())
     expect_identical(tok1$hash(), tok2$hash())
@@ -66,18 +66,18 @@ test_that("Obtaining token from KustoClient works",
     expect_true(as.numeric(tok1$credentials$expires_on) > expire)
 
     toks <- list_kusto_tokens()
-    expect_true(is.list(toks) && all(sapply(toks, AzureRMR::is_azure_token)))
+    expect_true(is.list(toks) && all(sapply(toks, AzureAuth::is_azure_token)))
 })
 
 
 test_that("Obtaining token from own app works",
 {
     tok1 <- get_kusto_token(clustername=srvname, location=srvloc, tenant=tenant, app=app, password=password)
-    expect_true(AzureRMR::is_azure_token(tok1))
+    expect_true(AzureAuth::is_azure_token(tok1))
 
     srvuri <- sprintf("https://%s.%s.kusto.windows.net", srvname, srvloc)
     tok2 <- get_kusto_token(srvuri, tenant=tenant, app=app, password=password)
-    expect_true(AzureRMR::is_azure_token(tok2))
+    expect_true(AzureAuth::is_azure_token(tok2))
 
     expect_identical(tok1$hash(), tok2$hash())
     expect_identical(tok1$hash(), tok2$hash())

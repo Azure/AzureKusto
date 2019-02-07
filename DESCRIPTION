@@ -22,6 +22,7 @@ Imports:
     jsonlite,
     R6,
     openssl,
+    AzureAuth,
     AzureRMR (>= 1.0.0.9000),
     dplyr,
     tidyselect (>= 0.2.4)
@@ -33,5 +34,6 @@ Suggests:
 Roxygen: list(markdown=TRUE)
 RoxygenNote: 6.1.0.9000
 Remotes:
+    cloudyr/AzureAuth,
     cloudyr/AzureRMR,
     cloudyr/AzureStor

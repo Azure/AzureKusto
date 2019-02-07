@@ -1,3 +1,8 @@
+#############################################################################################
+# ingestion can have significant and unpredictable latencies, do not run in automated fashion
+#############################################################################################
+
+
 context("Ingesting")
 
 tenant <- Sys.getenv("AZ_TEST_TENANT_ID")
@@ -8,7 +13,8 @@ subscription <- Sys.getenv("AZ_TEST_SUBSCRIPTION")
 if(tenant == "" || app == "" || password == "" || subscription == "")
     skip("Tests skipped: ARM credentials not set")
 
-if(!requireNamespace("AzureStor"))
+# this will add AzureStor to search path
+if(!require("AzureStor"))
     skip("Database ingestion tests skipped: AzureStor package not found")
 
 # use persistent testing resources
@@ -20,6 +26,9 @@ blobacct <- Sys.getenv("AZ_TEST_KUSTO_BLOBACCT")
 blobcont <- Sys.getenv("AZ_TEST_KUSTO_BLOBCONT")
 adlsacct <- Sys.getenv("AZ_TEST_KUSTO_ADLSACCT")
 adlscont <- Sys.getenv("AZ_TEST_KUSTO_ADLSCONT")
+
+storage_app <- Sys.getenv("AZ_TEST_KUSTO_STORAGE_APP")
+storage_pwd <- Sys.getenv("AZ_TEST_KUSTO_STORAGE_PWD")
 
 if(rgname == "" || username == "" ||
    srvname == "" || srvloc == "" ||
@@ -73,12 +82,12 @@ test_that("ADLSgen2 ingestion works",
     ingest_adls2(db, adlsurl, "irisadlskey", key=adlskey, ignoreFirstRecord=TRUE)
     expect_equal(run_query(db, "irisadlskey | count")$Count, 150)
 
-    # skip adls2 token test for now
-    # adlstok <- AzureRMR::get_azure_token(sprintf("https://%s.dfs.core.windows.net", adlsacct),
-    #     tenant=tenant, app=app, password=password)
-    # run_query(db, ".create table irisadlskey (sl:real, sw:real, pl:real, pw:real, species:string)")
-    # ingest_adls2(db, adlsurl, "irisadlskey", tok=adlstok, ignoreFirstRecord=TRUE)
-    # expect_equal(run_query(db, "irisadlskey | count")$Count, 150)
+    # adls2 with token
+    adlstok <- AzureAuth::get_azure_token("https://storage.azure.com/",
+        tenant=tenant, app=storage_app, password=storage_pwd)
+    run_query(db, ".create table irisadlstok (sl:real, sw:real, pl:real, pw:real, species:string)")
+    ingest_adls2(db, adlsurl, "irisadlstok", tok=adlstok, ignoreFirstRecord=TRUE)
+    expect_equal(run_query(db, "irisadlstok | count")$Count, 150)
 })
 
 test_that("local indirect ingestion works",

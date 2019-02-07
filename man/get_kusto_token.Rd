@@ -28,14 +28,14 @@ list_kusto_tokens()
 
 \item{auth_type}{The authentication method to use. Can be one of "authorization_code", "device_code", "client_credentials" or "resource_owner". The default is to pick one based on the other arguments.}
 
-\item{...}{Other arguments to pass to \link[AzureRMR:get_azure_token]{AzureRMR::get_azure_token}.}
+\item{...}{Other arguments to pass to \link[AzureAuth:get_azure_token]{AzureAuth::get_azure_token}.}
 
 \item{hash}{For \code{delete_kusto_token}, the MD5 hash of the token. This is used to identify the token if provided.}
 
 \item{confirm}{For \code{delete_kusto_token}, whether to ask for confirmation before deleting the token.}
 }
 \value{
-\code{get_kusto_token} returns an object of class AzureRMR::AzureToken representing the authentication token, while \code{list_kusto_tokens} returns a list of such objects. \code{delete_azure_token} returns NULL on a successful delete.
+\code{get_kusto_token} returns an object of class AzureAuth::AzureToken representing the authentication token, while \code{list_kusto_tokens} returns a list of such objects. \code{delete_azure_token} returns NULL on a successful delete.
 }
 \description{
 Manage AAD authentication tokens for Kusto clusters
@@ -46,5 +46,5 @@ Manage AAD authentication tokens for Kusto clusters
 By default, authentication tokens will be obtained using the main KustoClient Active Directory app. This app can be used to authenticate with any Kusto cluster (assuming, of course, you have the proper credentials).
 }
 \seealso{
-\link{kusto_database_endpoint}, \link[AzureRMR:get_azure_token]{AzureRMR::get_azure_token}
+\link{kusto_database_endpoint}, \link[AzureAuth:get_azure_token]{AzureAuth::get_azure_token}
 }

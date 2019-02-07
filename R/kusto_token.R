@@ -12,7 +12,7 @@
 #' @param auth_type The authentication method to use. Can be one of "authorization_code", "device_code", "client_credentials" or "resource_owner". The default is to pick one based on the other arguments.
 #' @param hash For `delete_kusto_token`, the MD5 hash of the token. This is used to identify the token if provided.
 #' @param confirm For `delete_kusto_token`, whether to ask for confirmation before deleting the token.
-#' @param ... Other arguments to pass to [AzureRMR::get_azure_token].
+#' @param ... Other arguments to pass to [AzureAuth::get_azure_token].
 #'
 #' @details
 #' `get_kusto_token` returns an authentication token for the given cluster, caching its value on disk. `delete_kusto_token` deletes a cached token, and `list_kusto_tokens` lists all cached tokens.
@@ -20,14 +20,14 @@
 #' By default, authentication tokens will be obtained using the main KustoClient Active Directory app. This app can be used to authenticate with any Kusto cluster (assuming, of course, you have the proper credentials).
 #'
 #' @return
-#' `get_kusto_token` returns an object of class AzureRMR::AzureToken representing the authentication token, while `list_kusto_tokens` returns a list of such objects. `delete_azure_token` returns NULL on a successful delete.
+#' `get_kusto_token` returns an object of class AzureAuth::AzureToken representing the authentication token, while `list_kusto_tokens` returns a list of such objects. `delete_azure_token` returns NULL on a successful delete.
 #'
 #' @seealso
-#' [kusto_database_endpoint], [AzureRMR::get_azure_token]
+#' [kusto_database_endpoint], [AzureAuth::get_azure_token]
 #' @export
 get_kusto_token <- function(server=NULL, clustername, location=NULL, tenant, app=.kusto_app_id, auth_type=NULL, ...)
 {
-    tenant <- AzureRMR::normalize_tenant(tenant)
+    tenant <- AzureAuth::normalize_tenant(tenant)
     if(is.null(server))
     {
         location <- normalize_location(location)
@@ -39,7 +39,7 @@ get_kusto_token <- function(server=NULL, clustername, location=NULL, tenant, app
     if(is.null(auth_type) && app == .kusto_app_id && (!"username" %in% names(list(...))))
         auth_type <- "device_code"
 
-    AzureRMR::get_azure_token(server, tenant, app, auth_type=auth_type, ...)
+    AzureAuth::get_azure_token(server, tenant, app, auth_type=auth_type, ...)
 }
 
 
@@ -50,9 +50,9 @@ delete_kusto_token <- function(server=NULL, clustername, location=NULL, tenant, 
 {
     # use hash if provided
     if(!is.null(hash))
-        return(AzureRMR::delete_azure_token(hash=hash, confirm=confirm))
+        return(AzureAuth::delete_azure_token(hash=hash, confirm=confirm))
 
-    tenant <- AzureRMR::normalize_tenant(tenant)
+    tenant <- AzureAuth::normalize_tenant(tenant)
     if(is.null(server))
     {
         location <- normalize_location(location)
@@ -64,7 +64,7 @@ delete_kusto_token <- function(server=NULL, clustername, location=NULL, tenant, 
     if(is.null(auth_type) && app == .kusto_app_id && (!"username" %in% names(list(...))))
         auth_type <- "device_code"
 
-    AzureRMR::delete_azure_token(server, tenant, app, auth_type=auth_type, confirm=confirm)
+    AzureAuth::delete_azure_token(server, tenant, app, auth_type=auth_type, confirm=confirm)
 }
 
 
@@ -72,7 +72,7 @@ delete_kusto_token <- function(server=NULL, clustername, location=NULL, tenant, 
 #' @export
 list_kusto_tokens <- function()
 {
-    lst <- AzureRMR::list_azure_tokens()
+    lst <- AzureAuth::list_azure_tokens()
 
     is_kusto <- sapply(lst, function(tok)
         grepl("kusto.windows.net", tok$credentials$resource, fixed=TRUE))
