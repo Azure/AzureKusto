@@ -116,7 +116,7 @@ public=list(
         if(!is_empty(self$properties$trustedExternalTenants))
             tenant <- self$properties$trustedExternalTenants[[1]]$value
         if(is.null(tenant))
-            tenant <- sub("/.+$", "", httr::parse_url(self$token$endpoint$access)$path)
+            tenant <- self$token$tenant
         if(is.null(tenant))
             stop("Unable to find default tenant", call.=FALSE)
         tenant
