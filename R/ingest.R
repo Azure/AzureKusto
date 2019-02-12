@@ -221,7 +221,7 @@ ingest_inline <- function(database, src, dest_table, ...)
         "<|\n",
         paste0(records, collapse="\n"))
 
-    invisible(run_query(database, cmd))
+    run_query(database, cmd)
 }
 
 

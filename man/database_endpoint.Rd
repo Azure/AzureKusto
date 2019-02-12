@@ -29,11 +29,11 @@ General properties:
 \itemize{
 \item server: The URI of the server, usually of the form 'https://{clustername}.{location}.kusto.windows.net'.
 \itemize{
-\item addr, address, network address, datasource
+\item addr, address, network address, datasource, host
 }
 \item database: The database.
 \itemize{
-\item initialcatalog
+\item initialcatalog, dbname
 }
 \item tenantid: The AAD tenant name or ID to authenticate with.
 \itemize{

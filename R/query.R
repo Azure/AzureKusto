@@ -43,11 +43,11 @@ run_query <- function(database, qry_cmd, ..., .http_status_handler="stop")
 }
 
 
-get_param_types <- function(query_params)
+build_param_list <- function(query_params)
 {
     ps <- mapply(function(name, value)
     {
-        type <- switch(class(value),
+        type <- switch(class(value)[1],
             "logical"="bool",
             "numeric"="real",
             "integer64"="long",
@@ -59,7 +59,7 @@ get_param_types <- function(query_params)
         paste(name, type, sep=":")
     }, names(query_params), query_params)
 
-    paste0("declare query_parameters (", paste(ps, collapse=", "), ");")
+    paste0("(", paste(ps, collapse=", "), ")")
 }
 
 
@@ -81,7 +81,11 @@ build_request_body <- function(db, qry_cmd, query_options=list(), query_paramete
 
     if(!is_empty(query_parameters))
     {
-        body$csl <- paste(get_param_types(query_parameters), body$csl)
+        body$csl <- paste(
+            "declare query_parameters",
+            build_param_list(query_parameters),
+            ";",
+            body$csl)
         body$properties$Parameters <- query_parameters   
     }
 

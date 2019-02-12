@@ -25,7 +25,8 @@ Imports:
     AzureAuth,
     AzureRMR (>= 1.0.0.9000),
     dplyr,
-    tidyselect (>= 0.2.4)
+    tidyselect (>= 0.2.4),
+    DBI
 Suggests:
     bit64,
     knitr,

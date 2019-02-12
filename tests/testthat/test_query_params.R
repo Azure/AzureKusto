@@ -7,10 +7,10 @@ test_that("Query parameter types can be assigned appropriately",
         baz=FALSE,
         quux=1.1,
         dt=as.Date('2019-01-01'))
-    types <- AzureKusto:::get_param_types(params)
+    types <- AzureKusto:::build_param_list(params)
     expect_equal(
         types,
-        "declare query_parameters (foo:string, bar:int, baz:bool, quux:real, dt:datetime);")
+        "(foo:string, bar:int, baz:bool, quux:real, dt:datetime)")
 })
 
 test_that("build_request_body without params gives expected result",
@@ -34,5 +34,5 @@ test_that("build_request_body with params gives expected result",
                                query_parameters=params)
     expect_equal(body$properties$Parameters$foo, "hi")
     expect_equal(body$db, "Samples")
-    expect_equal(body$csl, "declare query_parameters (foo:string, bar:int, baz:bool, quux:real); MyFunction(foo, bar, baz, quux)")
+    expect_equal(body$csl, "declare query_parameters (foo:string, bar:int, baz:bool, quux:real) ; MyFunction(foo, bar, baz, quux)")
 })
