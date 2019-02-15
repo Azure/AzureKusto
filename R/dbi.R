@@ -11,7 +11,7 @@
 #'
 #' - Temporary tables are not a Kusto concept, so `dbCreateTable(*, temporary=TRUE)` will throw an error.
 #'
-#' - It only supports synchronous queries, with a default timeout of 4 minutes. `dbSendQuery` and `dbSendStatement` will wait for the query to execute, rather than returning immediately. The object returned contains wraps the full result of the query, which `dbFetch` extracts.
+#' - It only supports synchronous queries, with a default timeout of 4 minutes. `dbSendQuery` and `dbSendStatement` will wait for the query to execute, rather than returning immediately. The object returned contains the full result of the query, which `dbFetch` extracts.
 #'
 #' - The Kusto Query Language (KQL) is not SQL, and so higher-level SQL methods are not implemented.
 #'

@@ -4,7 +4,7 @@
 \name{base_scalar}
 \alias{base_scalar}
 \title{Scalar operator translations (infix and prefix)}
-\format{An object of class \code{environment} of length 71.}
+\format{An object of class \code{environment} of length 75.}
 \usage{
 base_scalar
 }

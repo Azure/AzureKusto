@@ -38,10 +38,8 @@ kql_mask <- function(expr, variant)
 
     # Existing symbols in expression
     names <- all_names(expr)
-    name_env <- ceply(
-        names, function(x) escape(ident(x)),
-        parent = special_calls2
-    )
+    idents <- lapply(names, ident)
+    name_env <- ceply(idents, escape, parent = special_calls2)
 
     # Known kql expressions
     symbol_env <- env_clone(base_symbols, parent = name_env)
@@ -335,6 +333,15 @@ base_scalar <- kql_translator(
     as.double = kql_prefix("todouble", 1),
     as.integer = kql_prefix("toint", 1),
     as.character = kql_prefix("tostring", 1),
+    as.Date = kql_prefix("todatetime", 1),
+    as.POSIXct = kql_prefix("todatetime", 1),
+    as.POSIXlt = kql_prefix("todatetime", 1),
+    strptime = function(dt_str, format_str, tz="UTC") {
+        if(tz != "UTC") {
+            warning("Kusto only supports datetimes in UTC timezone. Non-UTC datetimes will be cast as UTC.")
+        }
+        kql_prefix("todatetime", 1)(dt_str)
+    },
 
     c = function(...) c(...),
     `:` = function(from, to) from:to,

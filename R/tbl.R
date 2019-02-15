@@ -28,6 +28,7 @@ select.tbl_kusto_abstract <- function(.data, ...)
 distinct.tbl_kusto_abstract <- function(.data, ...)
 {
     dots <- quos(...)
+    dots <- partial_eval(dots, vars = op_vars(.data))
     add_op_single("distinct", .data, dots = dots)
 }
 
@@ -42,6 +43,7 @@ rename.tbl_kusto_abstract <- function(.data, ...)
 filter.tbl_kusto_abstract <- function(.data, ...)
 {
     dots <- quos(...)
+    dots <- partial_eval(dots, vars = op_vars(.data))
     add_op_single("filter", .data, dots = dots)
 }
 
@@ -49,6 +51,7 @@ filter.tbl_kusto_abstract <- function(.data, ...)
 mutate.tbl_kusto_abstract <- function(.data, ...)
 {
     dots <- quos(..., .named=TRUE)
+    dots <- partial_eval(dots, vars = op_vars(.data))
     add_op_single("mutate", .data, dots = dots)
 }
 
@@ -56,6 +59,7 @@ mutate.tbl_kusto_abstract <- function(.data, ...)
 arrange.tbl_kusto_abstract <- function(.data, ...)
 {
     dots <- quos(...)
+    dots <- partial_eval(dots, vars = op_vars(.data))
     names(dots) <- NULL
     add_op_single("arrange", .data, dots = dots)
 }
@@ -64,7 +68,7 @@ arrange.tbl_kusto_abstract <- function(.data, ...)
 group_by.tbl_kusto_abstract <- function(.data, ..., add = FALSE)
 {
     dots <- quos(...)
-
+    dots <- partial_eval(dots, vars = op_vars(.data))
     if (is_empty(dots))
     {
         return(.data)
@@ -88,6 +92,7 @@ ungroup.tbl_kusto_abstract <- function(.data, ...)
 summarise.tbl_kusto_abstract <- function(.data, ...)
 {
     dots <- quos(..., .named = TRUE)
+    dots <- partial_eval(dots, vars = op_vars(.data))
     add_op_single("summarise", .data, dots = dots)
 }
 
