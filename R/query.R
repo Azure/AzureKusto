@@ -68,7 +68,7 @@ build_request_body <- function(db, qry_cmd, query_options=list(), query_paramete
     default_query_options <- list(
         queryconsistency="weakconsistency",
         response_dynamic_serialization="string",
-        response_dynamic_serialization_2="string")
+        response_dynamic_serialization_2="legacy")
 
     query_options <- utils::modifyList(default_query_options, query_options)
 

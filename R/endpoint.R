@@ -214,19 +214,19 @@ check_endpoint_properties <- function(props)
         props$use_integer64 <- FALSE
     }
 
-    if(!is_empty(props$response_dynamic_serialization) &&
-       tolower(props$response_dynamic_serialization) != "string")
+    if(!is_empty(props[["response_dynamic_serialization"]]) &&
+       tolower(props[["response_dynamic_serialization"]]) != "string")
     {
         warning("Serialization of dynamic response to JSON is not yet supported")
-        props$response_dynamic_serialization <- NULL
+        props[["response_dynamic_serialization"]] <- NULL
     }
 
-    if(!is_empty(props$response_dynamic_serialization_2) &&
-       tolower(props$response_dynamic_serialization_2) != "string")
-    {
-        warning("Serialization of dynamic response to JSON is not yet supported")
-        props$response_dynamic_serialization_2 <- NULL
-    }
+    # if(!is_empty(props[["response_dynamic_serialization_2"]]) &&
+    #    tolower(props[["response_dynamic_serialization_2"]]) != "string")
+    # {
+    #     warning("Serialization of dynamic response to JSON is not yet supported")
+    #     props[["response_dynamic_serialization_2"]] <- NULL
+    # }
 
     props
 }
