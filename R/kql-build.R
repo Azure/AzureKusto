@@ -214,7 +214,7 @@ append_asc <- function(dot)
 #' @export
 flatten_query <- function(op, ops=list())
 {
-    if (inherits(op, "tbl_df"))
+    if (inherits(op, "tbl_df") || inherits(op, "character"))
         return(ops)
 
     if (inherits(op, "tbl_kusto_abstract"))
