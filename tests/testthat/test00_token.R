@@ -40,7 +40,10 @@ if(!interactive())
 lapply(AzureAuth::list_azure_tokens(), function(token)
 {
     hash <- token$hash()
-    if(grepl("kusto\\.windows\\.net", token$credentials$resource))
+    name_suffix <- "kusto\\.windows\\.net"
+    if((!is.null(token$resource) && grepl(name_suffix, token$resource)) ||
+       (!is.null(token$scope) && grepl(name_suffix, token$scope)) ||
+       (!is.null(token$credentials$resource) && grepl(name_suffix, token$credentials$resource)))
         file.remove(file.path(AzureAuth::AzureR_dir(), hash))
 })
 

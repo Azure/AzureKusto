@@ -74,10 +74,15 @@ list_kusto_tokens <- function()
 {
     lst <- AzureAuth::list_azure_tokens()
 
-    is_kusto <- sapply(lst, function(tok)
-        grepl("kusto.windows.net", tok$credentials$resource, fixed=TRUE))
+    is_kusto <- function(x)
+    {
+        !is.null(x) && grepl("kusto.windows.net", x, fixed=TRUE)
+    }
 
-    lst[is_kusto]
+    lst[sapply(lst, function(tok)
+    {
+        is_kusto(tok$resource) || is_kusto(tok$scope) || is_kusto(tok$credentials$resource)
+    })]
 }
 
 
