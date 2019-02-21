@@ -5,6 +5,9 @@
 
 context("Ingesting")
 
+# skip from testing
+skip("Automated database ingestion tests skipped: run manually")
+
 tenant <- Sys.getenv("AZ_TEST_TENANT_ID")
 app <- Sys.getenv("AZ_TEST_APP_ID")
 password <- Sys.getenv("AZ_TEST_PASSWORD")
