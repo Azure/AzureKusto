@@ -124,7 +124,7 @@ public=list(
 
     get_query_token=function(tenant=self$get_default_tenant(), ...)
     {
-        get_kusto_token(server=self$properties$queryUri, tenant=tenant, ...)
+        get_kusto_token(server=self$properties$uri, tenant=tenant, ...)
     },
 
     get_ingestion_token=function(tenant=self$get_default_tenant(), ...)

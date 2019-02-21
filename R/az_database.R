@@ -122,7 +122,7 @@ public=list(
             tenant <- self$cluster$get_default_tenant()
 
         token <- self$cluster$get_query_token(tenant)
-        server <- self$cluster$properties$queryUri
+        server <- self$cluster$properties$uri
         database <- basename(self$name)
         kusto_database_endpoint(server=server, database=database, tenantid=tenant,
             .query_token=token,

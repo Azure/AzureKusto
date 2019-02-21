@@ -42,7 +42,7 @@ test_that("Resource access functions work",
     endp1 <- db$get_database_endpoint()
     expect_is(endp1, "kusto_database_endpoint")
 
-    server <- srv$properties$queryUri
+    server <- srv$properties$uri
     endp2 <- kusto_database_endpoint(server=server, database=dbname, tenantid=tenant)
     expect_is(endp2, "kusto_database_endpoint")
 
