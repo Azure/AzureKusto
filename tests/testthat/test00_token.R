@@ -85,3 +85,14 @@ test_that("Obtaining token from own app works",
     expect_identical(tok1$hash(), tok2$hash())
     expect_identical(tok1$hash(), tok2$hash())
 })
+
+
+# should get one devicecode prompt here
+test_that("Obtaining token for common tenant works",
+{
+    srvuri <- sprintf("https://%s.%s.kusto.windows.net", srvname, srvloc)
+    tok <- get_kusto_token(srvuri)
+    expect_true(AzureAuth::is_azure_token(tok))
+})
+
+Sys.unsetenv("AZ_TEST_KUSTO_TOKEN_HASH")

@@ -10,15 +10,13 @@ You can install the development version from GitHub, via `devtools::install_gith
 
 ### Kusto Endpoint Interface
 
-Connect to a Kusto cluster by instantiating a `kusto_database_endpoint` object with the cluster URI, database name, and an `AzureRMR::AzureToken` object, which you can obtain via the `get_kusto_token` helper function.
+Connect to a Kusto cluster by instantiating a `kusto_database_endpoint` object with the cluster URI and database name.
 
 ```r
 
 library(AzureKusto)
 
-Samples <- kusto_database_endpoint(server="https://help.kusto.windows.net",
-    database="Samples",
-    .query_token=get_kusto_token(clustername="help", tenant="microsoft"))
+Samples <- kusto_database_endpoint(server="https://help.kusto.windows.net", database="Samples")
 
 # To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code FPD8GZPY9 to authenticate.
 # Waiting for device code in browser...

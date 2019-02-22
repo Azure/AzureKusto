@@ -25,9 +25,13 @@
 #' @seealso
 #' [kusto_database_endpoint], [AzureAuth::get_azure_token]
 #' @export
-get_kusto_token <- function(server=NULL, clustername, location=NULL, tenant, app=.kusto_app_id, auth_type=NULL, ...)
+get_kusto_token <- function(server=NULL, clustername, location=NULL, tenant=NULL, app=.kusto_app_id, auth_type=NULL,
+                            ...)
 {
-    tenant <- AzureAuth::normalize_tenant(tenant)
+    tenant <- if(is.null(tenant))
+        "common"
+    else AzureAuth::normalize_tenant(tenant)
+
     if(is.null(server))
     {
         location <- normalize_location(location)
@@ -45,14 +49,17 @@ get_kusto_token <- function(server=NULL, clustername, location=NULL, tenant, app
 
 #' @rdname get_kusto_token
 #' @export
-delete_kusto_token <- function(server=NULL, clustername, location=NULL, tenant, app=.kusto_app_id, auth_type=NULL,
+delete_kusto_token <- function(server=NULL, clustername, location=NULL, tenant=NULL, app=.kusto_app_id, auth_type=NULL,
                                ..., hash=NULL, confirm=TRUE)
 {
     # use hash if provided
     if(!is.null(hash))
         return(AzureAuth::delete_azure_token(hash=hash, confirm=confirm))
 
-    tenant <- AzureAuth::normalize_tenant(tenant)
+    tenant <- if(is.null(tenant))
+        "common"
+    else AzureAuth::normalize_tenant(tenant)
+
     if(is.null(server))
     {
         location <- normalize_location(location)
@@ -64,7 +71,7 @@ delete_kusto_token <- function(server=NULL, clustername, location=NULL, tenant, 
     if(is.null(auth_type) && app == .kusto_app_id && (!"username" %in% names(list(...))))
         auth_type <- "device_code"
 
-    AzureAuth::delete_azure_token(server, tenant, app, auth_type=auth_type, confirm=confirm)
+    AzureAuth::delete_azure_token(server, tenant, app, auth_type=auth_type, confirm=confirm, ...)
 }
 
 

@@ -6,12 +6,12 @@
 \alias{list_kusto_tokens}
 \title{Manage AAD authentication tokens for Kusto clusters}
 \usage{
-get_kusto_token(server = NULL, clustername, location = NULL, tenant,
-  app = .kusto_app_id, auth_type = NULL, ...)
+get_kusto_token(server = NULL, clustername, location = NULL,
+  tenant = NULL, app = .kusto_app_id, auth_type = NULL, ...)
 
-delete_kusto_token(server = NULL, clustername, location = NULL, tenant,
-  app = .kusto_app_id, auth_type = NULL, ..., hash = NULL,
-  confirm = TRUE)
+delete_kusto_token(server = NULL, clustername, location = NULL,
+  tenant = NULL, app = .kusto_app_id, auth_type = NULL, ...,
+  hash = NULL, confirm = TRUE)
 
 list_kusto_tokens()
 }

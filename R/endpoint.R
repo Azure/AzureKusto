@@ -195,7 +195,7 @@ find_endpoint_token <- function(properties, .query_token)
         auth_type <- "client_credentials"
     }
 
-    return(AzureRMR::get_azure_token(properties$server, tenant=properties$tenantid,
+    return(get_kusto_token(properties$server, tenant=properties$tenantid,
         app=properties$appclientid, password=token_pwd, username=token_user, auth_type=auth_type))
 }
 
