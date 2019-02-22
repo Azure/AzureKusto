@@ -22,7 +22,7 @@
 ingest_local <- function(database, src, dest_table, method=NULL, staging_container=NULL,
     ingestion_token=database$token, http_status_handler="stop", ...)
 {
-    AzureStor <- requireNamespace("AzureStor")
+    AzureStor <- requireNamespace("AzureStor", quietly=TRUE)
     if(is.null(method))
         method <- if(AzureStor) "indirect" else "streaming"
 
@@ -161,7 +161,7 @@ ingest_streaming <- function(database, src, dest_table, ingestion_token=database
 
 ingest_indirect <- function(database, src, dest_table, staging_container=NULL, ...)
 {
-    if(!requireNamespace("AzureStor"))
+    if(!requireNamespace("AzureStor", quietly=TRUE))
         stop("AzureStor package must be installed to do indirect ingestion", call.=FALSE)
 
     opts <- utils::modifyList(list(...), list(
