@@ -177,8 +177,6 @@ setMethod("dbDisconnect", "AzureKustoDriver", function(conn, ...)
 #' @export
 setMethod("dbReadTable", c("AzureKustoConnection", "character"), function(conn, name, ...)
 {
-    if(!dbi_validate_table_name(name))
-        stop("Must provide a table name, not an expression")
     run_query(conn@endpoint, escape(ident(name)))
 })
 
@@ -187,9 +185,6 @@ setMethod("dbReadTable", c("AzureKustoConnection", "character"), function(conn, 
 #' @export
 setMethod("dbWriteTable", "AzureKustoConnection", function(conn, name, value, method, ...)
 {
-    if(!dbi_validate_table_name(name))
-        stop("Must provide a table name, not an expression")
-
     if(!dbExistsTable(conn, name))
         dbCreateTable(conn, name, value)
 
@@ -231,9 +226,6 @@ setMethod("dbCreateTable", "AzureKustoConnection", function(conn, name, fields, 
     if(temporary)
         stop("Kusto does not have temporary tables")
 
-    if(!dbi_validate_table_name(name))
-        stop("Must provide a table name, not an expression")
-
     cmd <- paste(".create table",
         escape(ident(name)),
         build_fields())
@@ -245,9 +237,6 @@ setMethod("dbCreateTable", "AzureKustoConnection", function(conn, name, fields, 
 #' @export
 setMethod("dbRemoveTable", "AzureKustoConnection", function(conn, name, ...)
 {
-    if(!dbi_validate_table_name(name))
-        stop("Must provide a table name, not an expression")
-
     cmd <- paste(".drop table", escape(ident(name)))
     run_query(conn@endpoint, cmd)
 })
@@ -266,9 +255,6 @@ setMethod("dbListTables", "AzureKustoConnection", function(conn, ...)
 #' @export
 setMethod("dbExistsTable", "AzureKustoConnection", function(conn, name, ...)
 {
-    if(!dbi_validate_table_name(name))
-        stop("Must provide a table name, not an expression")
-
     name %in% dbListTables(conn)
 })
 
@@ -363,9 +349,6 @@ setMethod("dbExecute", c("AzureKustoConnection", "character"), function(conn, st
 #' @export
 setMethod("dbListFields", c("AzureKustoConnection", "character"), function(conn, name, ...)
 {
-    if(!dbi_validate_table_name(name))
-        stop("Must provide a table name, not an expression")
-
     cmd <- paste(".show table", escape(ident(name)))
     res <- run_query(conn@endpoint, cmd)
     res[[1]]
@@ -381,8 +364,3 @@ setMethod("dbColumnInfo", "AzureKustoResult", function(res, ...)
 })
 
 
-# helper function for dbXxxTable functions: check that argument is a name, not an expr
-dbi_validate_table_name <- function(string)
-{
-    grepl("^[_a-zA-Z][_a-zA-Z0-9]*$", string)
-}

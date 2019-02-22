@@ -10,7 +10,7 @@ test_that("filter generates simple expressions",
         filter(x > 1L) %>%
         kql_build()
 
-    expect_equal(out$ops[[2]][[1]], kql('where x > 1'))
+    expect_equal(out$ops[[2]][[1]], kql("where ['x'] > 1"))
 })
 
 # mutate ------------------------------------------------------------------
@@ -21,5 +21,5 @@ test_that("mutate generates simple expressions",
         mutate(y = x + 1L) %>%
         kql_build()
 
-    expect_equal(out$ops[[2]], kql("extend y = x + 1"))
+    expect_equal(out$ops[[2]], kql("extend ['y'] = ['x'] + 1"))
 })

@@ -185,12 +185,14 @@ kql_escape_string <- function(x)
     kql_quote(x, "'")
 }
 
-#' Escape a Kusto identifer (pass-through, as identifiers don't need quoting)
+#' Escape a Kusto identifer with ['']
 #' @param x An identifier to escape
 #' @export
 kql_escape_ident <- function(x)
 {
-    x
+    if(!is_empty(x) && nchar(x) > 0)
+        paste0("[", kql_escape_string(x), "]")
+    else x
 }
 
 #' Escape a Kusto logical value.

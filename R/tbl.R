@@ -10,8 +10,8 @@
 #'
 #' df <- tbl_kusto_abstract(df, "table1", src = simulate_kusto())
 #' df %>% summarise(x = sd(x)) %>% show_query()
-tbl_kusto_abstract <- function(df, table_name, src = NULL) {
-  src$table <- table_name
+tbl_kusto_abstract <- function(df, table_name, src = simulate_kusto()) {
+  src$table <- escape(ident(table_name))
   make_tbl("kusto_abstract", ops = op_base_local(df), src = src)
 }
 
@@ -181,7 +181,7 @@ simulate_kusto <- function()
     structure(
         list(
             database = "local_df",
-            cluster = "local_df"
+            server = "local_df"
         ),
         class = "kusto_database_endpoint"
     )
@@ -205,8 +205,12 @@ tbl_kusto <- function(kusto_database, table_name, ...)
 {
     stopifnot(inherits(kusto_database, "kusto_database_endpoint"))
     params <- list(...)
-    kusto_database$table <- table_name
-    query_str <- sprintf("%s | take 1", escape(ident(table_name)))
+    #in case the table name is a function like MyFunction(arg1, arg2) we need to split it
+    table_ident <- strsplit(table_name, split="\\(")[[1]]
+    table_ident[1] <- escape(ident(table_ident[1]))
+    escaped_table_name <- paste(table_ident, collapse="(")
+    kusto_database$table <- escaped_table_name
+    query_str <- sprintf("%s | take 1", escaped_table_name)
     vars <- names(run_query(kusto_database, query_str, ...))
     ops <- op_base_remote(table_name, vars)
     make_tbl(c("kusto", "kusto_abstract"), src = kusto_database, ops = ops, params = params)
@@ -226,4 +230,33 @@ collect.tbl_kusto <- function(tbl, ...)
     params$qry_cmd <- q_str
     res <- do.call(run_query, params)
     as_tibble(res)
+}
+
+
+#' @keywords internal
+#' @export
+print.tbl_kusto_abstract <- function(x, ...)
+{
+    # different paths if this is a query, simulated table, or real table
+    if(!inherits(x$ops, "op_base"))
+    {
+        cat("<Kusto query>\n")
+        print(show_query(x))
+    }
+    else if(!inherits(x, "tbl_kusto"))
+    {
+        
+        cat("<Simulated Kusto table '")
+        name <- paste0("local_df/", x$src$table)
+        cat(name, "'>\n", sep="")
+    }
+    else
+    {
+        cat("<Kusto table '")
+        url <- httr::parse_url(x$src$server)
+        url$path <- file.path(x$src$database, x$src$table)
+        cat(httr::build_url(url), "'>\n", sep="")
+    }
+
+    invisible(x)
 }

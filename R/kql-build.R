@@ -63,7 +63,7 @@ kql_build.op_rename <- function(op, ...)
     assigned_exprs <- mapply(get_expr, op$dots)
     stmts <- lapply(assigned_exprs, translate_kql)
     pieces <- lapply(seq_along(assigned_exprs),
-                     function(i) sprintf("%s = %s", names(assigned_exprs)[i], stmts[i]))
+                     function(i) sprintf("%s = %s", escape(ident(names(assigned_exprs)[i])), stmts[i]))
     kql(paste0("project-rename ", paste0(pieces, collapse=", ")))
 }
 
@@ -111,7 +111,7 @@ kql_build.op_mutate <- function(op, ...)
 
     stmts <- mapply(translate_kql, assigned_exprs)
     pieces <- lapply(seq_along(assigned_exprs),
-                     function(i) sprintf("%s = %s", names(assigned_exprs)[i], stmts[i]))
+                     function(i) sprintf("%s = %s", escape(ident(names(assigned_exprs)[i])), stmts[i]))
     kql(paste0(verb, pieces, by))
 }
 
@@ -129,7 +129,7 @@ kql_build.op_summarise <- function(op, ...)
     assigned_exprs <- mapply(get_expr, op$dots)
     stmts <- mapply(translate_kql, assigned_exprs)
     pieces <- lapply(seq_along(assigned_exprs),
-                     function(i) sprintf("%s = %s", names(assigned_exprs)[i], stmts[i]))
+                     function(i) sprintf("%s = %s", escape(ident(names(assigned_exprs)[i])), stmts[i]))
     groups <- build_kql(escape(ident(op$groups), collapse = ", "))
     by <- ifelse(nchar(groups) > 0, paste0(" by ", groups), "")
     kql(paste0("summarize ", pieces, by))
@@ -171,16 +171,23 @@ kql_build.op_join <- function(op, ...)
         by_clause <- kql(ident(paste0(mapply(build_by_clause, by$x, by$y), collapse = ", ")))
     }
 
-    kind <- switch(join_type,
-                   "inner_join" = "inner",
-                   "left_join" = "leftouter",
-                   "right_join" = "rightouter",
-                   "full_join" = "fullouter",
-                   "semi_join" = "leftsemi",
-                   "anti_join" = "leftanti",
-                   "inner")
+    y_render <- kql(kql_render(kql_build(op$y)))
 
-    build_kql("join kind = ", ident(kind), " (", kql(kql_render(kql_build(op$y))), ") on ", by_clause)
+    switch(join_type,
+        inner_join=
+            build_kql("join kind = inner (", y_render, ") on ", by_clause),
+        left_join=
+            build_kql("join kind = leftouter (", y_render, ") on ", by_clause),
+        right_join=
+            build_kql("join kind = rightouter (", y_render, ") on ", by_clause),
+        full_join=
+            build_kql("join kind = fullouter (", y_render, ") on ", by_clause),
+        semi_join=
+            build_kql("join kind = leftsemi (", y_render, ") on ", by_clause),
+        anti_join=
+            build_kql("join kind = leftanti (", y_render, ") on ", by_clause),
+        build_kql("join kind = inner (", y_render, ") on ", by_clause)
+    )
 }
 
 #' @export
@@ -188,11 +195,13 @@ kql_build.op_set_op <- function(op, ...)
 {
     op_type <- op$args$type
 
-    kind <- switch(op_type,
-                   "union_all" = "outer",
-                   "inner")
+    y_render <- kql(kql_render(kql_build(op$y)))
 
-    build_kql("union kind = ", ident(kind), " (", kql(kql_render(kql_build(op$y))), ")")
+    switch(op_type,
+        union_all=
+            build_kql("union kind = outer (", y_render, ")"),
+        build_kql("union kind = inner (", y_render, ")")
+    )
 }
 
 append_asc <- function(dot)
@@ -279,5 +288,5 @@ kql_query <- function(ops, src)
 
 build_by_clause <- function(x, y )
 {
-    sprintf("$left.%s == $right.%s", x, y)
+    sprintf("$left.%s == $right.%s", escape(ident(x)), escape(ident(y)))
 }

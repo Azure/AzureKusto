@@ -4,7 +4,7 @@
 \alias{tbl_kusto_abstract}
 \title{Create a local lazy tbl}
 \usage{
-tbl_kusto_abstract(df, table_name, src = NULL)
+tbl_kusto_abstract(df, table_name, src = simulate_kusto())
 }
 \description{
 Useful for testing KQL generation without a remote connection.

@@ -215,8 +215,8 @@ ingest_inline <- function(database, src, dest_table, ...)
     }
     else records <- readLines(src)
 
-    cmd <- paste(".ingest inline into table",
-        escape(ident(dest_table)),
+    cmd <- paste0(".ingest inline into table ",
+        escape(ident(dest_table)), " ",
         prop_list,
         "<|\n",
         paste0(records, collapse="\n"))

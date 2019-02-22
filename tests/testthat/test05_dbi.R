@@ -48,12 +48,13 @@ test_that("DBI table functions work",
     expect_equal(nrow(ir), 150)
     expect_equal(ncol(ir), 5)
 
-    # fail on non-table input arg
-    expect_error(DBI::dbExistsTable(dbi, "not a name"))
-    expect_error(DBI::dbReadTable(dbi, "not a name"))
-    expect_error(DBI::dbWriteTable(dbi, "not a name"))
+    # non-syntactic names
+    expect_false(DBI::dbExistsTable(dbi, "name with spaces"))
+    expect_silent(DBI::dbCreateTable(dbi, "name with spaces", mtcars))
+    expect_true(DBI::dbExistsTable(dbi, "name with spaces"))
+    expect_silent(DBI::dbRemoveTable(dbi, "name with spaces"))
 
-    # don't test table creation/insertion: Kusto has unpredictable lags
+    # don't test row insertion: Kusto has unpredictable lags
 })
 
 

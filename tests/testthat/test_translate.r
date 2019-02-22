@@ -3,7 +3,7 @@ context("translate")
 
 tbl_iris <- tibble::as.tibble(iris)
 names(tbl_iris) <- c("SepalLength", "SepalWidth", "PetalLength", "PetalWidth", "Species")
-tbl_iris <- tbl_kusto_abstract(tbl_iris, "iris", src = simulate_kusto())
+tbl_iris <- tbl_kusto_abstract(tbl_iris, "iris")
 
 test_that("select is translated to project",
 {
@@ -11,7 +11,7 @@ test_that("select is translated to project",
         dplyr::select(Species, SepalLength) %>%
         show_query()
 
-    expect_equal(q, kql("database('local_df').iris\n| project Species, SepalLength"))
+    expect_equal(q, kql("database('local_df').['iris']\n| project ['Species'], ['SepalLength']"))
 })
 
 test_that("distinct is translated to distinct",
@@ -20,21 +20,21 @@ test_that("distinct is translated to distinct",
         dplyr::distinct(Species, SepalLength) %>%
         show_query()
 
-    expect_equal(q, kql("database('local_df').iris\n| distinct Species, SepalLength"))
+    expect_equal(q, kql("database('local_df').['iris']\n| distinct ['Species'], ['SepalLength']"))
 })
 
 test_that("kql_infix formats correctly",
 {
     fn <- kql_infix("==")
     expr <- fn(translate_kql(foo), translate_kql(bar))
-    expect_equal(expr, kql("foo == bar"))
+    expect_equal(expr, kql("['foo'] == ['bar']"))
 })
 
 test_that("kql_prefix formats correctly",
 {
     fn <- kql_prefix("sum")
     expr <- fn(translate_kql(foo), translate_kql(bar), translate_kql(baz))
-    expect_equal(expr, kql("sum(foo, bar, baz)"))
+    expect_equal(expr, kql("sum(['foo'], ['bar'], ['baz'])"))
 })
 
 test_that("filter is translated to where with a single expression",
@@ -45,7 +45,7 @@ test_that("filter is translated to where with a single expression",
     q_str <- q %>%
         show_query()
 
-    expect_equal(q_str, kql("database('local_df').iris\n| where Species == 'setosa'"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| where ['Species'] == 'setosa'"))
 })
 
 test_that("multiple arguments to filter() become multiple where clauses",
@@ -56,7 +56,7 @@ test_that("multiple arguments to filter() become multiple where clauses",
     q_str <- q %>%
         show_query()
 
-    expect_equal(q_str, kql("database('local_df').iris\n| where Species == 'setosa'\n| where SepalLength > 4.1"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| where ['Species'] == 'setosa'\n| where ['SepalLength'] > 4.1"))
 })
 
 test_that("filter errors on missing symbols",
@@ -75,7 +75,7 @@ test_that("variables from enclosing environment are passed to filter()",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').iris\n| where SepalLength <= 2.5"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| where ['SepalLength'] <= 2.5"))
 })
 
 test_that("variables from enclosing environment are passed to mutate()",
@@ -86,7 +86,7 @@ test_that("variables from enclosing environment are passed to mutate()",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').iris\n| extend SepalLengthLimit = 2.5"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| extend ['SepalLengthLimit'] = 2.5"))
 })
 
 test_that("select and filter can be combined",
@@ -98,7 +98,7 @@ test_that("select and filter can be combined",
     q_str <- q %>%
         show_query()
 
-    expect_equal(q_str, kql("database('local_df').iris\n| where Species == 'setosa'\n| project Species, SepalLength"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| where ['Species'] == 'setosa'\n| project ['Species'], ['SepalLength']"))
 })
 
 test_that("select errors on column after selected away",
@@ -118,7 +118,7 @@ test_that("mutate translates to extend",
     q_str <- q %>%
         show_query()
 
-    expect_equal(q_str, kql("database('local_df').iris\n| extend Species2 = Species"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| extend ['Species2'] = ['Species']"))
 })
 
 test_that("multiple arguments to mutate() become multiple extend clauses",
@@ -129,13 +129,13 @@ test_that("multiple arguments to mutate() become multiple extend clauses",
     q_str <- q %>%
         show_query()
 
-    expect_equal(q_str, kql("database('local_df').iris\n| extend Species2 = Species\n| extend Species3 = Species2\n| extend Foo = 1 + 2"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| extend ['Species2'] = ['Species']\n| extend ['Species3'] = ['Species2']\n| extend ['Foo'] = 1 + 2"))
 })
 
 test_that("sum() translated correctly",
 {
     expect_equal(as.character(translate_kql(MeanSepalLength = mean(SepalLength, na.rm = TRUE))),
-                 "avg(SepalLength)"
+                 "avg(['SepalLength'])"
                  )
 })
 
@@ -147,7 +147,7 @@ test_that("arrange() generates order by ",
     q_str <- q %>%
         show_query()
 
-    expect_equal(q_str, kql("database('local_df').iris\n| order by Species asc, SepalLength desc"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| order by ['Species'] asc, ['SepalLength'] desc"))
 })
 
 test_that("group_by() followed by summarize() generates summarize clause",
@@ -159,7 +159,7 @@ test_that("group_by() followed by summarize() generates summarize clause",
 
     q_str <- q %>% show_query()
 
-    expect_equal(q_str, kql("database('local_df').iris\n| summarize MaxSepalLength = max(SepalLength) by Species"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| summarize ['MaxSepalLength'] = max(['SepalLength']) by ['Species']"))
 })
 
 test_that("group_by() followed by ungroup() followed by summarize() generates summarize clause",
@@ -173,7 +173,7 @@ test_that("group_by() followed by ungroup() followed by summarize() generates su
 
     q_str <- q %>% show_query()
 
-    expect_equal(q_str, kql("database('local_df').iris\n| summarize MaxSepalLength = max(SepalLength) by Species\n| summarize MeanOfMaxSepalLength = avg(MaxSepalLength)"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| summarize ['MaxSepalLength'] = max(['SepalLength']) by ['Species']\n| summarize ['MeanOfMaxSepalLength'] = avg(['MaxSepalLength'])"))
 })
 
 test_that("group_by() followed by mutate() partitions the mutation by the grouping variables",
@@ -185,7 +185,7 @@ test_that("group_by() followed by mutate() partitions the mutation by the groupi
 
     q_str <- q %>% show_query()
 
-    expect_equal(q_str, kql("database('local_df').iris\n| as tmp | join kind=leftouter (tmp | summarize SpeciesMaxSepalLength = max(SepalLength) by Species) on Species\n| project SepalLength, SepalWidth, PetalLength, PetalWidth, Species, SpeciesMaxSepalLength"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| as tmp | join kind=leftouter (tmp | summarize ['SpeciesMaxSepalLength'] = max(['SepalLength']) by ['Species']) on ['Species']\n| project ['SepalLength'], ['SepalWidth'], ['PetalLength'], ['PetalWidth'], ['Species'], ['SpeciesMaxSepalLength']"))
 })
 
 test_that("mutate() with an agg function and no group_by() groups by all other columns",
@@ -195,7 +195,7 @@ test_that("mutate() with an agg function and no group_by() groups by all other c
 
     q_str <- q %>% show_query()
 
-    expect_equal(q_str, kql("database('local_df').iris\n| summarize MaxSepalLength = max(SepalLength) by SepalLength, SepalWidth, PetalLength, PetalWidth, Species"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| summarize ['MaxSepalLength'] = max(['SepalLength']) by ['SepalLength'], ['SepalWidth'], ['PetalLength'], ['PetalWidth'], ['Species']"))
 })
 
 test_that("is_agg works with symbols and strings",
@@ -216,7 +216,7 @@ test_that("rename() renames variables",
 
     q_str <- q %>% show_query()
 
-    expect_equal(q_str, kql("database('local_df').iris\n| project-rename Species2 = Species, SepalLength2 = SepalLength"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| project-rename ['Species2'] = ['Species'], ['SepalLength2'] = ['SepalLength']"))
 })
 
 test_that("rename() errors when given a nonexistent column",
@@ -234,7 +234,7 @@ test_that("head(10) translates to take 10",
 
     q_str <- q %>% show_query()
 
-    expect_equal(q_str, kql("database('local_df').iris\n| take 10"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| take 10"))
 })
 
 test_that("head() translates to take 6 (the default)",
@@ -244,7 +244,7 @@ test_that("head() translates to take 6 (the default)",
 
     q_str <- q %>% show_query
 
-    expect_equal(q_str, kql("database('local_df').iris\n| take 6"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| take 6"))
 })
 
 left <- tbl_iris
@@ -274,7 +274,7 @@ test_that("inner_join() on a single column translates correctly",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').iris\n| join kind = inner (database('local_df').iris2) on Species"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| join kind = inner (database('local_df').['iris2']) on ['Species']"))
 })
 
 test_that("inner_join() on two columns translates correctly",
@@ -284,7 +284,7 @@ test_that("inner_join() on two columns translates correctly",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').iris\n| join kind = inner (database('local_df').iris2) on Species, SepalWidth"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| join kind = inner (database('local_df').['iris2']) on ['Species'], ['SepalWidth']"))
 })
 
 test_that("inner_join() on one differently named column translates correctly",
@@ -294,7 +294,7 @@ test_that("inner_join() on one differently named column translates correctly",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').iris\n| join kind = inner (database('local_df').iris3) on $left.Species == $right.Species2"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| join kind = inner (database('local_df').['iris3']) on $left.['Species'] == $right.['Species2']"))
 })
 
 test_that("inner_join() on two differently named columns translates correctly",
@@ -305,7 +305,7 @@ test_that("inner_join() on two differently named columns translates correctly",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').iris\n| join kind = inner (database('local_df').iris3) on $left.Species == $right.Species2, $left.SepalWidth == $right.SepalWidth2"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| join kind = inner (database('local_df').['iris3']) on $left.['Species'] == $right.['Species2'], $left.['SepalWidth'] == $right.['SepalWidth2']"))
 })
 
 test_that("left_join() on a single column translates correctly",
@@ -316,7 +316,7 @@ test_that("left_join() on a single column translates correctly",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').iris\n| join kind = leftouter (database('local_df').iris2) on Species"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| join kind = leftouter (database('local_df').['iris2']) on ['Species']"))
 })
 
 test_that("right_join() on a single column translates correctly",
@@ -327,7 +327,7 @@ test_that("right_join() on a single column translates correctly",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').iris\n| join kind = rightouter (database('local_df').iris2) on Species"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| join kind = rightouter (database('local_df').['iris2']) on ['Species']"))
 })
 
 test_that("full_join() on a single column translates correctly",
@@ -338,7 +338,7 @@ test_that("full_join() on a single column translates correctly",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').iris\n| join kind = fullouter (database('local_df').iris2) on Species"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| join kind = fullouter (database('local_df').['iris2']) on ['Species']"))
 })
 
 test_that("semi_join() on a single column translates correctly",
@@ -349,7 +349,7 @@ test_that("semi_join() on a single column translates correctly",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').iris\n| join kind = leftsemi (database('local_df').iris2) on Species"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| join kind = leftsemi (database('local_df').['iris2']) on ['Species']"))
 })
 
 test_that("anti_join() on a single column translates correctly",
@@ -360,7 +360,7 @@ test_that("anti_join() on a single column translates correctly",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').iris\n| join kind = leftanti (database('local_df').iris2) on Species"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| join kind = leftanti (database('local_df').['iris2']) on ['Species']"))
 })
 
 test_that("union_all translates correctly",
@@ -372,7 +372,7 @@ test_that("union_all translates correctly",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').iris\n| union kind = outer (database('local_df').iris)"))
+    expect_equal(q_str, kql("database('local_df').['iris']\n| union kind = outer (database('local_df').['iris'])"))
 
 })
 
@@ -391,7 +391,7 @@ test_that("as.Date() produces a Kusto datetime",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').df\n| where dates == todatetime('2019-01-01')"))
+    expect_equal(q_str, kql("database('local_df').['df']\n| where ['dates'] == todatetime('2019-01-01')"))
     
 })
 
@@ -410,7 +410,7 @@ test_that("as.POSIXct() produces a Kusto datetime",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').df\n| where dates == todatetime(todatetime('2019-01-01T23:59:59'))"))
+    expect_equal(q_str, kql("database('local_df').['df']\n| where ['dates'] == todatetime(todatetime('2019-01-01T23:59:59'))"))
     
 })
 
@@ -429,6 +429,6 @@ test_that("as.POSIXlt() produces a Kusto datetime",
 
     q_str <- show_query(q)
 
-    expect_equal(q_str, kql("database('local_df').df\n| where dates == todatetime('2019-01-01')"))
+    expect_equal(q_str, kql("database('local_df').['df']\n| where ['dates'] == todatetime('2019-01-01')"))
     
 })

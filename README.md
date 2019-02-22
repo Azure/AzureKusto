@@ -77,9 +77,9 @@ q <- StormEvents %>%
 
 show_query(q)
 
-# <KQL> database('Samples').StormEvents
-# | summarize EventCount = count() by State
-# | order by State asc
+## <KQL> database('Samples').['StormEvents']
+## | summarize ['EventCount'] = count() by ['State']
+## | order by ['State'] asc
 
 collect(q)
 

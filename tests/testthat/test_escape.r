@@ -4,12 +4,12 @@ context("KQL: escaping")
 
 ei <- function(...) unclass(escape(ident(c(...))))
 
-test_that("identifiers are not quoted", {
-  expect_equal(ei("x"), "x")
+test_that("identifiers are bracket-escaped", {
+  expect_equal(ei("x"), "['x']")
 })
 
 test_that("identifiers are comma separated", {
-  expect_equal(ei("x", "y"), "x, y")
+  expect_equal(ei("x", "y"), "['x'], ['y']")
 })
 
 # Zero-length inputs ------------------------------------------------------
