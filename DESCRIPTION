@@ -23,7 +23,7 @@ Imports:
     R6,
     openssl,
     AzureAuth,
-    AzureRMR (>= 1.0.0.9000),
+    AzureRMR (>= 2.0.0),
     dplyr,
     tidyselect (>= 0.2.4),
     DBI (>= 1.0.0)
@@ -31,10 +31,6 @@ Suggests:
     bit64,
     knitr,
     testthat,
-    AzureStor (>= 1.0.0.9000)
+    AzureStor (>= 2.0.0)
 Roxygen: list(markdown=TRUE)
 RoxygenNote: 6.1.0.9000
-Remotes:
-    cloudyr/AzureAuth,
-    cloudyr/AzureRMR,
-    cloudyr/AzureStor
