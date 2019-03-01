@@ -4,7 +4,12 @@ R interface to Kusto, also known as [Azure Data Explorer](https://azure.microsof
 
 ## Installation
 
-You can install the development version from GitHub, via `devtools::install_github("cloudyr/AzureKusto")`.
+You can install the development version from GitHub. Note that if you are using Microsoft R, AzureKusto requires recent versions of some packages which will likely not be in your default MRAN snapshot. You can set the repository to CRAN before installing.
+
+```r
+options(repos="https://cloud.r-project.org")
+devtools::install_github("cloudyr/AzureKusto")
+```
 
 ## Example Usage
 
