@@ -25,6 +25,13 @@ escape.ident <- function(x, parens = FALSE, collapse = ", ")
 }
 
 #' @export
+escape.ident_q <- function(x, parens = FALSE, collapse = ", ")
+{
+    y <- kql_escape_ident_q(x)
+    kql_vector(y, parens, collapse)
+}
+
+#' @export
 escape.logical <- function(x, parens = NA, collapse = ", ")
 {
     kql_vector(kql_escape_logical(x), parens, collapse)
@@ -185,7 +192,7 @@ kql_escape_string <- function(x)
     kql_quote(x, "'")
 }
 
-#' Escape a Kusto identifer with ['']
+#' Escape a Kusto identifer with \[' '\]
 #' @param x An identifier to escape
 #' @export
 kql_escape_ident <- function(x)
@@ -204,4 +211,12 @@ kql_escape_logical <- function(x)
     y <- tolower(as.character(x))
     y[is.na(x)] <- "null"
     y
+}
+
+#' Pass through an already-escaped Kusto identifier
+#' @param x An identifier to pass through
+#' @export
+kql_escape_ident_q <- function(x)
+{
+    x
 }

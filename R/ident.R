@@ -19,3 +19,12 @@ ident <- function(...)
 }
 
 setOldClass(c("ident", "character"), ident())
+
+
+#' Pass an already-escaped string to Kusto
+#' @param ... character strings to treat as already-escaped identifiers
+ident_q <- function(...)
+{
+    x <- c_character(...)
+    structure(x, class=c("ident_q", "ident", "character"))
+}

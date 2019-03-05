@@ -2,7 +2,7 @@
 % Please edit documentation in R/kql-escape.R
 \name{kql_escape_ident}
 \alias{kql_escape_ident}
-\title{Escape a Kusto identifer (pass-through, as identifiers don't need quoting)}
+\title{Escape a Kusto identifer with [' ']}
 \usage{
 kql_escape_ident(x)
 }
@@ -10,5 +10,5 @@ kql_escape_ident(x)
 \item{x}{An identifier to escape}
 }
 \description{
-Escape a Kusto identifer (pass-through, as identifiers don't need quoting)
+Escape a Kusto identifer with [' ']
 }

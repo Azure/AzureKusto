@@ -132,7 +132,27 @@ kql_build.op_summarise <- function(op, ...)
                      function(i) sprintf("%s = %s", escape(ident(names(assigned_exprs)[i])), stmts[i]))
     groups <- build_kql(escape(ident(op$groups), collapse = ", "))
     by <- ifelse(nchar(groups) > 0, paste0(" by ", groups), "")
-    kql(paste0("summarize ", pieces, by))
+
+    .strategy <- if(!is.null(op$args$.strategy))
+        paste0(" hint.strategy = ", op$args$.strategy)
+    else NULL
+
+    .shufflekeys <- if(!is.null(op$args$.shufflekeys))
+    {
+        vars <- sapply(op$args$.shufflekeys, function(x) escape(ident(x)))
+        paste0(" hint.shufflekey = ", vars, collapse="")
+    }
+    else NULL
+
+    .num_partitions <- if(is.numeric(op$args$.num_partitions))
+        paste0(" hint.num_partitions = ", op$args$.num_partitions)
+    else if(!is.null(op$args$.num_partitions))
+        stop(".num_partitions must be a number", .call=FALSE)
+    else NULL
+    
+    # paste(c(*), collapse="") will not insert extra spaces when NULLs present
+    smry_str <- paste(c("summarize", .strategy, .shufflekeys, .num_partitions, " "), collapse="")
+    kql(ident_q(paste0(smry_str, pieces, by)))
 }
 
 #' @export
@@ -160,9 +180,7 @@ kql_build.op_join <- function(op, ...)
     join_type <- op$args$type
 
     by <- op$args$by
-
     by_x <- escape(ident(by$x))
-
     if (identical(by$x, by$y))
         by_clause <- by_x
     else
@@ -173,21 +191,36 @@ kql_build.op_join <- function(op, ...)
 
     y_render <- kql(kql_render(kql_build(op$y)))
 
-    switch(join_type,
-        inner_join=
-            build_kql("join kind = inner (", y_render, ") on ", by_clause),
-        left_join=
-            build_kql("join kind = leftouter (", y_render, ") on ", by_clause),
-        right_join=
-            build_kql("join kind = rightouter (", y_render, ") on ", by_clause),
-        full_join=
-            build_kql("join kind = fullouter (", y_render, ") on ", by_clause),
-        semi_join=
-            build_kql("join kind = leftsemi (", y_render, ") on ", by_clause),
-        anti_join=
-            build_kql("join kind = leftanti (", y_render, ") on ", by_clause),
-        build_kql("join kind = inner (", y_render, ") on ", by_clause)
+    .strategy <- if(!is.null(op$args$.strategy))
+        paste0(" hint.strategy = ", op$args$.strategy)
+    else NULL
+
+    .shufflekeys <- if(!is.null(op$args$.shufflekeys))
+    {
+        vars <- sapply(op$args$.shufflekeys, function(x) escape(ident(x)))
+        paste0(" hint.shufflekey = ", vars, collapse="")
+    }
+    else NULL
+
+    .num_partitions <- if(is.numeric(op$args$.num_partitions))
+        paste0(" hint.num_partitions = ", op$args$.num_partitions)
+    else if(!is.null(op$args$.num_partitions))
+        stop(".num_partitions must be a number", .call=FALSE)
+    else NULL
+
+    kind <- switch(join_type,
+        inner_join="inner",
+        left_join="leftouter",
+        right_join="rightouter",
+        full_join="fullouter",
+        semi_join="leftsemi",
+        anti_join="leftanti",
+        stop("unknown join type")
     )
+
+    # paste(c(*), collapse="") will not insert extra spaces when NULLs present
+    join_str <- ident_q(paste(c("join kind = ", kind, .strategy, .shufflekeys, .num_partitions, " "), collapse=""))
+    build_kql(join_str, "(", y_render, ") on ", by_clause)
 }
 
 #' @export
