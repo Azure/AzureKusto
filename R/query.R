@@ -17,6 +17,19 @@
 #'
 #' @seealso
 #' [kusto_database_endpoint], [ingest_local], [ingest_url], [ingest_blob], [ingest_adls2]
+#'
+#' @examples
+#' \dontrun{
+#' 
+#' endp <- kusto_database_endpoint(server="myclust.australiaeast.kusto.windows.net", database="db1")
+#'
+#' # a command
+#' run_query(endp, ".show table iris")
+#'
+#' # a query
+#' run_query(endp, "iris | count")
+#'
+#' }
 #' @export
 run_query <- function(database, qry_cmd, ..., .http_status_handler="stop")
 {

@@ -56,6 +56,18 @@
 #'
 #' @return
 #' An object of class `kusto_database_endpoint`.
+#'
+#' @examples
+#' \dontrun{
+#'
+#' kusto_database_endpoint(server="myclust.australiaeast.kusto.windows.net", database="db1")
+#'
+#' # supplying a token obtained previously
+#' token <- get_kusto_token("myclust.australiaeast.kusto.windows.net")
+#' kusto_database_endpoint(server="myclust.australiaeast.kusto.windows.net", database="db1",
+#'                         .query_token=token)
+#'
+#' }
 #' @seealso
 #' [run_query], [az_kusto_database]
 #' @rdname database_endpoint

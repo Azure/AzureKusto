@@ -99,6 +99,23 @@ ungroup.tbl_kusto_abstract <- function(.data, ...)
 #' @param .num_partitions The number of partitions for a shuffle query.
 #' @seealso
 #' [dplyr::summarise]
+#'
+#' @examples
+#' \dontrun{
+#'
+#' tbl1 <- tbl_kusto(db, "table1")
+#'
+#' ## standard dplyr syntax:
+#' summarise(tbl1, mx=mean(x))
+#'
+#' ## Kusto extensions:
+#' summarise(tbl1, mx=mean(x), .strategy="broadcast") # a broadcast summarise
+#'
+#' summarise(tbl1, mx=mean(x), .shufflekeys=c("var1", "var2")) # shuffle summarise with shuffle keys
+#'
+#' summarise(tbl1, mx=mean(x), .num_partitions=5)     # no. of partitions for a shuffle summarise
+#' }
+#'
 #' @rdname summarise
 #' @export
 summarise.tbl_kusto_abstract <- function(.data, ..., .strategy = NULL, .shufflekeys = NULL, .num_partitions = NULL)
@@ -128,7 +145,26 @@ head.tbl_kusto_abstract <- function(x, n = 6L, ...)
 #' @param ... Other arguments passed to lower-level functions.
 #' @seealso
 #' [dplyr::join]
-#' @aliases inner_join left_join right_join full_join semi_join anti_join 
+#'
+#' @examples
+#' \dontrun{
+#'
+#' tbl1 <- tbl_kusto(db, "table1")
+#' tbl2 <- tbl_kusto(db, "table2")
+#'
+#' # standard dplyr syntax:
+#' left_join(tbl1, tbl2)
+#'
+#' # Kusto extensions:
+#' left_join(tbl1, tbl2, .strategy="broadcast") # a broadcast join
+#'
+#' left_join(tbl1, tbl2, .shufflekeys=c("var1", "var2")) # shuffle join with shuffle keys
+#'
+#' left_join(tbl1, tbl2, .num_partitions=5)     # no. of partitions for a shuffle join
+#' }
+#'
+#' @aliases inner_join left_join right_join full_join semi_join anti_join
+#'
 #' @rdname join
 #' @export
 inner_join.tbl_kusto_abstract <- function(x, y, by = NULL, suffix = c(".x", ".y"),

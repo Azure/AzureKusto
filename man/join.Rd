@@ -57,6 +57,24 @@
 \description{
 These methods are the same as other joining methods, with the exception of the \code{.strategy}, \code{.shufflekeys} and \code{.num_partitions} optional arguments. They provide hints to the Kusto engine on how to execute the join, and can sometimes be useful to speed up a query. See the Kusto documentation for more details.
 }
+\examples{
+\dontrun{
+
+tbl1 <- tbl_kusto(db, "table1")
+tbl2 <- tbl_kusto(db, "table2")
+
+# standard dplyr syntax:
+left_join(tbl1, tbl2)
+
+# Kusto extensions:
+left_join(tbl1, tbl2, .strategy="broadcast") # a broadcast join
+
+left_join(tbl1, tbl2, .shufflekeys=c("var1", "var2")) # shuffle join with shuffle keys
+
+left_join(tbl1, tbl2, .num_partitions=5)     # no. of partitions for a shuffle join
+}
+
+}
 \seealso{
 \link[dplyr:join]{dplyr::join}
 }

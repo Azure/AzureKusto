@@ -21,6 +21,19 @@ Run a query or command against a Kusto database
 \details{
 This function is the workhorse of the AzureKusto package. It communicates with the Kusto server and returns the query or command results, as data frames.
 }
+\examples{
+\dontrun{
+
+endp <- kusto_database_endpoint(server="myclust.australiaeast.kusto.windows.net", database="db1")
+
+# a command
+run_query(endp, ".show table iris")
+
+# a query
+run_query(endp, "iris | count")
+
+}
+}
 \seealso{
 \link{kusto_database_endpoint}, \link{ingest_local}, \link{ingest_url}, \link{ingest_blob}, \link{ingest_adls2}
 }

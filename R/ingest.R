@@ -17,6 +17,45 @@
 #' - `method="streaming"`: The data is uploaded to the cluster ingestion endpoint. This is the default if the AzureStor package is not present, however be aware that currently (as of February 2019) streaming ingestion is in beta and has to be enabled for a cluster by filing a support ticket.
 #' - `method="inline"`: The data is embedded into the command text itself. This is only recommended for testing purposes, or small datasets.
 #'
+#' Note that the destination table must be created ahead of time for the ingestion to proceed. 
+#'
+#' @examples
+#' \dontrun{
+#'
+#' # ingesting from local:
+#'
+#' # ingest via Azure storage
+#' cont <- AzureStor::storage_container("https://mystorage.blob.core.windows.net/container", sas="mysas")
+#' ingest_local(db, "file.csv", "table",
+#'              method="indirect", storage_container=cont)
+#'
+#  # ingest by streaming
+#' ingest_local(db, "file.csv", "table", method="streaming")
+#'
+#' # ingest by inlining data into query
+#' ingest_inline(db, "file.csv", "table", method="inline")
+#'
+#' # ingesting online data:
+#'
+#' # a public dataset: Microsoft web data from UCI machine learning repository
+#' ingest_url(db,
+#'            "https://archive.ics.uci.edu/ml/machine-learning-databases/anonymous/anonymous-msweb.data",
+#'            "table")
+#'
+#' # from blob storage:
+#' ingest_blob(db,
+#'             "https://mystorage.blob.core.windows.net/container/myblob",
+#'             "table",
+#'             sas="mysas")
+#'
+#' # from ADLSGen2:
+#' token <- AzureRMR::get_azure_token("https://storage.azure.com", "mytenant", "myapp", "password")
+#' ingest_blob(db,
+#'             "abfss://filesystem@myadls2.dfs.core.windows.net/data/myfile",
+#'             "table",
+#'             token=token)
+#'
+#' }
 #' @rdname ingest
 #' @export
 ingest_local <- function(database, src, dest_table, method=NULL, staging_container=NULL,
@@ -163,6 +202,9 @@ ingest_indirect <- function(database, src, dest_table, staging_container=NULL, .
 {
     if(!requireNamespace("AzureStor", quietly=TRUE))
         stop("AzureStor package must be installed to do indirect ingestion", call.=FALSE)
+
+    if(is.null(staging_container))
+        stop("Must provide an Azure storage container object for staging", call.=FALSE)
 
     opts <- utils::modifyList(list(...), list(
         key=staging_container$endpoint$key,

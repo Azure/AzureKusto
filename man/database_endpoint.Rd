@@ -103,6 +103,18 @@ The way \code{kusto_database_endpoint} obtains an AAD token is as follows.
 }
 }
 }
+\examples{
+\dontrun{
+
+kusto_database_endpoint(server="myclust.australiaeast.kusto.windows.net", database="db1")
+
+# supplying a token obtained previously
+token <- get_kusto_token("myclust.australiaeast.kusto.windows.net")
+kusto_database_endpoint(server="myclust.australiaeast.kusto.windows.net", database="db1",
+                        .query_token=token)
+
+}
+}
 \seealso{
 \link{run_query}, \link{az_kusto_database}
 }

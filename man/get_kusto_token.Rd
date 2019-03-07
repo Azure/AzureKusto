@@ -45,6 +45,18 @@ Manage AAD authentication tokens for Kusto clusters
 
 By default, authentication tokens will be obtained using the main KustoClient Active Directory app. This app can be used to authenticate with any Kusto cluster (assuming, of course, you have the proper credentials).
 }
+\examples{
+\dontrun{
+
+get_kusto_token("myclust.australiaeast.kusto.windows.net")
+get_kusto_token(clustername="myclust", location="australiaeast")
+
+# authenticate using client_credentials method: see ?AzureAuth::get_azure_token
+get_kusto_token("myclust.australiaeast.kusto.windows.net",
+                tenant="mytenant", app="myapp", password="password")
+
+}
+}
 \seealso{
 \link{kusto_database_endpoint}, \link[AzureAuth:get_azure_token]{AzureAuth::get_azure_token}
 }

@@ -24,6 +24,18 @@
 #'
 #' @seealso
 #' [kusto_database_endpoint], [AzureAuth::get_azure_token]
+#'
+#' @examples
+#' \dontrun{
+#'
+#' get_kusto_token("myclust.australiaeast.kusto.windows.net")
+#' get_kusto_token(clustername="myclust", location="australiaeast")
+#'
+#' # authenticate using client_credentials method: see ?AzureAuth::get_azure_token
+#' get_kusto_token("myclust.australiaeast.kusto.windows.net",
+#'                 tenant="mytenant", app="myapp", password="password")
+#'
+#' }
 #' @export
 get_kusto_token <- function(server=NULL, clustername, location=NULL, tenant=NULL, app=.kusto_app_id, auth_type=NULL,
                             ...)
