@@ -242,3 +242,13 @@ check_endpoint_properties <- function(props)
 
     props
 }
+
+
+#' @export
+print.kusto_database_endpoint <- function(x, ...)
+{
+    url <- httr::parse_url(x$server)
+    url$path <- x$database
+    cat("<Kusto database endpoint '", httr::build_url(url), "'>\n", sep="")
+    invisible(x)
+}
