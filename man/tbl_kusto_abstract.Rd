@@ -4,7 +4,7 @@
 \alias{tbl_kusto_abstract}
 \title{Create a local lazy tbl}
 \usage{
-tbl_kusto_abstract(df, table_name, src = simulate_kusto())
+tbl_kusto_abstract(df, table_name, ...)
 }
 \description{
 Useful for testing KQL generation without a remote connection.
@@ -13,7 +13,7 @@ Useful for testing KQL generation without a remote connection.
 library(dplyr)
 df <- data.frame(x = 1, y = 2)
 
-df <- tbl_kusto_abstract(df, "table1", src = simulate_kusto())
+df <- tbl_kusto_abstract(df, "table1")
 df \%>\% summarise(x = sd(x)) \%>\% show_query()
 }
 \keyword{internal}

@@ -5,6 +5,35 @@ tbl_iris <- tibble::as.tibble(iris)
 names(tbl_iris) <- c("SepalLength", "SepalWidth", "PetalLength", "PetalWidth", "Species")
 tbl_iris <- tbl_kusto_abstract(tbl_iris, "iris")
 
+
+test_that("params to a function can be used inside a mutate expressions",
+{
+    tbl_iris_p <- tibble::as.tibble(iris)
+    names(tbl_iris_p) <- c("SepalLength", "SepalWidth", "PetalLength", "PetalWidth", "Species")
+    tbl_iris_p <- tbl_kusto_abstract(tbl_iris, "iris", p="setosa")
+    
+    q <- tbl_iris_p %>%
+        mutate(Species = p)
+    
+    q_str <- show_query(q)
+
+    expect_equal(q_str, kql("database('local_df').['iris']\n| extend ['Species'] = 'setosa'"))
+})
+
+test_that("params to a function can be used inside a filter expressions",
+{
+    
+    tbl_iris_p <- tibble::as.tibble(iris)
+    names(tbl_iris_p) <- c("SepalLength", "SepalWidth", "PetalLength", "PetalWidth", "Species")
+    tbl_iris_p <- tbl_kusto_abstract(tbl_iris_p, "iris", p="setosa")
+    
+    q <- filter(tbl_iris_p, Species == p)
+    q_str <- show_query(q)
+
+    expect_equal(q_str, kql("database('local_df').['iris']\n| where ['Species'] == 'setosa'"))
+})
+
+
 test_that("select is translated to project",
 {
     q <- tbl_iris %>%
@@ -260,11 +289,11 @@ right2 <- iris %>%
 
 right3 <- right2 %>% dplyr::rename(Species2 = Species, SepalWidth2 = SepalWidth)
 
-right <- tbl_kusto_abstract(right, "iris2", src = simulate_kusto())
+right <- tbl_kusto_abstract(right, "iris2")
 
-right2 <- tbl_kusto_abstract(right2, "iris2", src = simulate_kusto())
+right2 <- tbl_kusto_abstract(right2, "iris2")
 
-right3 <- tbl_kusto_abstract(right3, "iris3", src = simulate_kusto())
+right3 <- tbl_kusto_abstract(right3, "iris3")
 
 test_that("inner_join() on a single column translates correctly",
 {
@@ -364,7 +393,7 @@ test_that("anti_join() on a single column translates correctly",
 
 test_that("union_all translates correctly",
 {
-    tbl_iris_2 <- tbl_kusto_abstract(iris, "iris", src=simulate_kusto())
+    tbl_iris_2 <- tbl_kusto_abstract(iris, "iris")
 
     q <- tbl_iris %>%
         dplyr::union_all(tbl_iris_2)
@@ -383,7 +412,7 @@ test_that("as.Date() produces a Kusto datetime",
     words <- c("Tuesday", "Wednesday", "Thursday")
     df <- data.frame(dates, words)
 
-    tbl_dates <- tbl_kusto_abstract(df, "df", src=simulate_kusto())
+    tbl_dates <- tbl_kusto_abstract(df, "df")
 
     q <- tbl_dates %>%
         filter(dates == as.Date("2019-01-01"))
@@ -402,7 +431,7 @@ test_that("as.POSIXct() produces a Kusto datetime",
     words <- c("Tuesday", "Wednesday", "Thursday")
     df <- data.frame(dates, words)
 
-    tbl_dates <- tbl_kusto_abstract(df, "df", src=simulate_kusto())
+    tbl_dates <- tbl_kusto_abstract(df, "df")
 
     q <- tbl_dates %>%
         filter(dates == as.POSIXct(strptime("2019-01-01T23:59:59", "%Y-%m-%dT%H:%M:%S", tz="UTC")))
@@ -421,7 +450,7 @@ test_that("as.POSIXlt() produces a Kusto datetime",
     words <- c("Tuesday", "Wednesday", "Thursday")
     df <- data.frame(dates, words)
 
-    tbl_dates <- tbl_kusto_abstract(df, "df", src=simulate_kusto())
+    tbl_dates <- tbl_kusto_abstract(df, "df")
 
     q <- tbl_dates %>%
         filter(dates == as.POSIXlt("2019-01-01"))
@@ -493,4 +522,3 @@ test_that("summarize hinting translates correctly",
     q_str <- q %>% show_query()
     expect_equal(q_str, kql("database('local_df').['iris']\n| summarize hint.shufflekey = ['SepalLength'] hint.shufflekey = ['SepalWidth'] hint.num_partitions = 2 ['MaxSepalLength'] = max(['SepalLength']) by ['Species']"))
 })
-

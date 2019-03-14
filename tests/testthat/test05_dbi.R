@@ -17,7 +17,7 @@ if(srvname == "" || srvloc == "" || dbname == "")
 
 server <- sprintf("https://%s.%s.kusto.windows.net", srvname, srvloc)
 
-if(!requireNamespace("bit64"))
+if(!requireNamespace("bit64", quietly=TRUE))
     skip("DBI tests skipped: bit64 package not installed")
 
 

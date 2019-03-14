@@ -137,3 +137,14 @@ test_that("join hinting works",
     out <- dplyr::left_join(ir, spec, by="species", .strategy="shuffle", .num_partitions=2)
     expect_is(dplyr::collect(out), "tbl_df")
 })
+
+test_that("parameterised queries work",
+{
+    ir_parm <- tbl_kusto(db, "iris", parm="setosa")
+
+    out <- dplyr::collect(dplyr::filter(ir_parm, species == parm))
+    expect_true(inherits(out, "tbl_df") && all(out$species == "setosa") && nrow(out) == 50)
+
+    out <- dplyr::collect(dplyr::mutate(ir_parm, species2=parm))
+    expect_true(inherits(out, "tbl_df") && all(out$species2 == "setosa") && nrow(out) == 150)
+})

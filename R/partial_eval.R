@@ -41,7 +41,6 @@
 #' f <- function(x) x + 1
 #' partial_eval(quote(year > f(1980)), vars = vars)
 #' partial_eval(quote(year > local(f(1980))), vars = vars)
-
 partial_eval <- function(call, vars = character(), env = caller_env())
 {
     switch_type(call,
