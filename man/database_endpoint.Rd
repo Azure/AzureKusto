@@ -66,7 +66,7 @@ User authentication properties:
 }
 \item fed: Logical, whether federated authentication is enabled. Currently unsupported; if this is TRUE, \code{kusto_database_endpoint} will print a warning and ignore it.
 \itemize{
-\item federated security, federated, aadfed
+\item federated security, federated, aadfed, aadfederatedsecurity
 }
 }
 
@@ -83,7 +83,7 @@ App authentication properties:
 }
 }
 
-Currently, AzureKusto only supports authentication via Azure Active Directory, and only via app or user credentials. Authenticating with federated logins, an AAD certificate, or with DSTS is planned for the future.
+Currently, AzureKusto only supports authentication via Azure Active Directory. Authenticating with DSTS is planned for the future.
 
 The way \code{kusto_database_endpoint} obtains an AAD token is as follows.
 \enumerate{

@@ -31,7 +31,7 @@
 #' - usertoken: The AAD token for user authentication.
 #' - * usertoken, usrtoken
 #' - fed: Logical, whether federated authentication is enabled. Currently unsupported; if this is TRUE, `kusto_database_endpoint` will print a warning and ignore it.
-#'   * federated security, federated, aadfed
+#'   * federated security, federated, aadfed, aadfederatedsecurity
 #'
 #' App authentication properties:
 #' - appkey: The secret key for the app.
@@ -40,7 +40,7 @@
 #' - apptoken: The AAD token for app authentication.
 #'   * apptoken, applicationtoken
 #'
-#' Currently, AzureKusto only supports authentication via Azure Active Directory, and only via app or user credentials. Authenticating with federated logins, an AAD certificate, or with DSTS is planned for the future.
+#' Currently, AzureKusto only supports authentication via Azure Active Directory. Authenticating with DSTS is planned for the future.
 #'
 #' The way `kusto_database_endpoint` obtains an AAD token is as follows.
 #' 1. If the `.query_token` argument is supplied, use it.
@@ -120,7 +120,7 @@ normalize_connstring_properties <- function(properties)
         response_dynamic_serialization_2="response_dynamic_serialization_2",
 
         # userauth properties -- DSTS not yet supported
-        fed=c("fed", "federated security", "federated", "aadfed"),
+        fed=c("fed", "federated security", "federated", "aadfed", "aadfederatedsecurity"),
         pwd=c("pwd", "password"),
         user=c("user", "uid", "userid"),
         traceusername="traceusername",
@@ -212,15 +212,10 @@ find_endpoint_token <- function(properties, .query_token)
 }
 
 
+# internal checks on various properties
 check_endpoint_properties <- function(props)
 {
-    if(isTRUE(props$fed))
-    {
-        warning("Federated logins not yet supported")
-        props$fed <- NULL
-    }
-
-    if(isTRUE(props$use_integer64) && !requireNamespace("bit64"))
+    if(isTRUE(props$use_integer64) && !requireNamespace("bit64", quietly=TRUE))
     {
         warning("bit64 package not installed, cannot use 64-bit integers")
         props$use_integer64 <- FALSE
@@ -232,13 +227,6 @@ check_endpoint_properties <- function(props)
         warning("Serialization of dynamic response to JSON is not yet supported")
         props[["response_dynamic_serialization"]] <- NULL
     }
-
-    # if(!is_empty(props[["response_dynamic_serialization_2"]]) &&
-    #    tolower(props[["response_dynamic_serialization_2"]]) != "string")
-    # {
-    #     warning("Serialization of dynamic response to JSON is not yet supported")
-    #     props[["response_dynamic_serialization_2"]] <- NULL
-    # }
 
     props
 }
