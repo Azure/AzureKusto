@@ -153,6 +153,7 @@ head.tbl_kusto_abstract <- function(x, n = 6L, ...)
 #' @param .strategy A join strategy hint to pass to Kusto. Currently the values supported are "shuffle" and "broadcast".
 #' @param .shufflekeys A character vector of column names to use as shuffle keys.
 #' @param .num_partitions The number of partitions for a shuffle query.
+#' @param .remote A join strategy hint to use for cross-cluster joins. Can be "left", "right", "local" or "auto" (the default).
 #' @param ... Other arguments passed to lower-level functions.
 #' @seealso
 #' [dplyr::join]
@@ -179,57 +180,69 @@ head.tbl_kusto_abstract <- function(x, n = 6L, ...)
 #' @rdname join
 #' @export
 inner_join.tbl_kusto_abstract <- function(x, y, by = NULL, suffix = c(".x", ".y"),
-                                          .strategy = NULL, .shufflekeys = NULL, .num_partitions = NULL, ...)
+                                          .strategy = NULL, .shufflekeys = NULL, .num_partitions = NULL,
+                                          .remote = NULL, ...)
 {
     add_op_join("inner_join", x, y, by = by, suffix = suffix,
-                .strategy = .strategy, .shufflekeys = .shufflekeys, .num_partitions = .num_partitions, ...)
+                .strategy = .strategy, .shufflekeys = .shufflekeys, .num_partitions = .num_partitions,
+                .remote = .remote, ...)
 }
 
 #' @rdname join
 #' @export
 left_join.tbl_kusto_abstract <- function(x, y, by = NULL, suffix = c(".x", ".y"),
-                                         .strategy = NULL, .shufflekeys = NULL, .num_partitions = NULL, ...)
+                                         .strategy = NULL, .shufflekeys = NULL, .num_partitions = NULL,
+                                         .remote = NULL, ...)
 {
     add_op_join("left_join", x, y, by = by, suffix = suffix,
-                .strategy = .strategy, .shufflekeys = .shufflekeys, .num_partitions = .num_partitions, ...)
+                .strategy = .strategy, .shufflekeys = .shufflekeys, .num_partitions = .num_partitions,
+                .remote = .remote, ...)
 }
 
 #' @rdname join
 #' @export
 right_join.tbl_kusto_abstract <- function(x, y, by = NULL, suffix = c(".x", ".y"),
-                                          .strategy = NULL, .shufflekeys = NULL, .num_partitions = NULL, ...)
+                                          .strategy = NULL, .shufflekeys = NULL, .num_partitions = NULL,
+                                          .remote = NULL, ...)
 {
     add_op_join("right_join", x, y, by = by, suffix = suffix,
-                .strategy = .strategy, .shufflekeys = .shufflekeys, .num_partitions = .num_partitions, ...)
+                .strategy = .strategy, .shufflekeys = .shufflekeys, .num_partitions = .num_partitions,
+                .remote = .remote, ...)
 }
 
 #' @rdname join
 #' @export
 full_join.tbl_kusto_abstract <- function(x, y, by = NULL, suffix = c(".x", ".y"),
-                                         .strategy = NULL, .shufflekeys = NULL, .num_partitions = NULL, ...)
+                                         .strategy = NULL, .shufflekeys = NULL, .num_partitions = NULL,
+                                         .remote = NULL, ...)
 
 {
     add_op_join("full_join", x, y, by = by, suffix = suffix,
-                .strategy = .strategy, .shufflekeys = .shufflekeys, .num_partitions = .num_partitions, ...)
+                .strategy = .strategy, .shufflekeys = .shufflekeys, .num_partitions = .num_partitions,
+                .remote = .remote, ...)
 }
 
 #' @rdname join
 #' @export
 semi_join.tbl_kusto_abstract <- function(x, y, by = NULL, suffix = c(".x", ".y"),
-                                         .strategy = NULL, .shufflekeys = NULL, .num_partitions = NULL, ...)
+                                         .strategy = NULL, .shufflekeys = NULL, .num_partitions = NULL,
+                                         .remote = NULL, ...)
 
 {
     add_op_join("semi_join", x, y, by = by, suffix = suffix,
-                .strategy = .strategy, .shufflekeys = .shufflekeys, .num_partitions = .num_partitions, ...)
+                .strategy = .strategy, .shufflekeys = .shufflekeys, .num_partitions = .num_partitions,
+                .remote = .remote, ...)
 }
 
 #' @rdname join
 #' @export
 anti_join.tbl_kusto_abstract <- function(x, y, by = NULL, suffix = c(".x", ".y"),
-                                         .strategy = NULL, .shufflekeys = NULL, .num_partitions = NULL, ...)
+                                         .strategy = NULL, .shufflekeys = NULL, .num_partitions = NULL,
+                                         .remote = NULL, ...)
 {
     add_op_join("anti_join", x, y, by = by, suffix = suffix,
-                .strategy = .strategy, .shufflekeys = .shufflekeys, .num_partitions = .num_partitions, ...)
+                .strategy = .strategy, .shufflekeys = .shufflekeys, .num_partitions = .num_partitions,
+                .remote = .remote, ...)
 }
 
 #' @export

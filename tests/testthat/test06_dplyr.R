@@ -148,3 +148,29 @@ test_that("parameterised queries work",
     out <- dplyr::collect(dplyr::mutate(ir_parm, species2=parm))
     expect_true(inherits(out, "tbl_df") && all(out$species2 == "setosa") && nrow(out) == 150)
 })
+
+test_that("cross-cluster joins work",
+{
+    srvname2 <- Sys.getenv("AZ_TEST_KUSTO_SERVER2")
+    srvloc2 <- Sys.getenv("AZ_TEST_KUSTO_SERVER2_LOCATION")
+    dbname2 <- Sys.getenv("AZ_TEST_KUSTO_DATABASE2")
+    
+    if(srvname2 == "" || srvloc2 == "" || dbname2 == "")
+        skip("Cross-cluster join tests skipped: server info not set")
+
+    server2 <- sprintf("https://%s.%s.kusto.windows.net", srvname2, srvloc2)
+
+    db2 <- kusto_database_endpoint(server=server2, database=dbname2, tenantid=tenant,
+        appclientid=app, appkey=password)
+
+    spec <- tbl_kusto(db2, "species")
+
+    out <- dplyr::collect(dplyr::left_join(ir, spec))
+    expect_true(inherits(out, "tbl_df") && nrow(out) == 150)
+
+    out <- dplyr::collect(dplyr::left_join(ir, spec, .remote="left"))
+    expect_true(inherits(out, "tbl_df") && nrow(out) == 150)
+
+    out <- dplyr::collect(dplyr::left_join(ir, spec, .remote="right"))
+    expect_true(inherits(out, "tbl_df") && nrow(out) == 150)
+})

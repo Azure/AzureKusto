@@ -17,27 +17,27 @@
 \usage{
 \method{inner_join}{tbl_kusto_abstract}(x, y, by = NULL,
   suffix = c(".x", ".y"), .strategy = NULL, .shufflekeys = NULL,
-  .num_partitions = NULL, ...)
+  .num_partitions = NULL, .remote = NULL, ...)
 
 \method{left_join}{tbl_kusto_abstract}(x, y, by = NULL,
   suffix = c(".x", ".y"), .strategy = NULL, .shufflekeys = NULL,
-  .num_partitions = NULL, ...)
+  .num_partitions = NULL, .remote = NULL, ...)
 
 \method{right_join}{tbl_kusto_abstract}(x, y, by = NULL,
   suffix = c(".x", ".y"), .strategy = NULL, .shufflekeys = NULL,
-  .num_partitions = NULL, ...)
+  .num_partitions = NULL, .remote = NULL, ...)
 
 \method{full_join}{tbl_kusto_abstract}(x, y, by = NULL,
   suffix = c(".x", ".y"), .strategy = NULL, .shufflekeys = NULL,
-  .num_partitions = NULL, ...)
+  .num_partitions = NULL, .remote = NULL, ...)
 
 \method{semi_join}{tbl_kusto_abstract}(x, y, by = NULL,
   suffix = c(".x", ".y"), .strategy = NULL, .shufflekeys = NULL,
-  .num_partitions = NULL, ...)
+  .num_partitions = NULL, .remote = NULL, ...)
 
 \method{anti_join}{tbl_kusto_abstract}(x, y, by = NULL,
   suffix = c(".x", ".y"), .strategy = NULL, .shufflekeys = NULL,
-  .num_partitions = NULL, ...)
+  .num_partitions = NULL, .remote = NULL, ...)
 }
 \arguments{
 \item{x, y}{Kusto tbls.}
@@ -51,6 +51,8 @@
 \item{.shufflekeys}{A character vector of column names to use as shuffle keys.}
 
 \item{.num_partitions}{The number of partitions for a shuffle query.}
+
+\item{.remote}{A join strategy hint to use for cross-cluster joins. Can be "left", "right", "local" or "auto" (the default).}
 
 \item{...}{Other arguments passed to lower-level functions.}
 }

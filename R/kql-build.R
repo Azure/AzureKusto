@@ -211,6 +211,10 @@ kql_build.op_join <- function(op, ...)
         stop(".num_partitions must be a number", .call=FALSE)
     else NULL
 
+    .remote <- if(!is.null(op$args$.remote))
+        paste0(" hint.remote = ", op$args$.remote, collapse="")
+    else NULL
+
     kind <- switch(join_type,
         inner_join="inner",
         left_join="leftouter",
@@ -222,7 +226,8 @@ kql_build.op_join <- function(op, ...)
     )
 
     # paste(c(*), collapse="") will not insert extra spaces when NULLs present
-    join_str <- ident_q(paste(c("join kind = ", kind, .strategy, .shufflekeys, .num_partitions, " "), collapse=""))
+    join_str <- ident_q(paste(c("join kind = ", kind, .strategy, .shufflekeys, .num_partitions, .remote, " "),
+        collapse=""))
     build_kql(join_str, "(", y_render, ") on ", by_clause)
 }
 

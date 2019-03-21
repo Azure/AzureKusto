@@ -63,9 +63,10 @@ Note that the destination table must be created ahead of time for the ingestion 
 # ingesting from local:
 
 # ingest via Azure storage
-cont <- AzureStor::storage_container("https://mystorage.blob.core.windows.net/container", sas="mysas")
+cont <- AzureStor::storage_container("https://mystorage.blob.core.windows.net/container",
+    sas="mysas")
 ingest_local(db, "file.csv", "table",
-             method="indirect", storage_container=cont)
+    method="indirect", storage_container=cont)
 
 ingest_local(db, "file.csv", "table", method="streaming")
 
@@ -76,21 +77,21 @@ ingest_inline(db, "file.csv", "table", method="inline")
 
 # a public dataset: Microsoft web data from UCI machine learning repository
 ingest_url(db,
-           "https://archive.ics.uci.edu/ml/machine-learning-databases/anonymous/anonymous-msweb.data",
-           "table")
+    "https://archive.ics.uci.edu/ml/machine-learning-databases/anonymous/anonymous-msweb.data",
+    "table")
 
 # from blob storage:
 ingest_blob(db,
-            "https://mystorage.blob.core.windows.net/container/myblob",
-            "table",
-            sas="mysas")
+    "https://mystorage.blob.core.windows.net/container/myblob",
+    "table",
+    sas="mysas")
 
 # from ADLSGen2:
 token <- AzureRMR::get_azure_token("https://storage.azure.com", "mytenant", "myapp", "password")
 ingest_blob(db,
-            "abfss://filesystem@myadls2.dfs.core.windows.net/data/myfile",
-            "table",
-            token=token)
+    "abfss://filesystem@myadls2.dfs.core.windows.net/data/myfile",
+    "table",
+    token=token)
 
 }
 }
