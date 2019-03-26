@@ -3,6 +3,8 @@
 S3method(anti_join,tbl_kusto_abstract)
 S3method(arrange,tbl_kusto_abstract)
 S3method(collect,tbl_kusto)
+S3method(compute,tbl_kusto)
+S3method(copy_to,kusto_database_endpoint)
 S3method(distinct,tbl_kusto_abstract)
 S3method(escape,"NULL")
 S3method(escape,Date)

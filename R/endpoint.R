@@ -240,3 +240,45 @@ print.kusto_database_endpoint <- function(x, ...)
     cat("<Kusto database endpoint '", httr::build_url(url), "'>\n", sep="")
     invisible(x)
 }
+
+#' This function uploads a local data frame into a remote data source, creating the table definition as needed.
+#' If the table exists, it will append the data to the existing table. If not, it will create a new table.
+#' @export
+#' @param dest remote data source
+#' @param df local data frame
+#' @param name Name for new remote table
+#' @param overwrite If `TRUE`, will overwrite an existing table with
+#'   name `name`. If `FALSE`, will throw an error if `name` already
+#'   exists.
+#' @param method For local ingestion, the method to use. "inline", "streaming", or "indirect".
+#' @param ... other parameters passed to the query
+#' @seealso [collect()] for the opposite action; downloading remote data into a local tbl.
+copy_to.kusto_database_endpoint <- function(dest, df, name=deparse(substitute(df)), overwrite = FALSE, method = "inline", ...)
+{
+    if (!is.data.frame(df) && !inherits(df, "tbl_kusto"))
+        stop("`df` must be a local dataframe or a remote tbl_kusto", call. = FALSE)   
+
+    if (inherits(df, "tbl_kusto") && dest$server == df$src$server)
+        out <- compute(df, name = name, ...)
+    else
+    {
+        df <- collect(df)
+        class(df) <- "data.frame" # avoid S4 dispatch problem in dbSendPreparedQuery
+
+        #initialize DBI connection
+        cnxn <- new("AzureKustoConnection", endpoint=dest)
+        tableExists <- DBI::dbExistsTable(cnxn, name)
+        if (tableExists)
+        {
+            if(overwrite)
+                DBI::dbRemoveTable(cnxn, name)
+            else stop(paste0("table ",
+                             name,
+                             " already exists. If you wish to overwrite it, specify overwrite=TRUE"))
+        }
+        dbWriteTable(cnxn, name, df, method=method)
+        
+        out <- tbl_kusto(dest, name)
+    }
+    invisible(out)
+}
