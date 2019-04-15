@@ -11,9 +11,9 @@ options(repos="https://cloud.r-project.org")
 devtools::install_github("cloudyr/AzureKusto")
 ```
 
-## Example Usage
+## Example usage
 
-### Kusto Endpoint Interface
+### Kusto endpoint interface
 
 Connect to a Kusto cluster by instantiating a `kusto_database_endpoint` object with the cluster URI and database name.
 
@@ -124,6 +124,49 @@ MyFunctionDate %>%
 ## 5 2007-12-20 07:50:00 2007-12-20 07:53:00     12554   68796 MISSISSIPPI   
 ## 6 2007-12-20 10:32:00 2007-12-20 10:36:00     12554   68814 MISSISSIPPI   
 
+```
+
+
+### DBI interface
+
+AzureKusto implements a subset of the DBI specification for interacting with databases. It should be noted that Kusto is quite different to the SQL databases that DBI targets, which affects the behaviour of certain DBI methods and renders other moot.
+
+
+```r
+# connect to the server: basically a wrapper for kusto_database_endpoint()
+db <- DBI::dbConnect(AzureKusto(),
+    server="https://mycluster.location.kusto.windows.net", database="database", tenantid="myaadtenant"))
+
+DBI::dbListTables()
+
+if(!DBI::dbExistsTable(db, "mtcars"))
+    DBI::dbCreateTable(db, "mtcars")
+
+DBI::dbWriteTable(db, "mtcars", mtcars, method="inline")
+
+DBI::dbReadTable(db, "mtcars")
+
+DBI::dbRemoveTable(db, "mtcars")
+```
+
+
+## Azure Resource Manager interface
+
+On the admin side, AzureKusto extends the framework supplied by the [AzureRMR](https://github.com/cloudyr/AzureRMR) to support Kusto. Methods are provided to create and delete clusters and databases, and manage database principals.
+
+```r
+# create a new Kusto cluster
+az <- AzureRMR::get_azure_login()
+ku <- az$
+    get_subscription("sub_id")$
+    get_resource_group("rgname")$
+    create_kusto_cluster("mykustocluster")
+
+# create a new database
+db1 <- ku$create_database("database1")
+
+# add a user
+db1$add_principals("myusername", role="User", fqn="aaduser=username@mydomain")
 ```
 
 ---
