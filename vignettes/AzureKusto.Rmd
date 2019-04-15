@@ -1,7 +1,7 @@
 ---
 title: "AzureKusto"
 author: "Alex Kyllo"
-date: "`r Sys.Date()`"
+date: "2019-04-15"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{AzureKusto}
@@ -12,10 +12,170 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "##"
 )
 ```
 
-```{r setup}
+AzureKusto is the R interface to [Azure Data Explorer](https://azure.microsoft.com/en-us/services/data-explorer/) (internally codenamed "Kusto"), a fast, fully managed data analytics service from Microsoft.
+
+AzureKusto provides an interface (including [DBI](https://cran.r-project.org/web/packages/DBI/index.html) compliant methods) for connecting to Kusto clusters and submitting [Kusto Query Language (KQL)](https://docs.microsoft.com/en-us/azure/kusto/query/) statements, as well as a [dbplyr](https://cran.r-project.org/web/packages/dbplyr/index.html) style backend that translates [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html) queries into KQL statements.
+
+
+```{r setup, eval = FALSE}
 library(AzureKusto)
+## The first time you import AzureKusto, you'll be asked if you'd like to create a directory to cache OAuth2 tokens.
+
+## Connect to an AzureKusto database with (default) device code authentication:
+Samples <- kusto_database_endpoint(server="https://help.kusto.windows.net", database="Samples")
+
+## To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code ######### to authenticate.
+## Waiting for device code in browser...
+## Press Esc/Ctrl + C to abort
+## Authentication complete.
+
+```
+
+Now you can issue KQL queries to the Kusto database with `run_query()` and get the results back as a data.frame object.
+
+```{r run_query, eval = FALSE}
+res <- run_query(Samples, "StormEvents | summarize EventCount = count() by State | order by State asc")
+head(res)
+
+##            State EventCount
+## 1        ALABAMA       1315
+## 2         ALASKA        257
+## 3 AMERICAN SAMOA         16
+## 4        ARIZONA        340
+## 5       ARKANSAS       1028
+## 6 ATLANTIC NORTH        188
+
+```
+
+`run_query()` also supports query parameters, to allow you to call parameterized Kusto functions. Simply pass your parameters as additional keyword arguments and they will be escaped and interpolated into the query string.
+
+```{r run_query_params, eval = FALSE}
+res <- run_query(Samples, "MyFunction(lim)", lim=10L)
+head(res)
+
+##             StartTime             EndTime EpisodeId EventId          State
+## 1 2007-09-29 08:11:00 2007-09-29 08:11:00     11091   61032 ATLANTIC SOUTH
+## 2 2007-09-18 20:00:00 2007-09-19 18:00:00     11074   60904        FLORIDA
+## 3 2007-09-20 21:57:00 2007-09-20 22:05:00     11078   60913        FLORIDA
+## 4 2007-12-30 16:00:00 2007-12-30 16:05:00     11749   64588        GEORGIA
+## 5 2007-12-20 07:50:00 2007-12-20 07:53:00     12554   68796    MISSISSIPPI
+## 6 2007-12-20 10:32:00 2007-12-20 10:36:00     12554   68814    MISSISSIPPI
+
+```
+
+`run_query()` can also handle command statements, which begin with a '.' character. Command statements do not accept parameters and cannot be combined together with query statements in the same request.
+
+Command statements return a list where the first element is the table returned by the command (if any) and the other elements contain command metadata.
+
+```{r run_query_commands, eval = FALSE}
+res <- run_query(Samples, ".show tables | count")
+res[[1]]
+
+##   Count
+## 1     5
+
+```
+
+### dplyr Interface
+
+The package also implements a [dplyr](https://github.com/tidyverse/dplyr)-style interface for building a query upon a `tbl_kusto` object and then running it on the remote Kusto database and returning the result as a regular tibble object with `collect()`.
+
+```{r dplyr, eval = FALSE}
+library(dplyr)
+
+StormEvents <- tbl_kusto(Samples, "StormEvents")
+
+q <- StormEvents %>%
+    group_by(State) %>%
+    summarize(EventCount=n()) %>%
+    arrange(State)
+
+show_query(q)
+
+## <KQL> database('Samples').['StormEvents']
+## | summarize ['EventCount'] = count() by ['State']
+## | order by ['State'] asc
+
+collect(q)
+
+## # A tibble: 67 x 2
+##    State          EventCount
+##    <chr>               <dbl>
+##  1 ALABAMA              1315
+##  2 ALASKA                257
+##  3 AMERICAN SAMOA         16
+##  4 ARIZONA               340
+##  5 ARKANSAS             1028
+##  6 ATLANTIC NORTH        188
+##  7 ATLANTIC SOUTH        193
+##  8 CALIFORNIA            898
+##  9 COLORADO             1654
+## 10 CONNECTICUT           148
+## # ... with 57 more rows
+
+```
+
+`tbl_kusto` also accepts query parameters, in case the Kusto source table is a parameterized function:
+
+```{r tbl_kusto_params, eval = FALSE}
+MyFunctionDate <- tbl_kusto(Samples, "MyFunctionDate(dt)", dt=as.Date("2019-01-01"))
+
+MyFunctionDate %>%
+    select(StartTime, EndTime, EpisodeId, EventId, State) %>%
+    head() %>%
+    collect()
+
+## # A tibble: 6 x 5
+##   StartTime           EndTime             EpisodeId EventId State         
+##   <dttm>              <dttm>                  <int>   <int> <chr>         
+## 1 2007-09-29 08:11:00 2007-09-29 08:11:00     11091   61032 ATLANTIC SOUTH
+## 2 2007-09-18 20:00:00 2007-09-19 18:00:00     11074   60904 FLORIDA       
+## 3 2007-09-20 21:57:00 2007-09-20 22:05:00     11078   60913 FLORIDA       
+## 4 2007-12-30 16:00:00 2007-12-30 16:05:00     11749   64588 GEORGIA       
+## 5 2007-12-20 07:50:00 2007-12-20 07:53:00     12554   68796 MISSISSIPPI   
+## 6 2007-12-20 10:32:00 2007-12-20 10:36:00     12554   68814 MISSISSIPPI   
+
+```
+
+### DBI interface
+
+AzureKusto implements a subset of the DBI specification for interfacing with databases in R. 
+
+The following methods are supported:
+- Connections: [dbConnect], [dbDisconnect], [dbCanConnect]
+- Table management: [dbExistsTable], [dbCreateTable], [dbRemoveTable], [dbReadTable], [dbWriteTable]
+- Querying: [dbGetQuery], [dbSendQuery], [dbFetch], [dbSendStatement], [dbExecute], [dbListFields], [dbColumnInfo]
+
+Azure Data Explorer is quite different to the SQL databases that DBI targets, which affects the behaviour of certain DBI methods and renders other moot.
+
+- Communication goes through the REST API rather than a socket connection. Therefore, `dbConnect` simply wraps a database endpoint object, created with [kusto_database_endpoint]. Similarly, `dbDisconnect` always returns TRUE. `dbCanConnect` attempts to check if querying the database will succeed, but this may not be accurate.
+- Temporary tables are not supported, so `dbCreateTable(*, temporary=TRUE)` will throw an error.
+- It only supports synchronous queries, with a default timeout of 4 minutes. `dbSendQuery` and `dbSendStatement` will wait for the query to execute, rather than returning immediately. The object returned contains the full result of the query, which `dbFetch` extracts.
+- The Kusto Query Language (KQL) is not SQL, and so higher-level SQL methods are not implemented.
+
+```{r dbi, eval = FALSE}
+library(DBI)
+
+Samples <- dbConnect(AzureKusto(),
+                     server="https://help.kusto.windows.net",
+                     database="Samples")
+
+dbListTables(Samples)
+
+## [1] "StormEvents"       "demo_make_series1" "demo_series2"     
+## [4] "demo_series3"      "demo_many_series1"
+
+dbExistsTable(Samples, "StormEvents")
+
+##[1] TRUE
+
+dbGetQuery(Samples, "StormEvents | summarize ct = count()")
+
+##      ct
+## 1 59066
+
 ```
