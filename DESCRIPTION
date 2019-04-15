@@ -32,6 +32,7 @@ Suggests:
     knitr,
     testthat,
     AzureGraph,
-    AzureStor (>= 2.0.0)
+    AzureStor (>= 2.0.0),
+    rmarkdown
 Roxygen: list(markdown=TRUE)
 RoxygenNote: 6.1.1
