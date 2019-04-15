@@ -326,6 +326,29 @@ collect.tbl_kusto <- function(tbl, ...)
     as_tibble(res)
 }
 
+generate_table_name <- function() {
+    paste0("Rtbl_", paste0(sample(letters, 8), collapse=""))
+}
+
+#' Execute the query, store the results in a table, and return a reference to the new table
+#' @export
+#' @param tbl An instance of class tbl_kusto representing a Kusto table
+#' @param name The name for the Kusto table to be created.
+#' If name is omitted, the table will be named Rtbl_ + 8 random lowercase letters
+#' @param ... other parameters passed to the query
+compute.tbl_kusto <- function(tbl, name=generate_table_name(), ...)
+{
+    q <- kql_build(tbl)
+    q_str <- kql_render(q)
+    new_tbl_name <- kql_escape_ident(name)
+    set_cmd <- kql(paste0(".set ", new_tbl_name, " <|\n"))
+    q_str <- kql(paste0(set_cmd, q_str))
+    params <- c(tbl$params, list(...))
+    params$database <- tbl$src
+    params$qry_cmd <- q_str
+    res <- do.call(run_query, params)
+    invisible(tbl_kusto(tbl$src, name))
+}
 
 #' @keywords internal
 #' @export
