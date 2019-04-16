@@ -133,20 +133,26 @@ AzureKusto implements a subset of the DBI specification for interacting with dat
 
 
 ```r
+library(DBI)
+
 # connect to the server: basically a wrapper for kusto_database_endpoint()
-db <- DBI::dbConnect(AzureKusto(),
-    server="https://mycluster.location.kusto.windows.net", database="database", tenantid="myaadtenant"))
+Samples <- dbConnect(AzureKusto(),
+                     server="https://help.kusto.windows.net",
+                     database="Samples")
 
-DBI::dbListTables()
+dbListTables(Samples)
 
-if(!DBI::dbExistsTable(db, "mtcars"))
-    DBI::dbCreateTable(db, "mtcars")
+## [1] "StormEvents"       "demo_make_series1" "demo_series2"     
+## [4] "demo_series3"      "demo_many_series1"
 
-DBI::dbWriteTable(db, "mtcars", mtcars, method="inline")
+dbExistsTable(Samples, "StormEvents")
 
-DBI::dbReadTable(db, "mtcars")
+##[1] TRUE
 
-DBI::dbRemoveTable(db, "mtcars")
+dbGetQuery(Samples, "StormEvents | summarize ct = count()")
+
+##      ct
+## 1 59066
 ```
 
 
