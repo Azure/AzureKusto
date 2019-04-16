@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 AzureKusto is the R interface to [Azure Data Explorer](https://azure.microsoft.com/en-us/services/data-explorer/) (internally codenamed "Kusto"), a fast, fully managed data analytics service from Microsoft.
 
-AzureKusto provides an interface (including [DBI](https://cran.r-project.org/web/packages/DBI/index.html) compliant methods) for connecting to Kusto clusters and submitting [Kusto Query Language (KQL)](https://docs.microsoft.com/en-us/azure/kusto/query/) statements, as well as a [dbplyr](https://cran.r-project.org/web/packages/dbplyr/index.html) style backend that translates [dplyr](https://cran.r-project.org/web/packages/dplyr/index.html) queries into KQL statements.
+AzureKusto provides an interface (including [DBI](https://dbi.r-dbi.org/) compliant methods) for connecting to Kusto clusters and submitting [Kusto Query Language (KQL)](https://docs.microsoft.com/en-us/azure/kusto/query/) statements, as well as a [dbplyr](https://dbplyr.tidyverse.org/) style backend that translates [dplyr](https://dplyr.tidyverse.org/) queries into KQL statements.
 
 
 ```{r setup, eval = FALSE}

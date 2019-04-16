@@ -25,6 +25,7 @@ Imports:
     openssl,
     AzureAuth,
     AzureRMR (>= 2.0.0),
+    tibble,
     dplyr,
     tidyselect (>= 0.2.4),
     DBI (>= 1.0.0)
