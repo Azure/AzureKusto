@@ -197,7 +197,7 @@ kql_escape_string <- function(x)
 #' @export
 kql_escape_ident <- function(x)
 {
-    if(!is_empty(x) && nchar(x) > 0)
+    if(!is_empty(x))
         paste0("[", kql_escape_string(x), "]")
     else x
 }
