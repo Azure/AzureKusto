@@ -191,6 +191,32 @@ test_that("group_by() followed by summarize() generates summarize clause",
     expect_equal(q_str, kql("cluster('local_df').database('local_df').['iris']\n| summarize ['MaxSepalLength'] = max(['SepalLength']) by ['Species']"))
 })
 
+test_that("group_by() followed by summarize() with multiple summarizations generates one summarize clause",
+{
+
+    q <- tbl_iris %>%
+        dplyr::group_by(Species) %>%
+        dplyr::summarize(MaxSepalLength = max(SepalLength, na.rm = TRUE),
+                         MaxSepalWidth = max(SepalWidth, na.rm = TRUE))
+
+    q_str <- q %>% show_query()
+
+    expect_equal(q_str, kql("cluster('local_df').database('local_df').['iris']\n| summarize ['MaxSepalLength'] = max(['SepalLength']), ['MaxSepalWidth'] = max(['SepalWidth']) by ['Species']"))
+})
+
+test_that("group_by() followed by summarize() with multiple summarizations generates one summarize clause in presence of hints",
+{
+
+    q <- tbl_iris %>%
+        dplyr::group_by(Species) %>%
+        dplyr::summarize(MaxSepalLength = max(SepalLength, na.rm = TRUE),
+                         MaxSepalWidth = max(SepalWidth, na.rm = TRUE), .strategy="shuffle")
+
+    q_str <- q %>% show_query()
+
+    expect_equal(q_str, kql("cluster('local_df').database('local_df').['iris']\n| summarize hint.strategy = shuffle ['MaxSepalLength'] = max(['SepalLength']), ['MaxSepalWidth'] = max(['SepalWidth']) by ['Species']"))
+})
+
 test_that("group_by() followed by ungroup() followed by summarize() generates summarize clause",
 {
 
