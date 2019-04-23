@@ -133,7 +133,7 @@ kql_build.op_summarise <- function(op, ...)
     stmts <- mapply(translate_kql, assigned_exprs)
     pieces <- lapply(seq_along(assigned_exprs),
                      function(i) sprintf("%s = %s", escape(ident(names(assigned_exprs)[i])), stmts[i]))
-    groups <- build_kql(escape(ident(op$groups), collapse = ", "))
+    groups <- build_kql(escape(ident(op_grps(op)), collapse = ", "))
     by <- ifelse(nchar(groups) > 0, paste0(" by ", groups), "")
 
     .strategy <- if(!is.null(op$args$.strategy))
@@ -152,10 +152,11 @@ kql_build.op_summarise <- function(op, ...)
     else if(!is.null(op$args$.num_partitions))
         stop(".num_partitions must be a number", .call=FALSE)
     else NULL
-    
+
     # paste(c(*), collapse="") will not insert extra spaces when NULLs present
     smry_str <- paste(c("summarize", .strategy, .shufflekeys, .num_partitions, " "), collapse="")
-    kql(ident_q(paste0(smry_str, pieces, by)))
+    smry_clauses <- paste(pieces, collapse=", ")
+    kql(ident_q(paste0(smry_str, smry_clauses, by)))
 }
 
 #' @export
