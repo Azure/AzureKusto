@@ -145,9 +145,10 @@ MyFunctionDate %>%
 AzureKusto implements a subset of the DBI specification for interfacing with databases in R. 
 
 The following methods are supported:
-- Connections: [dbConnect], [dbDisconnect], [dbCanConnect]
-- Table management: [dbExistsTable], [dbCreateTable], [dbRemoveTable], [dbReadTable], [dbWriteTable]
-- Querying: [dbGetQuery], [dbSendQuery], [dbFetch], [dbSendStatement], [dbExecute], [dbListFields], [dbColumnInfo]
+
+- Connections: `dbConnect`, `dbDisconnect`, `dbCanConnect`
+- Table management: `dbExistsTable`, `dbCreateTable`, `dbRemoveTable`, `dbReadTable`, `dbWriteTable`
+- Querying: `dbGetQuery`, `dbSendQuery`, `dbFetch`, `dbSendStatement`, `dbExecute`, `dbListFields`, `dbColumnInfo`
 
 Azure Data Explorer is quite different to the SQL databases that DBI targets, which affects the behaviour of certain DBI methods and renders other moot.
 
