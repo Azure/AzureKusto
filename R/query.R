@@ -152,7 +152,7 @@ make_error_message <- function(content)
 
 parse_query_result <- function(tables, .use_integer64)
 {
-    # if raw http response, pass through unchanged  
+    # if raw http response, pass through unchanged
     if(inherits(tables, "response"))
         return(tables)
 
@@ -172,16 +172,20 @@ parse_query_result <- function(tables, .use_integer64)
 
 parse_command_result <- function(tables, .use_integer64)
 {
-    # if raw http response, pass through unchanged  
+    # if raw http response, pass through unchanged
     if(inherits(tables, "response"))
         return(tables)
+
+    ## Command response only has DataType attribute, no ColumnType, so copy DataType into ColumnType.
+    if(!("ColumnType" %in% tables$Columns[[1]]))
+        tables$Columns[[1]]$ColumnType <- tables$Columns[[1]]$DataType
 
     res <- Map(convert_result_types, tables$Rows, coltypes_df=tables$Columns,
                MoreArgs=list(.use_integer64=.use_integer64))
 
     if(length(res) == 1)
         res[[1]]
-    else res    
+    else res
 }
 
 
@@ -199,17 +203,19 @@ convert_result_types <- function(df, coltypes_df, .use_integer64)
                 as.integer(column),
             datetime=, DateTime=
                 as.POSIXct(strptime(column, format='%Y-%m-%dT%H:%M:%OSZ', tz='UTC')),
-            real=, Double=, Float=
+            real=, double=, float=, decimal=, Decimal=, SqlDecimal=, Double=, Float=
                 as.numeric(column),
             bool=, Boolean=
-                as.logical(column),
+                       as.logical(column),
+            dynamic=
+                lapply(column, function(x) if (!is.na(x)) tryCatch(jsonlite::fromJSON(x), error=function(e) return (x))),
             as.character(column)
         )
     }
 
     df <- as.data.frame(df, stringsAsFactors=FALSE)
     names(df) <- coltypes_df$ColumnName
-    df[] <- Map(convert_kusto_datatype, df, coltypes_df$DataType, MoreArgs=list(.use_integer64=.use_integer64))
+    df[] <- Map(convert_kusto_datatype, df, coltypes_df$ColumnType, MoreArgs=list(.use_integer64=.use_integer64))
     df
 }
 

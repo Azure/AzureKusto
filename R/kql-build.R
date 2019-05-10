@@ -172,6 +172,25 @@ kql_build.op_ungroup <- function(op, ...)
 }
 
 #' @export
+kql_build.op_unnest <- function(op, ...)
+{
+    if (!is.null(op$args$.id))
+    {
+        with_itemindex <- build_kql("with_itemindex=", escape(ident(op$args$.id)), " ")
+    } else
+    {
+        with_itemindex <- kql("")
+    }
+
+    cols_to_unnest <- unname(tidyselect::vars_select(op_vars(op), !!! op$dots))
+
+    if (is_empty(cols_to_unnest))
+        cols_to_unnest <- setdiff(op_vars(op), op_grps(op))
+
+    build_kql("mv-expand ", with_itemindex, build_kql(escape(ident(cols_to_unnest), collapse = ", ")))
+}
+
+#' @export
 kql_build.op_head <- function(op, ...)
 {
     n <- lapply(op$args$n, translate_kql)

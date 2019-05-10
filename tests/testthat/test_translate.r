@@ -548,3 +548,89 @@ test_that("summarize hinting translates correctly",
     q_str <- q %>% show_query()
     expect_equal(q_str, kql("cluster('local_df').database('local_df').['iris']\n| summarize hint.shufflekey = ['SepalLength'] hint.shufflekey = ['SepalWidth'] hint.num_partitions = 2 ['MaxSepalLength'] = max(['SepalLength']) by ['Species']"))
 })
+
+test_that("unnest translates to mv-expand",
+{
+
+    list_df <- tibble::tibble(
+        x = 1:2,
+        y = list(a = 1, b = 3:4)
+        )
+
+    list_tbl <- tbl_kusto_abstract(list_df, table_name = "list_tbl")
+
+    q <- list_tbl %>%
+        tidyr::unnest(y)
+
+    q_str <- show_query(q)
+    expect_equal(q_str, kql("cluster('local_df').database('local_df').['list_tbl']\n| mv-expand ['y']"))
+
+})
+
+test_that("unnest can handle multiple columns",
+{
+
+    list_df <- tibble::tibble(
+        x = 1:2,
+        y = list(a = 1, b = 3:4),
+        z = list(c = 2, b = 5:6)
+        )
+
+    list_tbl <- tbl_kusto_abstract(list_df, table_name = "list_tbl")
+
+    q <- list_tbl %>%
+        tidyr::unnest(y, z)
+
+    q_str <- show_query(q)
+    expect_equal(q_str, kql("cluster('local_df').database('local_df').['list_tbl']\n| mv-expand ['y'], ['z']"))
+
+})
+
+test_that("unnest .id translates to with_itemindex",
+{
+
+    list_df <- tibble::tibble(
+        x = 1:2,
+        y = list(a = 1, b = 3:4)
+        )
+
+    list_tbl <- tbl_kusto_abstract(list_df, table_name = "list_tbl")
+
+    q <- list_tbl %>%
+        tidyr::unnest(y, .id = "name")
+
+    q_str <- show_query(q)
+
+    expect_equal(q_str, kql("cluster('local_df').database('local_df').['list_tbl']\n| mv-expand with_itemindex=['name'] ['y']"))
+
+})
+
+test_that("nest translates to summarize makelist()",
+{
+
+    q <- tbl_iris %>%
+        tidyr::nest(SepalLength, SepalWidth, PetalLength, PetalWidth)
+
+    q_str <- show_query(q)
+    expect_equal(q_str, kql("cluster('local_df').database('local_df').['iris']\n| summarize ['SepalLength'] = make_list(['SepalLength']), ['SepalWidth'] = make_list(['SepalWidth']), ['PetalLength'] = make_list(['PetalLength']), ['PetalWidth'] = make_list(['PetalWidth']) by ['Species']"))
+
+})
+
+test_that("nest respects preceding group_by",
+{
+    q <- tbl_iris %>%
+        group_by(Species) %>%
+        tidyr::nest()
+
+    q_str <- show_query(q)
+    expect_equal(q_str, kql("cluster('local_df').database('local_df').['iris']\n| summarize ['SepalLength'] = make_list(['SepalLength']), ['SepalWidth'] = make_list(['SepalWidth']), ['PetalLength'] = make_list(['PetalLength']), ['PetalWidth'] = make_list(['PetalWidth']) by ['Species']"))
+})
+
+test_that("nest nests all non-provided columns",
+{
+    q <- tbl_iris %>%
+        tidyr::nest(-Species)
+
+    q_str <- show_query(q)
+    expect_equal(q_str, kql("cluster('local_df').database('local_df').['iris']\n| summarize ['SepalLength'] = make_list(['SepalLength']), ['SepalWidth'] = make_list(['SepalWidth']), ['PetalLength'] = make_list(['PetalLength']), ['PetalWidth'] = make_list(['PetalWidth']) by ['Species']"))
+})

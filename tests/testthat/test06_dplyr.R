@@ -154,7 +154,7 @@ test_that("cross-cluster joins work",
     srvname2 <- Sys.getenv("AZ_TEST_KUSTO_SERVER2")
     srvloc2 <- Sys.getenv("AZ_TEST_KUSTO_SERVER2_LOCATION")
     dbname2 <- Sys.getenv("AZ_TEST_KUSTO_DATABASE2")
-    
+
     if(srvname2 == "" || srvloc2 == "" || dbname2 == "")
         skip("Cross-cluster join tests skipped: server info not set")
 
@@ -173,4 +173,28 @@ test_that("cross-cluster joins work",
 
     out <- dplyr::collect(dplyr::left_join(ir, spec, .remote="right"))
     expect_true(inherits(out, "tbl_df") && nrow(out) == 150)
+})
+
+test_that("nest works",
+{
+    tbl_iris <- tbl_kusto(db, "iris")
+    iris_nested <- dplyr::collect(tidyr::nest(tbl_iris, -species))
+    expect_equal(3, nrow(iris_nested))
+    expect_true(inherits(iris_nested$sepal_length, "list"))
+    expect_equal(50, length(iris_nested[[1, 2]]))
+})
+
+test_that("unnest works",
+{
+    tbl_iris <- tbl_kusto(db, "iris")
+    iris_nested <- tidyr::nest(tbl_iris, -species)
+    iris_unnested <- tidyr::unnest(iris_nested)
+    iris_unnested <- dplyr::mutate(iris_unnested,
+                                   sepal_length = toreal(sepal_length),
+                                   sepal_width = toreal(sepal_width),
+                                   petal_length = toreal(petal_length),
+                                   petal_width = toreal(petal_width))
+    result <- dplyr::collect(iris_unnested)
+    expect_equal(150, nrow(result))
+    expect_true(inherits(result$sepal_length, "numeric"))
 })
