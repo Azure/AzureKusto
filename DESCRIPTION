@@ -8,8 +8,8 @@ Authors@R: c(
     person("Microsoft", role = "cph")
     )
 Description: An interface to 'Azure Data Explorer', also known as 'Kusto', a fast, highly scalable data exploration service from Microsoft: <https://azure.microsoft.com/en-us/services/data-explorer/>. Includes 'DBI' and 'dplyr' interfaces, with the latter modelled after the 'dbplyr' package, whereby queries are translated from R into the native 'KQL' query language and executed lazily. On the admin side, the package extends the object framework provided by 'AzureRMR' to support creation and deletion of databases, and management of database principals.
-URL: https://github.com/cloudyr/AzureKusto
-BugReports: https://github.com/cloudyr/AzureKusto/issues
+URL: https://github.com/Azure/AzureKusto
+BugReports: https://github.com/Azure/AzureKusto/issues
 License: MIT + file LICENSE
 Encoding: UTF-8
 VignetteBuilder: knitr

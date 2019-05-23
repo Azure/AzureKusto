@@ -8,16 +8,17 @@ R interface to Kusto, also known as [Azure Data Explorer](https://azure.microsof
 
 ## Installation
 
-AzureKusto is available on [CRAN](https://cran.r-project.org/web/packages/AzureKusto/index.html):
-```r
-install.packages("AzureKusto")
-```
-
-You can install the development version from GitHub. Note that if you are using Microsoft R, AzureKusto requires recent versions of some packages which will likely not be in your default MRAN snapshot. You can set the repository to CRAN before installing.
+AzureKusto is available on [CRAN](https://cran.r-project.org/web/packages/AzureKusto/index.html). Note that if you are using Microsoft R, AzureKusto may not be in your default MRAN snapshot. You can set the repository to CRAN before installing.
 
 ```r
 options(repos="https://cloud.r-project.org")
-devtools::install_github("cloudyr/AzureKusto")
+install.packages("AzureKusto")
+```
+
+You can install the development version from GitHub. The primary repo is https://github.com/Azure/AzureKusto; please submit issues and pull requests there. AzureKusto is also mirrored at the Cloudyr organisation, at https://github.com/cloudyr/AzureKusto.
+
+```r
+devtools::install_github("Azure/AzureKusto")
 ```
 
 ## Example usage
@@ -167,7 +168,7 @@ dbGetQuery(Samples, "StormEvents | summarize ct = count()")
 
 ## Azure Resource Manager interface
 
-On the admin side, AzureKusto extends the framework supplied by the [AzureRMR](https://github.com/cloudyr/AzureRMR) to support Kusto. Methods are provided to create and delete clusters and databases, and manage database principals.
+On the admin side, AzureKusto extends the framework supplied by the [AzureRMR](https://github.com/Azure/AzureRMR) to support Kusto. Methods are provided to create and delete clusters and databases, and manage database principals.
 
 ```r
 # create a new Kusto cluster
