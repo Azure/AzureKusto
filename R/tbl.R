@@ -420,4 +420,4 @@ add_params_to_quosure <- function(quosure, params)
 {
   new_env <- list2env(params, envir = get_env(quosure))
   quo_set_env(quosure, new_env)
-}    
+}

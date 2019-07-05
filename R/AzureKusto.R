@@ -5,7 +5,7 @@
 #' @import methods
 NULL
 
-utils::globalVariables(c("self", "asc", "con"))
+utils::globalVariables(c("self", "asc", "con", "make_list"))
 
 .onLoad <- function(libname, pkgname)
 {

@@ -8,7 +8,7 @@ R interface to Kusto, also known as [Azure Data Explorer](https://azure.microsof
 
 ## Installation
 
-AzureKusto is available on [CRAN](https://cran.r-project.org/web/packages/AzureKusto/index.html). Note that if you are using Microsoft R, AzureKusto may not be in your default MRAN snapshot. You can set the repository to CRAN before installing.
+AzureKusto is available on [CRAN](https://cran.r-project.org/package=AzureKusto). Note that if you are using Microsoft R, AzureKusto may not be in your default MRAN snapshot. You can set the repository to CRAN before installing.
 
 ```r
 options(repos="https://cloud.r-project.org")
