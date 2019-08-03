@@ -1,14 +1,15 @@
+# AzureKusto <img src="man/figures/logo.png" align="right" width=150 />
+
 [![CRAN](https://www.r-pkg.org/badges/version/AzureKusto)](https://cran.r-project.org/package=AzureKusto)
 ![Downloads](https://cranlogs.r-pkg.org/badges/AzureKusto)
-[![Travis Build Status](https://travis-ci.org/cloudyr/AzureKusto.png?branch=master)](https://travis-ci.org/cloudyr/AzureKusto)
+[![Travis Build Status](https://travis-ci.org/cloudyr/AzureKusto.svg?branch=master)](https://travis-ci.org/cloudyr/AzureKusto)
 
-# AzureKusto
 
 R interface to Kusto, also known as [Azure Data Explorer](https://azure.microsoft.com/en-us/services/data-explorer/), a fast and highly scalable data exploration service.
 
 ## Installation
 
-AzureKusto is available on [CRAN](https://cran.r-project.org/package=AzureKusto). Note that if you are using Microsoft R, AzureKusto may not be in your default MRAN snapshot. You can set the repository to CRAN before installing.
+AzureKusto is available on [CRAN](https://cran.r-project.org/package=AzureKusto). If you are using Microsoft R, the latest version of the package may not be in your default MRAN snapshot. You can set the repository to CRAN before installing.
 
 ```r
 options(repos="https://cloud.r-project.org")
@@ -186,4 +187,4 @@ db1$add_principals("myusername", role="User", fqn="aaduser=username@mydomain")
 ```
 
 ---
-[![cloudyr project logo](https://i.imgur.com/JHS98Y7.png)](https://github.com/cloudyr)
+<p align="center"><a href="https://github.com/Azure/AzureR"><img src="https://github.com/Azure/AzureR/raw/master/images/logo2.png" width=800 /></a></p>
