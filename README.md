@@ -2,8 +2,7 @@
 
 [![CRAN](https://www.r-pkg.org/badges/version/AzureKusto)](https://cran.r-project.org/package=AzureKusto)
 ![Downloads](https://cranlogs.r-pkg.org/badges/AzureKusto)
-[![Travis Build Status](https://travis-ci.org/cloudyr/AzureKusto.svg?branch=master)](https://travis-ci.org/cloudyr/AzureKusto)
-
+[![Build Status](https://asiadatascience.visualstudio.com/AzureR/_apis/build/status/Azure.AzureKusto?branchName=master)](https://asiadatascience.visualstudio.com/AzureR/_build/latest?definitionId=8&branchName=master)
 
 R interface to Kusto, also known as [Azure Data Explorer](https://azure.microsoft.com/en-us/services/data-explorer/), a fast and highly scalable data exploration service.
 
