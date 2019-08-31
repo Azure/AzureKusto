@@ -21,7 +21,7 @@
 #' - queryconsistency: The level of query consistency. Defaults to "weakconsistency".
 #' - response_dynamic_serialization: How to serialize dynamic responses.
 #' - response_dynamic_serialization_2: How to serialize dynamic responses.
-#' 
+#'
 #' User authentication properties:
 #  - pwd: The user password.
 #'   * password
@@ -256,7 +256,7 @@ print.kusto_database_endpoint <- function(x, ...)
 copy_to.kusto_database_endpoint <- function(dest, df, name=deparse(substitute(df)), overwrite = FALSE, method = "inline", ...)
 {
     if (!is.data.frame(df) && !inherits(df, "tbl_kusto"))
-        stop("`df` must be a local dataframe or a remote tbl_kusto", call. = FALSE)   
+        stop("`df` must be a local dataframe or a remote tbl_kusto", call. = FALSE)
 
     if (inherits(df, "tbl_kusto") && dest$server == df$src$server)
         out <- compute(df, name = name, ...)
@@ -277,7 +277,7 @@ copy_to.kusto_database_endpoint <- function(dest, df, name=deparse(substitute(df
                              " already exists. If you wish to overwrite it, specify overwrite=TRUE"))
         }
         dbWriteTable(cnxn, name, df, method=method)
-        
+
         out <- tbl_kusto(dest, name)
     }
     invisible(out)

@@ -47,11 +47,11 @@ partial_eval <- function(call, vars = character(), env = caller_env())
                 "NULL" = NULL,
                 symbol = sym_partial_eval(call, vars, env),
                 language = lang_partial_eval(call, vars, env),
-                logical = ,
-                integer = ,
-                double = ,
-                complex = ,
-                string = ,
+                logical =,
+                integer =,
+                double =,
+                complex =,
+                string =,
                 character = call,
                 formula = {
                     f_rhs(call) <- partial_eval(f_rhs(call), vars, f_env(call) %||% env)

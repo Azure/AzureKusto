@@ -16,7 +16,7 @@
 #' - The Kusto Query Language (KQL) is not SQL, and so higher-level SQL methods are not implemented.
 #'
 #' @name kusto-DBI
-#' @aliases kusto-DBI kusto_dbi AzureKusto_dbi 
+#' @aliases kusto-DBI kusto_dbi AzureKusto_dbi
 #' @rdname kusto-DBI
 NULL
 

@@ -12,10 +12,10 @@ test_that("params to a function can be used inside a mutate expressions",
     tbl_iris_p <- tibble::as_tibble(iris)
     names(tbl_iris_p) <- c("SepalLength", "SepalWidth", "PetalLength", "PetalWidth", "Species")
     tbl_iris_p <- tbl_kusto_abstract(tbl_iris, "iris", p="setosa")
-    
+
     q <- tbl_iris_p %>%
         mutate(Species = p)
-    
+
     q_str <- show_query(q)
 
     expect_equal(q_str, kql("cluster('local_df').database('local_df').['iris']\n| extend ['Species'] = 'setosa'"))
@@ -23,11 +23,10 @@ test_that("params to a function can be used inside a mutate expressions",
 
 test_that("params to a function can be used inside a filter expressions",
 {
-    
     tbl_iris_p <- tibble::as_tibble(iris)
     names(tbl_iris_p) <- c("SepalLength", "SepalWidth", "PetalLength", "PetalWidth", "Species")
     tbl_iris_p <- tbl_kusto_abstract(tbl_iris_p, "iris", p="setosa")
-    
+
     q <- filter(tbl_iris_p, Species == p)
     q_str <- show_query(q)
 
@@ -433,7 +432,6 @@ test_that("union_all translates correctly",
 
 test_that("as.Date() produces a Kusto datetime",
 {
-    
     dates <- c("2019-01-01", "2019-01-02", "2019-01-03")
     dates <- as.Date(dates)
     words <- c("Tuesday", "Wednesday", "Thursday")
@@ -447,12 +445,10 @@ test_that("as.Date() produces a Kusto datetime",
     q_str <- show_query(q)
 
     expect_equal(q_str, kql("cluster('local_df').database('local_df').['df']\n| where ['dates'] == todatetime('2019-01-01')"))
-    
 })
 
 test_that("as.POSIXct() produces a Kusto datetime",
 {
-    
     dates <- c("2019-01-01T23:59:59", "2019-01-02T23:59:58", "2019-01-03T00:00:00")
     dates <- as.POSIXct(strptime(dates, "%Y-%m-%dT%H:%M:%S", tz="UTC"))
     words <- c("Tuesday", "Wednesday", "Thursday")
@@ -466,12 +462,10 @@ test_that("as.POSIXct() produces a Kusto datetime",
     q_str <- show_query(q)
 
     expect_equal(q_str, kql("cluster('local_df').database('local_df').['df']\n| where ['dates'] == todatetime(todatetime('2019-01-01T23:59:59'))"))
-    
 })
 
 test_that("as.POSIXlt() produces a Kusto datetime",
 {
-    
     dates <- c("2019-01-01", "2019-01-02", "2019-01-03")
     dates <- as.POSIXlt(dates)
     words <- c("Tuesday", "Wednesday", "Thursday")
@@ -485,7 +479,6 @@ test_that("as.POSIXlt() produces a Kusto datetime",
     q_str <- show_query(q)
 
     expect_equal(q_str, kql("cluster('local_df').database('local_df').['df']\n| where ['dates'] == todatetime('2019-01-01')"))
-    
 })
 
 test_that("join hinting translates correctly",

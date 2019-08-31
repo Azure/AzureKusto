@@ -20,7 +20,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' 
+#'
 #' endp <- kusto_database_endpoint(server="myclust.australiaeast.kusto.windows.net", database="db1")
 #'
 #' # a command
@@ -99,7 +99,7 @@ build_request_body <- function(db, qry_cmd, query_options=list(), query_paramete
             build_param_list(query_parameters),
             ";",
             body$csl)
-        body$properties$Parameters <- query_parameters   
+        body$properties$Parameters <- query_parameters
     }
 
     body
@@ -208,7 +208,7 @@ convert_result_types <- function(df, coltypes_df, .use_integer64)
             bool=, Boolean=
                        as.logical(column),
             dynamic=
-                lapply(column, function(x) if (!is.na(x)) tryCatch(jsonlite::fromJSON(x), error=function(e) return (x))),
+                lapply(column, function(x) if (!is.na(x)) tryCatch(jsonlite::fromJSON(x), error=function(e) return(x))),
             as.character(column)
         )
     }

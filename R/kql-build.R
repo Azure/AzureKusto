@@ -347,7 +347,7 @@ kql_query <- function(ops, src)
     )
 }
 
-build_by_clause <- function(x, y )
+build_by_clause <- function(x, y)
 {
     sprintf("$left.%s == $right.%s", escape(ident(x)), escape(ident(y)))
 }

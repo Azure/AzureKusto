@@ -17,7 +17,7 @@
 #' - `method="streaming"`: The data is uploaded to the cluster ingestion endpoint. This is the default if the AzureStor package is not present, however be aware that currently (as of February 2019) streaming ingestion is in beta and has to be enabled for a cluster by filing a support ticket.
 #' - `method="inline"`: The data is embedded into the command text itself. This is only recommended for testing purposes, or small datasets.
 #'
-#' Note that the destination table must be created ahead of time for the ingestion to proceed. 
+#' Note that the destination table must be created ahead of time for the ingestion to proceed.
 #'
 #' @examples
 #' \dontrun{
@@ -153,7 +153,7 @@ ingest_adls1 <- function(database, src, dest_table, async=FALSE, key=NULL, token
     }
     else if(src_uri$scheme == "abfss")
         stop("ADLSgen1 URIs do not use the abfss: scheme; did you mean to call ingest_adls2()?", call.=FALSE)
-    
+
     if(!is.null(key))
         stop("ADLSgen1 does not use shared keys; did you mean to call ingest_adls2()?", call.=FALSE)
     else if(!is.null(token))
