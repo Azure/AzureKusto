@@ -298,7 +298,7 @@ flatten_query <- function(op, ops=list())
     if (is_empty(ops))
         new_ops <- list(flat_op)
     else
-        new_ops <- prepend(ops, list(flat_op))
+        new_ops <- c(list(flat_op), ops)
     if (inherits(op, "op_base"))
         return(new_ops)
     else
