@@ -152,7 +152,7 @@ add_suffixes <- function(x, y, suffix)
 {
     if (identical(suffix, "")) return(x)
 
-    out <- chr_along(x)
+    out <- rep_len(na_chr, length(x))
     for (i in seq_along(x))
     {
         nm <- x[[i]]
@@ -244,7 +244,7 @@ op_vars.op_select <- function(op)
 #' @export
 op_vars.op_rename <- function(op)
 {
-    names(rename_vars(op_vars(op$x), !!! op$dots))
+    names(tidyselect::vars_rename(op_vars(op$x), !!! op$dots))
 }
 
 #' @export
