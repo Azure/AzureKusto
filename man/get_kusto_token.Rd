@@ -48,11 +48,11 @@ By default, authentication tokens will be obtained using the main KustoClient Ac
 \examples{
 \dontrun{
 
-get_kusto_token("myclust.australiaeast.kusto.windows.net")
-get_kusto_token(clustername="myclust", location="australiaeast")
+get_kusto_token("https://myclust.westus.kusto.windows.net")
+get_kusto_token(clustername="myclust", location="westus")
 
 # authenticate using client_credentials method: see ?AzureAuth::get_azure_token
-get_kusto_token("myclust.australiaeast.kusto.windows.net",
+get_kusto_token("https://myclust.westus.kusto.windows.net",
                 tenant="mytenant", app="myapp", password="password")
 
 }

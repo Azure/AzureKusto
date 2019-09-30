@@ -21,7 +21,7 @@
 #' @examples
 #' \dontrun{
 #'
-#' endp <- kusto_database_endpoint(server="myclust.australiaeast.kusto.windows.net", database="db1")
+#' endp <- kusto_database_endpoint(server="https://myclust.westus.kusto.windows.net", database="db1")
 #'
 #' # a command
 #' run_query(endp, ".show table iris")
@@ -108,10 +108,8 @@ build_request_body <- function(db, qry_cmd, query_options=list(), query_paramete
 
 build_auth_str <- function(token=NULL, user=NULL, password=NULL)
 {
-    token <- validate_token(token)
-
     auth_str <- if(!is.null(token))
-        paste("Bearer", token)
+        paste("Bearer", validate_token(token))
     else if(!is.null(user) && !is.null(password))
         paste("Basic", openssl::base64_encode(paste(user, password, sep=":")))
     else stop("Must provide authentication details")

@@ -1,6 +1,6 @@
 Package: AzureKusto
 Title: Interface to 'Kusto'/'Azure Data Explorer'
-Version: 1.0.3
+Version: 1.0.3.9000
 Authors@R: c(
     person("Hong", "Ooi", , "hongooi@microsoft.com", role = c("aut", "cre")),
     person("Alex", "Kyllo", , "jekyllo@microsoft.com", role = "aut"),

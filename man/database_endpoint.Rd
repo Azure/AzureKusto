@@ -83,11 +83,11 @@ App authentication properties:
 }
 }
 
-Currently, AzureKusto only supports authentication via Azure Active Directory. Authenticating with DSTS is planned for the future.
+Currently, AzureKusto supports authentication via an Azure Active Directory OAuth token, or with basic authentication (a username and password). The latter is not recommended, but may be necessary for certain connections.
 
-The way \code{kusto_database_endpoint} obtains an AAD token is as follows.
+To use basic authentication, supply the \code{user} and \code{pwd} properties, and set the \code{.query_token} argument to FALSE. Otherwise, \code{kusto_database_endpoint} will use AAD authentication, obtaining a token via the following procedure.
 \enumerate{
-\item If the \code{.query_token} argument is supplied, use it.
+\item If the \code{.query_token} argument is supplied and not FALSE, use it.
 \item Otherwise, if the \code{usertoken} property is supplied, use it.
 \item Otherwise, if the \code{apptoken} property is supplied, use it.
 \item Otherwise, if the \code{appclientid} property is supplied, use it to obtain a token:
@@ -106,13 +106,16 @@ The way \code{kusto_database_endpoint} obtains an AAD token is as follows.
 \examples{
 \dontrun{
 
-kusto_database_endpoint(server="myclust.australiaeast.kusto.windows.net", database="db1")
+kusto_database_endpoint(server="https://myclust.westus.kusto.windows.net", database="db1")
 
 # supplying a token obtained previously
-token <- get_kusto_token("myclust.australiaeast.kusto.windows.net")
-kusto_database_endpoint(server="myclust.australiaeast.kusto.windows.net", database="db1",
+token <- get_kusto_token("https://myclust.westus.kusto.windows.net")
+kusto_database_endpoint(server="https://myclust.westus.kusto.windows.net", database="db1",
                         .query_token=token)
 
+# basic (username/password) authentication
+kusto_database_endpoint(server="https://myclust.westus.kusto.windows.net", database="db1",
+                        user="myname", pwd="mypassword", .query_token=FALSE)
 }
 }
 \seealso{

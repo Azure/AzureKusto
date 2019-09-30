@@ -40,10 +40,10 @@
 #' - apptoken: The AAD token for app authentication.
 #'   * apptoken, applicationtoken
 #'
-#' Currently, AzureKusto only supports authentication via Azure Active Directory. Authenticating with DSTS is planned for the future.
+#' Currently, AzureKusto supports authentication via an Azure Active Directory OAuth token, or with basic authentication (a username and password). The latter is not recommended, but may be necessary for certain connections.
 #'
-#' The way `kusto_database_endpoint` obtains an AAD token is as follows.
-#' 1. If the `.query_token` argument is supplied, use it.
+#' To use basic authentication, supply the `user` and `pwd` properties, and set the `.query_token` argument to FALSE. Otherwise, `kusto_database_endpoint` will use AAD authentication, obtaining a token via the following procedure.
+#' 1. If the `.query_token` argument is supplied and not FALSE, use it.
 #' 2. Otherwise, if the `usertoken` property is supplied, use it.
 #' 3. Otherwise, if the `apptoken` property is supplied, use it.
 #' 4. Otherwise, if the `appclientid` property is supplied, use it to obtain a token:
@@ -60,13 +60,16 @@
 #' @examples
 #' \dontrun{
 #'
-#' kusto_database_endpoint(server="myclust.australiaeast.kusto.windows.net", database="db1")
+#' kusto_database_endpoint(server="https://myclust.westus.kusto.windows.net", database="db1")
 #'
 #' # supplying a token obtained previously
-#' token <- get_kusto_token("myclust.australiaeast.kusto.windows.net")
-#' kusto_database_endpoint(server="myclust.australiaeast.kusto.windows.net", database="db1",
+#' token <- get_kusto_token("https://myclust.westus.kusto.windows.net")
+#' kusto_database_endpoint(server="https://myclust.westus.kusto.windows.net", database="db1",
 #'                         .query_token=token)
 #'
+#' # basic (username/password) authentication
+#' kusto_database_endpoint(server="https://myclust.westus.kusto.windows.net", database="db1",
+#'                         user="myname", pwd="mypassword", .query_token=FALSE)
 #' }
 #' @seealso
 #' [run_query], [az_kusto_database]
@@ -170,6 +173,9 @@ find_type_from_connstring <- function(string)
 
 find_endpoint_token <- function(properties, .query_token)
 {
+    if(!is.null(.query_token) && identical(unname(.query_token), FALSE))
+        return(NULL)
+
     if(!is.null(.query_token))
         return(.query_token)
 

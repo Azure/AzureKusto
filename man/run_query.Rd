@@ -24,7 +24,7 @@ This function is the workhorse of the AzureKusto package. It communicates with t
 \examples{
 \dontrun{
 
-endp <- kusto_database_endpoint(server="myclust.australiaeast.kusto.windows.net", database="db1")
+endp <- kusto_database_endpoint(server="https://myclust.westus.kusto.windows.net", database="db1")
 
 # a command
 run_query(endp, ".show table iris")
