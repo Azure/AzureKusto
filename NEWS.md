@@ -1,5 +1,6 @@
 # AzureKusto 1.0.4
 
+* Default `queryconsistency` query setting changed to `strongconsistency`, which fixes query errors under certain cluster configurations.
 * New maintainer (Alex Kyllo; jekyllo@microsoft.com).
 
 # AzureKusto 1.0.3
