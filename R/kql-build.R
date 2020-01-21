@@ -267,11 +267,11 @@ kql_build.op_set_op <- function(op, ...)
 
 append_asc <- function(dot)
 {
-    if (inherits(dot[[2]], "name"))
-        dot[[2]] <- call2(expr(asc), dot[[2]])
-    else if (inherits(dot[[2]], "call"))
-        if (dot[[2]][[1]] != expr("desc"))
-            dot[[2]] <- call2(expr(asc), dot[[2]])
+    if (inherits(quo_get_expr(dot), "name"))
+        quo_set_expr(dot, call2(expr(asc), quo_get_expr(dot)))
+    else if (inherits(quo_get_expr(dot), "call"))
+        if (quo_get_expr(dot)[[1]] != expr("desc"))
+            quo_set_expr(dot, call2(expr(asc), quo_get_expr(dot)))
         else
             dot
     else
