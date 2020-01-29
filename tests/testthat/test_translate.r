@@ -93,7 +93,7 @@ test_that("filter errors on missing symbols",
     q <- tbl_iris %>%
         dplyr::filter(Speciess == "setosa")
 
-    expect_error(show_query(q), "Unknown column `Speciess`")
+    expect_error(show_query(q))
 })
 
 test_that("variables from enclosing environment are passed to filter()",
@@ -136,7 +136,7 @@ test_that("select errors on column after selected away",
         dplyr::select(Species) %>%
         dplyr::select(SepalLength)
 
-    expect_error(show_query(q), "object 'SepalLength' not found")
+    expect_error(show_query(q))
 })
 
 test_that("mutate translates to extend",
@@ -279,7 +279,7 @@ test_that("rename() errors when given a nonexistent column",
     q <- tbl_iris %>%
         dplyr::rename(Species2 = Species1)
 
-    expect_error(show_query(q), "object 'Species1' not found")
+    expect_error(show_query(q))
 })
 
 test_that("head(10) translates to take 10",
