@@ -1,3 +1,7 @@
+# AzureKusto 1.0.5
+
+* Compatibility update for tidyselect 1.0.0.
+
 # AzureKusto 1.0.4
 
 * Default `queryconsistency` query setting changed to `strongconsistency`, which fixes query errors under certain cluster configurations.
