@@ -4,7 +4,9 @@
 \name{base_window}
 \alias{base_window}
 \title{Window function translations}
-\format{An object of class \code{environment} of length 1.}
+\format{
+An object of class \code{environment} of length 1.
+}
 \usage{
 base_window
 }

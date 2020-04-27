@@ -4,8 +4,17 @@
 \alias{add_op_join}
 \title{Append a join operation to the tbl_kusto object's ops list}
 \usage{
-add_op_join(type, x, y, by = NULL, suffix = NULL, .strategy = NULL,
-  .shufflekeys = NULL, .num_partitions = NULL, .remote = NULL)
+add_op_join(
+  type,
+  x,
+  y,
+  by = NULL,
+  suffix = NULL,
+  .strategy = NULL,
+  .shufflekeys = NULL,
+  .num_partitions = NULL,
+  .remote = NULL
+)
 }
 \arguments{
 \item{type}{The name of the join type,

@@ -320,6 +320,12 @@ tbl_vars.tbl_kusto_abstract <- function(x)
     op_vars(x$ops)
 }
 
+#' @export
+group_vars.tbl_kusto_abstract <- function(x)
+{
+    op_grps(x$ops)
+}
+
 #' Translate a sequence of dplyr operations on a tbl into a Kusto query string.
 #' @export
 #' @param tbl A tbl_kusto or tbl_kusto_abstract instance

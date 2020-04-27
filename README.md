@@ -69,7 +69,7 @@ Command statements work much the same way, except that they do not accept parame
 
 ```r
 
-res <- run_query(Samples, ".show tables | count")
+res <- run_query(Samples, ".show tables")
 
 ```
 

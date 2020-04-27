@@ -8,20 +8,51 @@
 \alias{ingest_adls1}
 \title{Ingestion functions for Kusto}
 \usage{
-ingest_local(database, src, dest_table, method = NULL,
-  staging_container = NULL, ingestion_token = database$token,
-  http_status_handler = "stop", ...)
+ingest_local(
+  database,
+  src,
+  dest_table,
+  method = NULL,
+  staging_container = NULL,
+  ingestion_token = database$token,
+  http_status_handler = "stop",
+  ...
+)
 
 ingest_url(database, src, dest_table, async = FALSE, ...)
 
-ingest_blob(database, src, dest_table, async = FALSE, key = NULL,
-  token = NULL, sas = NULL, ...)
+ingest_blob(
+  database,
+  src,
+  dest_table,
+  async = FALSE,
+  key = NULL,
+  token = NULL,
+  sas = NULL,
+  ...
+)
 
-ingest_adls2(database, src, dest_table, async = FALSE, key = NULL,
-  token = NULL, sas = NULL, ...)
+ingest_adls2(
+  database,
+  src,
+  dest_table,
+  async = FALSE,
+  key = NULL,
+  token = NULL,
+  sas = NULL,
+  ...
+)
 
-ingest_adls1(database, src, dest_table, async = FALSE, key = NULL,
-  token = NULL, sas = NULL, ...)
+ingest_adls1(
+  database,
+  src,
+  dest_table,
+  async = FALSE,
+  key = NULL,
+  token = NULL,
+  sas = NULL,
+  ...
+)
 }
 \arguments{
 \item{database}{A Kusto database endpoint object, created with \link{kusto_database_endpoint}.}

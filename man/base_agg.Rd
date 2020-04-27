@@ -4,7 +4,9 @@
 \name{base_agg}
 \alias{base_agg}
 \title{Aggregation function translations}
-\format{An object of class \code{environment} of length 7.}
+\format{
+An object of class \code{environment} of length 7.
+}
 \usage{
 base_agg
 }

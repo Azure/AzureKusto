@@ -4,8 +4,13 @@
 \alias{summarise.tbl_kusto_abstract}
 \title{Summarise method for Kusto tables}
 \usage{
-\method{summarise}{tbl_kusto_abstract}(.data, ..., .strategy = NULL,
-  .shufflekeys = NULL, .num_partitions = NULL)
+\method{summarise}{tbl_kusto_abstract}(
+  .data,
+  ...,
+  .strategy = NULL,
+  .shufflekeys = NULL,
+  .num_partitions = NULL
+)
 }
 \arguments{
 \item{.data}{A Kusto tbl.}

@@ -4,8 +4,12 @@
 \alias{kusto_database_endpoint}
 \title{Endpoints for communicating with a Kusto database}
 \usage{
-kusto_database_endpoint(..., .connection_string = NULL,
-  .query_token = NULL, .use_integer64 = FALSE)
+kusto_database_endpoint(
+  ...,
+  .connection_string = NULL,
+  .query_token = NULL,
+  .use_integer64 = FALSE
+)
 }
 \arguments{
 \item{...}{Named arguments which are the properties for the endpoint object. See 'Details' below for the properties that AzureKusto recognises.}

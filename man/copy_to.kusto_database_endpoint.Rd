@@ -5,9 +5,14 @@
 \title{This function uploads a local data frame into a remote data source, creating the table definition as needed.
 If the table exists, it will append the data to the existing table. If not, it will create a new table.}
 \usage{
-\method{copy_to}{kusto_database_endpoint}(dest, df,
-  name = deparse(substitute(df)), overwrite = FALSE,
-  method = "inline", ...)
+\method{copy_to}{kusto_database_endpoint}(
+  dest,
+  df,
+  name = deparse(substitute(df)),
+  overwrite = FALSE,
+  method = "inline",
+  ...
+)
 }
 \arguments{
 \item{dest}{remote data source}

@@ -4,10 +4,6 @@
 \name{az_kusto_database}
 \alias{az_kusto_database}
 \title{Kusto/Azure Data Explorer database resource class}
-\format{An object of class \code{R6ClassGenerator} of length 24.}
-\usage{
-az_kusto_database
-}
 \description{
 Class representing a Kusto database, exposing methods for working with it.
 }
@@ -71,4 +67,133 @@ db$get_database_endpoint(use_integer64=FALSE)
 
 \href{https://docs.microsoft.com/en-us/azure/data-explorer/}{Kusto/Azure Data Explorer documentation},
 }
-\keyword{datasets}
+\section{Super class}{
+\code{\link[AzureRMR:az_resource]{AzureRMR::az_resource}} -> \code{az_kusto_database}
+}
+\section{Methods}{
+\subsection{Public methods}{
+\itemize{
+\item \href{#method-new}{\code{az_kusto_database$new()}}
+\item \href{#method-delete}{\code{az_kusto_database$delete()}}
+\item \href{#method-add_principals}{\code{az_kusto_database$add_principals()}}
+\item \href{#method-remove_principals}{\code{az_kusto_database$remove_principals()}}
+\item \href{#method-list_principals}{\code{az_kusto_database$list_principals()}}
+\item \href{#method-get_database_endpoint}{\code{az_kusto_database$get_database_endpoint()}}
+\item \href{#method-clone}{\code{az_kusto_database$clone()}}
+}
+}
+\if{html}{
+\out{<details ><summary>Inherited methods</summary>}
+\itemize{
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="add_role_assignment">}\href{../../AzureRMR/html/az_resource.html#method-add_role_assignment}{\code{AzureRMR::az_resource$add_role_assignment()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="create_lock">}\href{../../AzureRMR/html/az_resource.html#method-create_lock}{\code{AzureRMR::az_resource$create_lock()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="delete_lock">}\href{../../AzureRMR/html/az_resource.html#method-delete_lock}{\code{AzureRMR::az_resource$delete_lock()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="do_operation">}\href{../../AzureRMR/html/az_resource.html#method-do_operation}{\code{AzureRMR::az_resource$do_operation()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="get_api_version">}\href{../../AzureRMR/html/az_resource.html#method-get_api_version}{\code{AzureRMR::az_resource$get_api_version()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="get_lock">}\href{../../AzureRMR/html/az_resource.html#method-get_lock}{\code{AzureRMR::az_resource$get_lock()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="get_role_assignment">}\href{../../AzureRMR/html/az_resource.html#method-get_role_assignment}{\code{AzureRMR::az_resource$get_role_assignment()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="get_role_definition">}\href{../../AzureRMR/html/az_resource.html#method-get_role_definition}{\code{AzureRMR::az_resource$get_role_definition()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="get_tags">}\href{../../AzureRMR/html/az_resource.html#method-get_tags}{\code{AzureRMR::az_resource$get_tags()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="list_locks">}\href{../../AzureRMR/html/az_resource.html#method-list_locks}{\code{AzureRMR::az_resource$list_locks()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="list_role_assignments">}\href{../../AzureRMR/html/az_resource.html#method-list_role_assignments}{\code{AzureRMR::az_resource$list_role_assignments()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="list_role_definitions">}\href{../../AzureRMR/html/az_resource.html#method-list_role_definitions}{\code{AzureRMR::az_resource$list_role_definitions()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="print">}\href{../../AzureRMR/html/az_resource.html#method-print}{\code{AzureRMR::az_resource$print()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="remove_role_assignment">}\href{../../AzureRMR/html/az_resource.html#method-remove_role_assignment}{\code{AzureRMR::az_resource$remove_role_assignment()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="set_api_version">}\href{../../AzureRMR/html/az_resource.html#method-set_api_version}{\code{AzureRMR::az_resource$set_api_version()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="set_tags">}\href{../../AzureRMR/html/az_resource.html#method-set_tags}{\code{AzureRMR::az_resource$set_tags()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="sync_fields">}\href{../../AzureRMR/html/az_resource.html#method-sync_fields}{\code{AzureRMR::az_resource$sync_fields()}}\out{</span>}
+\item \out{<span class="pkg-link" data-pkg="AzureRMR" data-topic="az_resource" data-id="update">}\href{../../AzureRMR/html/az_resource.html#method-update}{\code{AzureRMR::az_resource$update()}}\out{</span>}
+}
+\out{</details>}
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-new"></a>}}
+\if{latex}{\out{\hypertarget{method-new}{}}}
+\subsection{Method \code{new()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{az_kusto_database$new(..., kusto_cluster = self$cluster)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-delete"></a>}}
+\if{latex}{\out{\hypertarget{method-delete}{}}}
+\subsection{Method \code{delete()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{az_kusto_database$delete(..., confirm = TRUE)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-add_principals"></a>}}
+\if{latex}{\out{\hypertarget{method-add_principals}{}}}
+\subsection{Method \code{add_principals()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{az_kusto_database$add_principals(
+  name,
+  role = "User",
+  type = "User",
+  fqn = "",
+  email = "",
+  app_id = ""
+)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-remove_principals"></a>}}
+\if{latex}{\out{\hypertarget{method-remove_principals}{}}}
+\subsection{Method \code{remove_principals()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{az_kusto_database$remove_principals(
+  name,
+  role = "User",
+  type = "User",
+  fqn = "",
+  email = "",
+  app_id = ""
+)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-list_principals"></a>}}
+\if{latex}{\out{\hypertarget{method-list_principals}{}}}
+\subsection{Method \code{list_principals()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{az_kusto_database$list_principals()}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-get_database_endpoint"></a>}}
+\if{latex}{\out{\hypertarget{method-get_database_endpoint}{}}}
+\subsection{Method \code{get_database_endpoint()}}{
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{az_kusto_database$get_database_endpoint(
+  tenant = NULL,
+  user = NULL,
+  pwd = NULL,
+  ...
+)}\if{html}{\out{</div>}}
+}
+
+}
+\if{html}{\out{<hr>}}
+\if{html}{\out{<a id="method-clone"></a>}}
+\if{latex}{\out{\hypertarget{method-clone}{}}}
+\subsection{Method \code{clone()}}{
+The objects of this class are cloneable with this method.
+\subsection{Usage}{
+\if{html}{\out{<div class="r">}}\preformatted{az_kusto_database$clone(deep = FALSE)}\if{html}{\out{</div>}}
+}
+
+\subsection{Arguments}{
+\if{html}{\out{<div class="arguments">}}
+\describe{
+\item{\code{deep}}{Whether to make a deep clone.}
+}
+\if{html}{\out{</div>}}
+}
+}
+}

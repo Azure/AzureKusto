@@ -4,8 +4,7 @@
 \alias{kql_translator}
 \title{Builds an environment from a list of R -> Kusto query language translation pairs.}
 \usage{
-kql_translator(..., .funs = list(), .parent = new.env(parent =
-  emptyenv()))
+kql_translator(..., .funs = list(), .parent = new.env(parent = emptyenv()))
 }
 \arguments{
 \item{...}{Pairs of R call = Kusto call translations as individual arguments}

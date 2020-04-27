@@ -15,29 +15,77 @@
 \alias{anti_join.tbl_kusto_abstract}
 \title{Join methods for Kusto tables}
 \usage{
-\method{inner_join}{tbl_kusto_abstract}(x, y, by = NULL,
-  suffix = c(".x", ".y"), .strategy = NULL, .shufflekeys = NULL,
-  .num_partitions = NULL, .remote = NULL, ...)
+\method{inner_join}{tbl_kusto_abstract}(
+  x,
+  y,
+  by = NULL,
+  suffix = c(".x", ".y"),
+  .strategy = NULL,
+  .shufflekeys = NULL,
+  .num_partitions = NULL,
+  .remote = NULL,
+  ...
+)
 
-\method{left_join}{tbl_kusto_abstract}(x, y, by = NULL,
-  suffix = c(".x", ".y"), .strategy = NULL, .shufflekeys = NULL,
-  .num_partitions = NULL, .remote = NULL, ...)
+\method{left_join}{tbl_kusto_abstract}(
+  x,
+  y,
+  by = NULL,
+  suffix = c(".x", ".y"),
+  .strategy = NULL,
+  .shufflekeys = NULL,
+  .num_partitions = NULL,
+  .remote = NULL,
+  ...
+)
 
-\method{right_join}{tbl_kusto_abstract}(x, y, by = NULL,
-  suffix = c(".x", ".y"), .strategy = NULL, .shufflekeys = NULL,
-  .num_partitions = NULL, .remote = NULL, ...)
+\method{right_join}{tbl_kusto_abstract}(
+  x,
+  y,
+  by = NULL,
+  suffix = c(".x", ".y"),
+  .strategy = NULL,
+  .shufflekeys = NULL,
+  .num_partitions = NULL,
+  .remote = NULL,
+  ...
+)
 
-\method{full_join}{tbl_kusto_abstract}(x, y, by = NULL,
-  suffix = c(".x", ".y"), .strategy = NULL, .shufflekeys = NULL,
-  .num_partitions = NULL, .remote = NULL, ...)
+\method{full_join}{tbl_kusto_abstract}(
+  x,
+  y,
+  by = NULL,
+  suffix = c(".x", ".y"),
+  .strategy = NULL,
+  .shufflekeys = NULL,
+  .num_partitions = NULL,
+  .remote = NULL,
+  ...
+)
 
-\method{semi_join}{tbl_kusto_abstract}(x, y, by = NULL,
-  suffix = c(".x", ".y"), .strategy = NULL, .shufflekeys = NULL,
-  .num_partitions = NULL, .remote = NULL, ...)
+\method{semi_join}{tbl_kusto_abstract}(
+  x,
+  y,
+  by = NULL,
+  suffix = c(".x", ".y"),
+  .strategy = NULL,
+  .shufflekeys = NULL,
+  .num_partitions = NULL,
+  .remote = NULL,
+  ...
+)
 
-\method{anti_join}{tbl_kusto_abstract}(x, y, by = NULL,
-  suffix = c(".x", ".y"), .strategy = NULL, .shufflekeys = NULL,
-  .num_partitions = NULL, .remote = NULL, ...)
+\method{anti_join}{tbl_kusto_abstract}(
+  x,
+  y,
+  by = NULL,
+  suffix = c(".x", ".y"),
+  .strategy = NULL,
+  .shufflekeys = NULL,
+  .num_partitions = NULL,
+  .remote = NULL,
+  ...
+)
 }
 \arguments{
 \item{x, y}{Kusto tbls.}

@@ -17,7 +17,7 @@ AzureKusto implements a subset of the DBI specification for interfacing with dat
 Kusto is quite different to the SQL databases that DBI targets, which affects the behaviour of certain DBI methods and renders other moot.
 \itemize{
 \item Kusto is connectionless. \code{dbConnect} simply wraps a database endpoint object, created with \link{kusto_database_endpoint}. Similarly, \code{dbDisconnect} always returns TRUE. \code{dbCanConnect} attempts to check if querying the database will succeed, but this may not be accurate.
-\item Temporary tables are not a Kusto concept, so \code{dbCreateTable(*, temporary=TRUE)} will throw an error.
+\item Temporary tables are not a Kusto concept, so \verb{dbCreateTable(*, temporary=TRUE)} will throw an error.
 \item It only supports synchronous queries, with a default timeout of 4 minutes. \code{dbSendQuery} and \code{dbSendStatement} will wait for the query to execute, rather than returning immediately. The object returned contains the full result of the query, which \code{dbFetch} extracts.
 \item The Kusto Query Language (KQL) is not SQL, and so higher-level SQL methods are not implemented.
 }
