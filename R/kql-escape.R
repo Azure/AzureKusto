@@ -139,7 +139,7 @@ kql_vector <- function(x, parens = NA, collapse = " ")
 #' @param ... input to convert to KQL. Use [kql()] to preserve
 #'   user input as is (dangerous), and [ident()] to label user
 #'   input as kql identifiers (safe)
-#' @param .env the environment in which to evalute the arguments. Should not
+#' @param .env the environment in which to evaluate the arguments. Should not
 #'   be needed in typical use.
 #' @export
 build_kql <- function(..., .env = parent.frame())
@@ -192,7 +192,7 @@ kql_escape_string <- function(x)
     kql_quote(x, "'")
 }
 
-#' Escape a Kusto identifer with \[' '\]
+#' Escape a Kusto identifier with \[' '\]
 #' @param x An identifier to escape
 #' @export
 kql_escape_ident <- function(x)

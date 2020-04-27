@@ -13,7 +13,7 @@
 #' - `delete_database(database, confirm=TRUE)`: Delete a database, by default asking for confirmation first.
 #' - `list_databases()`: List all databases in this cluster.
 #' - `get_default_tenant()`: Retrieve the default tenant to authenticate with this cluster.
-#' - `get_query_token(tenant, ...)`: Obtain an authentication token from Azure Active Directory for this cluster's query enpdoint. Accepts further arguments that will be passed to [get_kusto_token].
+#' - `get_query_token(tenant, ...)`: Obtain an authentication token from Azure Active Directory for this cluster's query endpoint. Accepts further arguments that will be passed to [get_kusto_token].
 #' - `get_ingestion_token(tenant, ...)`: Obtain an authentication token for this cluster's ingestion endpoint. Accepts further arguments that will be passed to [get_kusto_token].
 #'
 #' @section Initialization:
@@ -136,7 +136,7 @@ public=list(
 
 #' Information functions
 #'
-#' These functions test whethen an object is of the given class.
+#' These functions test whether an object is of the given class.
 #'
 #' @param x An R object.
 #'

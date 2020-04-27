@@ -20,7 +20,7 @@
 #'
 #' `add_principal` takes the following arguments. It returns a data frame with one row per principal, containing the details for each principal.
 #' - `name`: The name of the principal to create.
-#' - `role`: The roleo of the principal, for example "Admin" or "User".
+#' - `role`: The role of the principal, for example "Admin" or "User".
 #' - `type`: The type of principal, either "User" or "App".
 #' - `fqn`: The fully qualified name of the principal, for example "aaduser=username@mydomain" for an Azure Active Directory account. If supplied, the other details will be obtained from this.
 #' - `email`: For a user principal, the email address.

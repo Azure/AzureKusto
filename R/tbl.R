@@ -355,7 +355,7 @@ tbl_kusto <- function(kusto_database, table_name, ...)
     make_tbl(c("kusto", "kusto_abstract"), src = kusto_database, ops = ops, params = params)
 }
 
-#' Compile the preceding dplyr oprations into a kusto query, execute it on the remote server,
+#' Compile the preceding dplyr operations into a kusto query, execute it on the remote server,
 #' and return the result as a tibble.
 #' @export
 #' @param tbl An instance of class tbl_kusto representing a Kusto table
