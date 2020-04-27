@@ -1,3 +1,7 @@
+# AzureKusto 1.0.6
+
+* Compatibility update for dplyr 1.0.0.
+
 # AzureKusto 1.0.5
 
 * Compatibility update for tidyselect 1.0.0.
