@@ -33,7 +33,7 @@ library(AzureKusto)
 
 Samples <- kusto_database_endpoint(server="https://help.kusto.windows.net", database="Samples")
 
-# To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code FPD8GZPY9 to authenticate.
+# To sign in, use a web browser to open the page https://microsoft.com/devicelogin and enter the code [your device code here] to authenticate.
 # Waiting for device code in browser...
 # Press Esc/Ctrl + C to abort
 # Authentication complete.
