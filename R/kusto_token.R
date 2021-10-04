@@ -53,7 +53,7 @@ get_kusto_token <- function(server=NULL, clustername, location=NULL, tenant=NULL
     }
 
     if(version == 2 && httr::parse_url(server)$path == "")
-        server <- paste0(sub("/$", "", server), "/.default")
+        server <- c(paste0(sub("/$", "", server), "/.default"), "offline_access", "openid")
 
     # KustoClient requires devicecode auth if username not supplied
     if(is.null(auth_type) && app == .kusto_app_id && (!"username" %in% names(list(...))))
@@ -84,7 +84,7 @@ delete_kusto_token <- function(server=NULL, clustername, location=NULL, tenant=N
     }
 
     if(version == 2 && httr::parse_url(server)$path == "")
-        server <- paste0(sub("/$", "", server), "/.default")
+        server <- c(paste0(sub("/$", "", server), "/.default"), "offline_access", "openid")
 
     # KustoClient requires devicecode auth if username not supplied
     if(is.null(auth_type) && app == .kusto_app_id && (!"username" %in% names(list(...))))
