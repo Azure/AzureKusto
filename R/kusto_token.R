@@ -10,6 +10,7 @@
 #' @param tenant Your Azure Active Directory (AAD) tenant. Can be a GUID, a name ("myaadtenant") or a fully qualified domain name ("myaadtenant.com").
 #' @param app The ID of the Azure Active Directory app/service principal to authenticate with. Defaults to the ID of the KustoClient app.
 #' @param auth_type The authentication method to use. Can be one of "authorization_code", "device_code", "client_credentials" or "resource_owner". The default is to pick one based on the other arguments.
+#' @param version The AAD version to use. There should be no reason to change this from the default value of 2.
 #' @param hash For `delete_kusto_token`, the MD5 hash of the token. This is used to identify the token if provided.
 #' @param confirm For `delete_kusto_token`, whether to ask for confirmation before deleting the token.
 #' @param ... Other arguments to pass to [AzureAuth::get_azure_token].
@@ -28,17 +29,17 @@
 #' @examples
 #' \dontrun{
 #'
-#' get_kusto_token("myclust.australiaeast.kusto.windows.net")
+#' get_kusto_token("https://myclust.australiaeast.kusto.windows.net")
 #' get_kusto_token(clustername="myclust", location="australiaeast")
 #'
 #' # authenticate using client_credentials method: see ?AzureAuth::get_azure_token
-#' get_kusto_token("myclust.australiaeast.kusto.windows.net",
+#' get_kusto_token("https://myclust.australiaeast.kusto.windows.net",
 #'                 tenant="mytenant", app="myapp", password="password")
 #'
 #' }
 #' @export
 get_kusto_token <- function(server=NULL, clustername, location=NULL, tenant=NULL, app=.kusto_app_id, auth_type=NULL,
-                            ...)
+                            version=2, ...)
 {
     tenant <- if(is.null(tenant))
         "common"
@@ -51,6 +52,9 @@ get_kusto_token <- function(server=NULL, clustername, location=NULL, tenant=NULL
         server <- paste0("https://", cluster, ".kusto.windows.net")
     }
 
+    if(version == 2 && httr::parse_url(server)$path == "")
+        server <- paste0(sub("/$", "", server), "/.default")
+
     # KustoClient requires devicecode auth if username not supplied
     if(is.null(auth_type) && app == .kusto_app_id && (!"username" %in% names(list(...))))
         auth_type <- "device_code"
@@ -62,7 +66,7 @@ get_kusto_token <- function(server=NULL, clustername, location=NULL, tenant=NULL
 #' @rdname get_kusto_token
 #' @export
 delete_kusto_token <- function(server=NULL, clustername, location=NULL, tenant=NULL, app=.kusto_app_id, auth_type=NULL,
-                               ..., hash=NULL, confirm=TRUE)
+                               version=2, ..., hash=NULL, confirm=TRUE)
 {
     # use hash if provided
     if(!is.null(hash))
@@ -78,6 +82,9 @@ delete_kusto_token <- function(server=NULL, clustername, location=NULL, tenant=N
         cluster <- normalize_cluster(clustername, location)
         server <- paste0("https://", cluster, ".kusto.windows.net")
     }
+
+    if(version == 2 && httr::parse_url(server)$path == "")
+        server <- paste0(sub("/$", "", server), "/.default")
 
     # KustoClient requires devicecode auth if username not supplied
     if(is.null(auth_type) && app == .kusto_app_id && (!"username" %in% names(list(...))))

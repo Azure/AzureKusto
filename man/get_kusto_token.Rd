@@ -13,6 +13,7 @@ get_kusto_token(
   tenant = NULL,
   app = .kusto_app_id,
   auth_type = NULL,
+  version = 2,
   ...
 )
 
@@ -23,6 +24,7 @@ delete_kusto_token(
   tenant = NULL,
   app = .kusto_app_id,
   auth_type = NULL,
+  version = 2,
   ...,
   hash = NULL,
   confirm = TRUE
@@ -42,6 +44,8 @@ list_kusto_tokens()
 \item{app}{The ID of the Azure Active Directory app/service principal to authenticate with. Defaults to the ID of the KustoClient app.}
 
 \item{auth_type}{The authentication method to use. Can be one of "authorization_code", "device_code", "client_credentials" or "resource_owner". The default is to pick one based on the other arguments.}
+
+\item{version}{The AAD version to use. There should be no reason to change this from the default value of 2.}
 
 \item{...}{Other arguments to pass to \link[AzureAuth:get_azure_token]{AzureAuth::get_azure_token}.}
 
@@ -63,11 +67,11 @@ By default, authentication tokens will be obtained using the main KustoClient Ac
 \examples{
 \dontrun{
 
-get_kusto_token("myclust.australiaeast.kusto.windows.net")
+get_kusto_token("https://myclust.australiaeast.kusto.windows.net")
 get_kusto_token(clustername="myclust", location="australiaeast")
 
 # authenticate using client_credentials method: see ?AzureAuth::get_azure_token
-get_kusto_token("myclust.australiaeast.kusto.windows.net",
+get_kusto_token("https://myclust.australiaeast.kusto.windows.net",
                 tenant="mytenant", app="myapp", password="password")
 
 }
