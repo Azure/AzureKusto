@@ -1,6 +1,6 @@
 Package: AzureKusto
 Title: Interface to 'Kusto'/'Azure Data Explorer'
-Version: 1.0.6
+Version: 1.0.6.9000
 Authors@R: c(
     person("Hong", "Ooi", , "hongooi73@gmail.com", role = "aut"),
     person("Alex", "Kyllo", , "jekyllo@microsoft.com", role = c("aut", "cre")),
@@ -37,5 +37,5 @@ Suggests:
     AzureGraph,
     AzureStor (>= 2.0.0),
     rmarkdown
-Roxygen: list(markdown=TRUE)
-RoxygenNote: 7.1.0
+Roxygen: list(markdown=TRUE, r6=FALSE)
+RoxygenNote: 7.1.1
