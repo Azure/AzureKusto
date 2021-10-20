@@ -1,3 +1,7 @@
+# AzureKusto 1.0.6.9000
+
+* Switch to AAD v2 when obtaining OAuth tokens with `get_kusto_token`.
+
 # AzureKusto 1.0.6
 
 * Compatibility update for dplyr 1.0.0.
