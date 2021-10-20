@@ -94,9 +94,6 @@ kusto_database_endpoint <- function(..., .connection_string=NULL, .query_token=N
     props <- normalize_connstring_properties(props)
 
     props$token <- find_endpoint_token(props, .query_token)
-    if(AzureRMR::is_azure_token(props$token) && props$token$credentials$resource != props$server)
-        warning(sprintf("Mismatch between server (%s) and token resource (%s)",
-                        props$token$credentials$resource, props$server))
 
     props$use_integer64 <- .use_integer64
     props <- check_endpoint_properties(props)
