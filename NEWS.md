@@ -1,3 +1,7 @@
+# AzureKusto 1.0.6.9001
+
+* Regenerate .Rd files for R 4.2+ using updated Roxygen to fix HTML5 issues.
+
 # AzureKusto 1.0.6.9000
 
 * Switch to AAD v2 when obtaining OAuth tokens with `get_kusto_token`.
