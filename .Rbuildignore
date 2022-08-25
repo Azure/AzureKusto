@@ -9,3 +9,5 @@ drat.sh
 .travis.yml
 ^LICENSE\.md$
 ^\.github$
+cran-comments.md
+SECURITY.md
