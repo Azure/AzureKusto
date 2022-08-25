@@ -2,7 +2,7 @@
 % Please edit documentation in R/tbl.R
 \name{collect.tbl_kusto}
 \alias{collect.tbl_kusto}
-\title{Compile the preceding dplyr oprations into a kusto query, execute it on the remote server,
+\title{Compile the preceding dplyr operations into a kusto query, execute it on the remote server,
 and return the result as a tibble.}
 \usage{
 \method{collect}{tbl_kusto}(tbl, ...)
@@ -13,6 +13,6 @@ and return the result as a tibble.}
 \item{...}{needed for agreement with generic. Not otherwise used.}
 }
 \description{
-Compile the preceding dplyr oprations into a kusto query, execute it on the remote server,
+Compile the preceding dplyr operations into a kusto query, execute it on the remote server,
 and return the result as a tibble.
 }

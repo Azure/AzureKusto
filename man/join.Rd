@@ -126,5 +126,5 @@ left_join(tbl1, tbl2, .num_partitions=5)     # no. of partitions for a shuffle j
 
 }
 \seealso{
-\link[dplyr:join]{dplyr::join}
+\link[dplyr:mutate-joins]{dplyr::join}
 }

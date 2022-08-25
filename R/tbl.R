@@ -368,7 +368,7 @@ collect.tbl_kusto <- function(tbl, ...)
     params$database <- tbl$src
     params$qry_cmd <- q_str
     res <- do.call(run_query, params)
-    as_tibble(res)
+    tibble::as_tibble(res)
 }
 
 generate_table_name <- function() {

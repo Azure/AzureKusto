@@ -8,9 +8,11 @@
 Method for the \link[AzureRMR:az_resource_group]{AzureRMR::az_resource_group} class.
 }
 \section{Usage}{
-\preformatted{get_kusto_cluster(name, location,
+
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{get_kusto_cluster(name, location,
                      node_size="D14_v2")
-}
+}\if{html}{\out{</div>}}
 }
 
 \section{Arguments}{

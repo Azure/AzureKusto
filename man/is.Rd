@@ -13,5 +13,5 @@ is_kusto_cluster(x)
 \item{x}{An R object.}
 }
 \description{
-These functions test whethen an object is of the given class.
+These functions test whether an object is of the given class.
 }

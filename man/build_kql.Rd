@@ -11,7 +11,7 @@ build_kql(..., .env = parent.frame())
 user input as is (dangerous), and \code{\link[=ident]{ident()}} to label user
 input as kql identifiers (safe)}
 
-\item{.env}{the environment in which to evalute the arguments. Should not
+\item{.env}{the environment in which to evaluate the arguments. Should not
 be needed in typical use.}
 }
 \description{
