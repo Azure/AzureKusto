@@ -1,3 +1,7 @@
+# AzureKusto 1.0.7
+
+* Re-release to resolve "Version contains large components" note.
+* 
 # AzureKusto 1.0.6.9001
 
 * Regenerate .Rd files for R 4.2+ using updated Roxygen to fix HTML5 issues.
