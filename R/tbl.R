@@ -397,6 +397,7 @@ export <- function(database, query, storage_uri, name_prefix = "export",
         name_prefix = name_prefix, key = key, format = format,
         distributed = distributed)
     run_query(database, q_str, ...)
+    # TODO: write an integration test for this
 }
 
 #' Execute the Kusto query and export the result to Azure Storage.
