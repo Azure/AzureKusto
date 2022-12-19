@@ -75,7 +75,10 @@ res <- run_query(Samples, ".show tables")
 
 ### dplyr Interface
 
-The package also implements a [dplyr](https://github.com/tidyverse/dplyr)-style interface for building a query upon a `tbl_kusto` object and then running it on the remote Kusto database and returning the result as a regular tibble object with `collect()`.
+The package also implements a [dplyr](https://github.com/tidyverse/dplyr)-style
+interface for building a query upon a `tbl_kusto` object and then running it on
+the remote Kusto database and returning the result as a regular tibble object
+with `collect()`.
 
 ```r
 
@@ -113,7 +116,8 @@ collect(q)
 
 ```
 
-`tbl_kusto` also accepts query parameters, in case the Kusto source table is a parameterized function:
+`tbl_kusto` also accepts query parameters, in case the Kusto source table is a
+parameterized function:
 
 ```r
 
@@ -136,10 +140,30 @@ MyFunctionDate %>%
 
 ```
 
+### Exporting to storage
+
+New: `export()` enables you to export a query to Azure Storage
+in one step.
+
+```r
+library(dplyr)
+
+StormEvents <- tbl_kusto(Samples, "StormEvents")
+
+q <- StormEvents %>%
+    group_by(State) %>%
+    summarize(EventCount=n()) %>%
+    arrange(State) %>%
+    export("https://mystorage.blob.core.windows.net/StormEvents")
+
+```
 
 ### DBI interface
 
-AzureKusto implements a subset of the DBI specification for interacting with databases. It should be noted that Kusto is quite different to the SQL databases that DBI targets, which affects the behaviour of certain DBI methods and renders other moot.
+AzureKusto implements a subset of the DBI specification for interacting with
+databases. It should be noted that Kusto is quite different to the SQL databases
+that DBI targets, which affects the behaviour of certain DBI methods and renders
+other moot.
 
 
 ```r
@@ -168,7 +192,10 @@ dbGetQuery(Samples, "StormEvents | summarize ct = count()")
 
 ## Azure Resource Manager interface
 
-On the admin side, AzureKusto extends the framework supplied by the [AzureRMR](https://github.com/Azure/AzureRMR) to support Kusto. Methods are provided to create and delete clusters and databases, and manage database principals.
+On the admin side, AzureKusto extends the framework supplied by the
+[AzureRMR](https://github.com/Azure/AzureRMR) to support Kusto. Methods are
+provided to create and delete clusters and databases, and manage database
+principals.
 
 ```r
 # create a new Kusto cluster

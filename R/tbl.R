@@ -375,11 +375,96 @@ generate_table_name <- function() {
     paste0("Rtbl_", paste0(sample(letters, 8), collapse=""))
 }
 
-#' Execute the query, store the results in a table, and return a reference to the new table
+#' Run a Kusto query and export results to Azure Storage in Parquet or CSV
+#' format.
+#'
+#' @param query The text of the Kusto query to run
+#' @param storage_uri The URI of the blob storage container to export to
+#' @param name_prefix The filename prefix for each exported file
+#' @param key The account key for the storage container.
+#' uses the identity that is signed into Kusto to authenticate to Azure Storage.
+#' @param format Options are "parquet", "csv", "tsv", "json"
+#' @param distributed logical, indicates whether Kusto should distributed the
+#' export job to multiple nodes, in which case multiple files will be written
+#' to storage concurrently.
+kusto_export_cmd <- function(query, storage_uri, name_prefix, key, format,
+    distributed) {
+    # Make sure the storage uri ends with a slash
+    if (!(format %in% c("parquet", "csv", "tsv", "json")))
+        stop("Format must be one of parquet, csv, tsv, or json.")
+    if (!endsWith(storage_uri, "/"))
+        storage_uri <- paste0(storage_uri, "/")
+    distr <- ifelse(distributed, "true", "false")
+    compr <- ifelse(format == "parquet", "snappy", "gzip")
+    sprintf(".export
+compressed
+to %s (h@'%s%s;%s')
+with (
+sizeLimit=1073741824,
+namePrefix='%s',
+fileExtension='%s',
+compressionType='%s',
+includeHeaders='firstFile',
+encoding='UTF8NoBOM',
+distributed=%s
+)
+<|
+%s
+", format, storage_uri, name_prefix, key, name_prefix, format, compr, distr, query)
+}
+
+#' Execute the Kusto query and export the result to Azure Storage.
+#' @param database A Kusto database endpoint object, as returned by `kusto_database_endpoint`.
+#' @param query A Kusto query string
+#' @param storage_uri The Azure Storage URI to export files to.
+#' @param name_prefix The filename prefix to use for exported files.
+#' @param key default "impersonate" which uses the account signed into Kusto to
+#' authenticate to Azure Storage. An Azure Storage account key.
+#' @param format Options are "parquet", "csv", "tsv", "json"
+#' @param distributed logical, indicates whether Kusto should distributed the
+#' export job to multiple nodes, in which case multiple files will be written
+#' to storage concurrently.
+#' @param ... needed for agreement with generic. Not otherwise used.
+#' @export
+export <- function(database, query, storage_uri, name_prefix = "export",
+    key = "impersonate", format = "parquet", distributed = FALSE, ...) {
+    is_cmd <- substr(query, 1, 1) == "."
+    if (is_cmd) stop("Management commands cannot be used with export()")
+    q_str <- kusto_export_cmd(query = query, storage_uri = storage_uri,
+        name_prefix = name_prefix, key = key, format = format,
+        distributed = distributed)
+    run_query(database, q_str, ...)
+}
+
+#' Execute the Kusto query and export the result to Azure Storage.
+#' @param tbl An instance of class tbl_kusto representing a Kusto table
+#' @param storage_uri The Azure Storage URI to export files to.
+#' @param name_prefix The filename prefix to use for exported files.
+#' @param key default "impersonate" which uses the account signed into Kusto to
+#' authenticate to Azure Storage. An Azure Storage account key.
+#' @param format Options are "parquet", "csv", "tsv", "json"
+#' @param distributed logical, indicates whether Kusto should distributed the
+#' export job to multiple nodes, in which case multiple files will be written
+#' to storage concurrently.
+#' @param ... needed for agreement with generic. Not otherwise used.
+#' @export
+export.tbl_kusto <- function(tbl, storage_uri, name_prefix = "export",
+    key = "impersonate", format = "parquet", distributed = FALSE, ...) {
+    database <- tbl$src
+    query <- kql_render(kql_build(tbl))
+    res <- export(database = database, query = query, storage_uri = storage_uri,
+        name_prefix = name_prefix, key = key, format = format,
+        distributed = distributed)
+    tibble::as_tibble(res)
+}
+
+#' Execute the query, store the results in a table, and return a reference to
+#' the new table
 #' @export
 #' @param tbl An instance of class tbl_kusto representing a Kusto table
 #' @param name The name for the Kusto table to be created.
-#' If name is omitted, the table will be named Rtbl_ + 8 random lowercase letters
+#' If name is omitted, the table will be named Rtbl_ + 8 random lowercase
+#' letters
 #' @param ... other parameters passed to the query
 compute.tbl_kusto <- function(tbl, name=generate_table_name(), ...)
 {
