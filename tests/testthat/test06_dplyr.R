@@ -57,7 +57,7 @@ test_that("mutate works",
     out <- dplyr::mutate(ir, sl2=sepal_length*2)
     expect_true({
         out <- dplyr::collect(out)
-        all_equal(out$sl2, out$sepal_length*2)
+        all(out$sl2 == out$sepal_length*2)
     })
 })
 
@@ -87,7 +87,7 @@ test_that("rename works",
 
 test_that("joining works",
 {
-    spec <- tbl_kusto(db, "species")
+    spec <- dplyr::summarize(dplyr::group_by(tbl_kusto(db2, "iris"), species), n = n())
 
     out <- dplyr::left_join(ir, spec, by="species")
     expect_is(dplyr::collect(out), "tbl_df")
@@ -123,7 +123,7 @@ test_that("summarize hinting works",
 
 test_that("join hinting works",
 {
-    spec <- tbl_kusto(db, "species")
+    spec <- dplyr::summarize(dplyr::group_by(tbl_kusto(db2, "iris"), species), n = n())
 
     out <- dplyr::left_join(ir, spec, by="species", .strategy="broadcast")
     expect_is(dplyr::collect(out), "tbl_df")
@@ -163,7 +163,7 @@ test_that("cross-cluster joins work",
     db2 <- kusto_database_endpoint(server=server2, database=dbname2, tenantid=tenant,
         appclientid=app, appkey=password)
 
-    spec <- tbl_kusto(db2, "species")
+    spec <- dplyr::summarize(dplyr::group_by(tbl_kusto(db2, "iris"), species), n = n())
 
     out <- dplyr::collect(dplyr::left_join(ir, spec))
     expect_true(inherits(out, "tbl_df") && nrow(out) == 150)
@@ -173,28 +173,4 @@ test_that("cross-cluster joins work",
 
     out <- dplyr::collect(dplyr::left_join(ir, spec, .remote="right"))
     expect_true(inherits(out, "tbl_df") && nrow(out) == 150)
-})
-
-test_that("nest works",
-{
-    tbl_iris <- tbl_kusto(db, "iris")
-    iris_nested <- dplyr::collect(tidyr::nest(tbl_iris, -species))
-    expect_equal(3, nrow(iris_nested))
-    expect_true(inherits(iris_nested$sepal_length, "list"))
-    expect_equal(50, length(iris_nested[[1, 2]]))
-})
-
-test_that("unnest works",
-{
-    tbl_iris <- tbl_kusto(db, "iris")
-    iris_nested <- tidyr::nest(tbl_iris, -species)
-    iris_unnested <- tidyr::unnest(iris_nested)
-    iris_unnested <- dplyr::mutate(iris_unnested,
-                                   sepal_length = toreal(sepal_length),
-                                   sepal_width = toreal(sepal_width),
-                                   petal_length = toreal(petal_length),
-                                   petal_width = toreal(petal_width))
-    result <- dplyr::collect(iris_unnested)
-    expect_equal(150, nrow(result))
-    expect_true(inherits(result$sepal_length, "numeric"))
 })

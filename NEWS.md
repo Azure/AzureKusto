@@ -5,6 +5,7 @@
 use.
 * `server` argument of `kusto_database_endpoint` can be just cluster name and
   no longer needs to be the fully qualified URI.
+* Removed `nest` and `unnest` as they were broken by {tidyr} API changes.
 
 # AzureKusto 1.0.7
 

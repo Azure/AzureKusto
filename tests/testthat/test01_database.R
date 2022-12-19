@@ -47,7 +47,7 @@ test_that("Resource access functions work",
     expect_is(endp2, "kusto_database_endpoint")
 
     endp3 <- kusto_database_endpoint(server=server, database=dbname,
-        .query_token=get_kusto_token(cluster=srvname, location=srv$location, tenant=tenant))
+        .query_token=get_kusto_token(cluster=srvname, location=normalize_location(srv$location), tenant=tenant))
     expect_is(endp3, "kusto_database_endpoint")
 
     conn_str <- sprintf("server=%s;database=%s;tenantid=%s", server, dbname, tenant)
@@ -62,12 +62,6 @@ test_that("Resource access functions work",
     endp5 <- kusto_database_endpoint(server=server, database=dbname, tenantid=tenant,
         appclientid=app, appkey=password)
     expect_is(endp5, "kusto_database_endpoint")
-
-    # no trailing / on server should trigger warning
-    expect_warning(kusto_database_endpoint(
-        server=sprintf("https://%s.%s.kusto.windows.net", srvname, srv$location),
-        database=dbname,
-        .query_token=endp4$token))
 
     # invalid property
     expect_error(kusto_property_endpoint(badproperty="foo"))

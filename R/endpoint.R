@@ -92,6 +92,9 @@ kusto_database_endpoint <- function(..., .connection_string=NULL, .query_token=N
 
     # fix all property names to a given (sub)set, remove quotes from quoted values
     props <- normalize_connstring_properties(props)
+    # warn if "fed" properties
+    if ("fed" %in% names(props))
+        warning("Federated authentication is not yet supported.")
     # Make bare cluster name into FQDN for server if it's not already
     if (!startsWith(props$server, "https://"))
     {
