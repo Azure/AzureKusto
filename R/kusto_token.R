@@ -38,8 +38,9 @@
 #'
 #' }
 #' @export
-get_kusto_token <- function(server=NULL, clustername, location=NULL, tenant=NULL, app=.kusto_app_id, auth_type=NULL,
-                            version=2, ...)
+get_kusto_token <- function(server=NULL, clustername, location=NULL,
+    tenant=NULL, app=.kusto_app_id, auth_type=NULL, version=2,
+    ...)
 {
     tenant <- if(is.null(tenant))
         "common"
@@ -57,7 +58,7 @@ get_kusto_token <- function(server=NULL, clustername, location=NULL, tenant=NULL
 
     # KustoClient requires devicecode auth if username not supplied
     if(is.null(auth_type) && app == .kusto_app_id && (!"username" %in% names(list(...))))
-        auth_type <- "device_code"
+        auth_type <- "authorization_code"
 
     AzureAuth::get_azure_token(server, tenant, app, auth_type=auth_type, version=version, ...)
 }

@@ -1,6 +1,10 @@
 # AzureKusto 1.1.0
 
 * New function `export()` to export query results to Azure Storage.
+* `get_kusto_token()` defaults to `auth_type = 'authorization_code'` for ease of
+use.
+* `server` argument of `kusto_database_endpoint` can be just cluster name and
+  no longer needs to be the fully qualified URI.
 
 # AzureKusto 1.0.7
 
