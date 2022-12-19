@@ -85,7 +85,7 @@ group_by.tbl_kusto_abstract <- function(.data, ..., add = FALSE)
         return(.data)
     }
 
-    groups <- group_by_prepare(.data, .dots = dots, .add = add)
+    groups <- group_by_prepare(.data, !!!dots, .add = add)
     # TODO: .dots is deprecated
     #groups <- group_by_prepare(.data, across(dots), .add = add)
     names <- vapply(groups$groups, as_string, character(1))
