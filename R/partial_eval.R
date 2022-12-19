@@ -43,6 +43,7 @@
 #' partial_eval(quote(year > local(f(1980))), vars = vars)
 partial_eval <- function(call, vars = character(), env = caller_env())
 {
+    # TODO: switch_type is soft deprecated, replace with switch(typeof())
     switch_type(call,
                 "NULL" = NULL,
                 symbol = sym_partial_eval(call, vars, env),
