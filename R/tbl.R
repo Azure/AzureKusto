@@ -453,7 +453,7 @@ distributed=%s
 #' to storage concurrently.
 #' @param ... needed for agreement with generic. Not otherwise used.
 #' @export
-export <- function(database, query, storage_uri, name_prefix = "export",
+export_storage <- function(database, query, storage_uri, name_prefix = "export",
     key = "impersonate", format = "parquet", distributed = FALSE, ...) {
     is_cmd <- substr(query, 1, 1) == "."
     if (is_cmd) stop("Management commands cannot be used with export()")
@@ -480,11 +480,18 @@ export.tbl_kusto <- function(tbl, storage_uri, name_prefix = "export",
     key = "impersonate", format = "parquet", distributed = FALSE, ...) {
     database <- tbl$src
     query <- kql_render(kql_build(tbl))
-    res <- export(database = database, query = query, storage_uri = storage_uri,
-        name_prefix = name_prefix, key = key, format = format,
-        distributed = distributed)
+    res <- export_storage(database = database, query = query,
+        storage_uri = storage_uri, name_prefix = name_prefix, key = key,
+        format = format, distributed = distributed)
     tibble::as_tibble(res)
 }
+
+#' @export
+export <- function(object, ...) {
+    UseMethod("export")
+}
+
+.S3method("export", "tbl_kusto", export.tbl_kusto)
 
 #' @keywords internal
 #' @export
