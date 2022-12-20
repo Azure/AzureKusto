@@ -316,3 +316,4 @@ flycheck_*.el
 test-creds.*
 inst/doc
 .Renviron
+.vscode/settings.json
