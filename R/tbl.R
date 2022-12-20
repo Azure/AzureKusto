@@ -137,6 +137,33 @@ summarise.tbl_kusto_abstract <- function(.data, ..., .strategy = NULL, .shufflek
                   args = list(.strategy = .strategy, .shufflekeys = .shufflekeys, .num_partitions = .num_partitions))
 }
 
+
+#' Unnest method for Kusto tables
+#'
+#' This method takes a list column and expands it so that each element of the list gets its own row.
+#' unnest() translates to Kusto's mv-expand operator.
+#'
+#' @param .data A Kusto tbl.
+#' @param ... Specification of columns to unnest.
+#' @param .id Data frame identifier - if supplied, will create a new column with name .id, giving a unique identifier. This is most useful if the list column is named.
+#' @export
+unnest.tbl_kusto_abstract <- function(.data, ..., .id = NULL)
+{
+    stop("nest and unnest are hard deprecated due to breaking upstream changes in tidyr.")
+}
+
+#' Nest method for Kusto tables
+#'
+#' This method collapses a column into a list
+#'
+#' @param .data A kusto tbl.
+#' @param ... Specification of columns to nest. Translates to summarize make_list() in Kusto.
+#' @export
+nest.tbl_kusto_abstract <- function(.data, ...)
+{
+    stop("nest and unnest are hard deprecated due to breaking upstream changes in tidyr.")
+}
+
 #' @export
 head.tbl_kusto_abstract <- function(x, n = 6L, ...)
 {
@@ -154,6 +181,7 @@ slice_sample.tbl_kusto_abstract <- function(x, n = 6L, ...)
 {
     add_op_single("slice_sample", x, args = list(n = n))
 }
+
 
 #' Join methods for Kusto tables
 #'

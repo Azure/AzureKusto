@@ -12,3 +12,4 @@ drat.sh
 cran-comments.md
 SECURITY.md
 ^CRAN-SUBMISSION$
+.vscode$
