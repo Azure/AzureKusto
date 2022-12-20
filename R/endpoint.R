@@ -93,6 +93,13 @@ kusto_database_endpoint <- function(..., .connection_string=NULL, .query_token=N
     # fix all property names to a given (sub)set, remove quotes from quoted values
     props <- normalize_connstring_properties(props)
 
+    # Make bare cluster name into FQDN for server if it's not already
+    if (!startsWith(props$server, "https://"))
+    {
+        props$server <- paste0("https://", props$server)
+        if (!endsWith(props$server, ".kusto.windows.net"))
+            props$server <- paste0(props$server, ".kusto.windows.net")
+    }
     props$token <- find_endpoint_token(props, .query_token)
 
     props$use_integer64 <- .use_integer64
