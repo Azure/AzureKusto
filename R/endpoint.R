@@ -116,7 +116,7 @@ normalize_connstring_properties <- function(properties)
     property_list <- list(
         # general properties
         traceclientversion="traceclientversion",
-        server=c("server", "addr", "address", "network address", "datasource", "host"),
+        server=c("server", "addr", "address", "network address", "datasource", "host", "cluster"),
         database=c("database", "initialcatalog", "dbname"),
         tenantid=c("tenantid", "authority"),
         queryconsistency="queryconsistency",
