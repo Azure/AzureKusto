@@ -136,6 +136,20 @@ MyFunctionDate %>%
 
 ```
 
+### Exporting to storage
+
+New: `export()` enables you to export a query to Azure Storage
+in one step.
+
+```r
+library(dplyr)
+StormEvents <- tbl_kusto(Samples, "StormEvents")
+q <- StormEvents %>%
+    group_by(State) %>%
+    summarize(EventCount=n()) %>%
+    arrange(State) %>%
+    export("https://mystorage.blob.core.windows.net/StormEvents")
+```
 
 ### DBI interface
 
