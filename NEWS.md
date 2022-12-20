@@ -1,7 +1,17 @@
+# AzureKusto 1.1.0
+
+* New function `export()` to export query results to Azure Storage.
+* `server` argument of `kusto_database_endpoint` can be just cluster name and no
+  longer needs to be the fully qualified URI. E.g. can pass either
+  `server = "help"` or `server = "https://help.kusto.windows.net"`
+* Added `$` as an infix operator in a KQL expression now translates to `.` to
+  enable nested dynamic field access.
+* Added `slice_sample` dplyr verb
+
 # AzureKusto 1.0.7
 
 * Re-release to resolve "Version contains large components" note.
-* 
+
 # AzureKusto 1.0.6.9001
 
 * Regenerate .Rd files for R 4.2+ using updated Roxygen to fix HTML5 issues.
