@@ -189,7 +189,7 @@ find_endpoint_token <- function(properties, .query_token)
     {
         message("No app ID supplied; using KustoClient app")
         properties$appclientid <- .kusto_app_id
-        auth_type <- "device_code"
+        auth_type <- "authorization_code"
     }
     else auth_type <- NULL  # KustoClient needs devicecode, otherwise let get_azure_token choose
 

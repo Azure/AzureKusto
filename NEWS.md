@@ -4,6 +4,8 @@
 * `server` argument of `kusto_database_endpoint` can be just cluster name and no
   longer needs to be the fully qualified URI. E.g. can pass either
   `server = "help"` or `server = "https://help.kusto.windows.net"`
+* Changed default `get_kusto_token()` auth_type from "device_code" to
+  "authorization_code" for easier to use sign-in flow.
 * Added `$` as an infix operator in a KQL expression now translates to `.` to
   enable nested dynamic field access.
 * Added `slice_sample` dplyr verb
