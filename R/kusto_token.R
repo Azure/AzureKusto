@@ -55,9 +55,10 @@ get_kusto_token <- function(server=NULL, clustername, location=NULL, tenant=NULL
     if(version == 2 && httr::parse_url(server)$path == "")
         server <- c(paste0(sub("/$", "", server), "/.default"), "offline_access", "openid")
 
-    # KustoClient requires devicecode auth if username not supplied
+    # Used to default to "device_code" but "authorization_code" has better ease of use
+    # and also works with .kusto_app_id without supplying a username.
     if(is.null(auth_type) && app == .kusto_app_id && (!"username" %in% names(list(...))))
-        auth_type <- "device_code"
+        auth_type <- "authorization_code"
 
     AzureAuth::get_azure_token(server, tenant, app, auth_type=auth_type, version=version, ...)
 }
