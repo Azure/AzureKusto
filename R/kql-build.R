@@ -198,6 +198,13 @@ kql_build.op_head <- function(op, ...)
 }
 
 #' @export
+kql_build.op_slice_sample <- function(op, ...)
+{
+    n <- lapply(op$args$n, translate_kql)
+    build_kql("sample ", kql(escape(n, parens = FALSE)))
+}
+
+#' @export
 kql_build.op_join <- function(op, ...)
 {
     join_type <- op$args$type

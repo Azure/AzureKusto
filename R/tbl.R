@@ -182,6 +182,12 @@ head.tbl_kusto_abstract <- function(x, n = 6L, ...)
     add_op_single("head", x, args = list(n = n))
 }
 
+#' @export
+slice_sample.tbl_kusto_abstract <- function(x, n = 6L, ...)
+{
+    add_op_single("slice_sample", x, args = list(n = n))
+}
+
 #' Join methods for Kusto tables
 #'
 #' These methods are the same as other joining methods, with the exception of the `.strategy`, `.shufflekeys` and `.num_partitions` optional arguments. They provide hints to the Kusto engine on how to execute the join, and can sometimes be useful to speed up a query. See the Kusto documentation for more details.
