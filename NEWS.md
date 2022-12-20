@@ -2,9 +2,13 @@
 
 * New function `export()` to export query results to Azure Storage.
 * `get_kusto_token()` defaults to `auth_type = 'authorization_code'` for ease of
-use.
-* `server` argument of `kusto_database_endpoint` can be just cluster name and
-  no longer needs to be the fully qualified URI.
+  use.
+* `server` argument of `kusto_database_endpoint` can be just cluster name and no
+  longer needs to be the fully qualified URI. E.g. can just be `server = "help"`
+  instead of `server = "https://help.kusto.windows.net"`
+* Added `$` as an infix operator in a KQL expression now translates to `.` to
+  enable nested dynamic field access.
+* Added `slice_head` and `slice_sample` dplyr verbs
 * Removed `nest` and `unnest` as they were broken by {tidyr} API changes.
 
 # AzureKusto 1.0.7
