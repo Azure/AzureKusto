@@ -441,7 +441,26 @@ distributed=%s
 }
 
 #' Execute the Kusto query and export the result to Azure Storage.
-#' @param database A Kusto database endpoint object, as returned by `kusto_database_endpoint`.
+#' @param tbl An object representing a table or database.
+#' @param storage_uri The Azure Storage URI to export files to.
+#' @param query A Kusto query string
+#' @param name_prefix The filename prefix to use for exported files.
+#' @param key default "impersonate" which uses the account signed into Kusto to
+#' authenticate to Azure Storage. An Azure Storage account key.
+#' @param format Options are "parquet", "csv", "tsv", "json"
+#' @param distributed logical, indicates whether Kusto should distributed the
+#' export job to multiple nodes, in which case multiple files will be written
+#' to storage concurrently.
+#' @param ... needed for agreement with generic. Not otherwise used.
+#' @rdname export
+#' @export
+export <- function(tbl, storage_uri, query = NULL, name_prefix = "export",
+    key = "impersonate", format = "parquet", distributed = FALSE, ...) {
+    UseMethod("export")
+}
+
+#' Execute the Kusto query and export the result to Azure Storage.
+#' @param tbl A Kusto database endpoint object, as returned by `kusto_database_endpoint`.
 #' @param query A Kusto query string
 #' @param storage_uri The Azure Storage URI to export files to.
 #' @param name_prefix The filename prefix to use for exported files.
@@ -452,46 +471,31 @@ distributed=%s
 #' export job to multiple nodes, in which case multiple files will be written
 #' to storage concurrently.
 #' @param ... needed for agreement with generic. Not otherwise used.
+#' @rdname export
 #' @export
-export_storage <- function(database, query, storage_uri, name_prefix = "export",
+export.kusto_database_endpoint <- function(tbl, storage_uri, query = NULL, name_prefix = "export",
     key = "impersonate", format = "parquet", distributed = FALSE, ...) {
+    if (missing(query)) stop("query parameter is required.")
     is_cmd <- substr(query, 1, 1) == "."
     if (is_cmd) stop("Management commands cannot be used with export()")
     q_str <- kusto_export_cmd(query = query, storage_uri = storage_uri,
         name_prefix = name_prefix, key = key, format = format,
         distributed = distributed)
-    run_query(database, q_str, ...)
-    # TODO: write an integration test for this
+    run_query(tbl, q_str, ...)
 }
 
-#' Execute the Kusto query and export the result to Azure Storage.
-#' @param tbl An instance of class tbl_kusto representing a Kusto table
-#' @param storage_uri The Azure Storage URI to export files to.
-#' @param name_prefix The filename prefix to use for exported files.
-#' @param key default "impersonate" which uses the account signed into Kusto to
-#' authenticate to Azure Storage. An Azure Storage account key.
-#' @param format Options are "parquet", "csv", "tsv", "json"
-#' @param distributed logical, indicates whether Kusto should distributed the
-#' export job to multiple nodes, in which case multiple files will be written
-#' to storage concurrently.
-#' @param ... needed for agreement with generic. Not otherwise used.
+#' @rdname export
 #' @export
-export.tbl_kusto <- function(tbl, storage_uri, name_prefix = "export",
+export.tbl_kusto <- function(tbl, storage_uri, query = NULL, name_prefix = "export",
     key = "impersonate", format = "parquet", distributed = FALSE, ...) {
     database <- tbl$src
-    query <- kql_render(kql_build(tbl))
-    res <- export_storage(database = database, query = query,
-        storage_uri = storage_uri, name_prefix = name_prefix, key = key,
-        format = format, distributed = distributed)
+    q <- kql_render(kql_build(tbl))
+    q_str <- kusto_export_cmd(query = q, storage_uri = storage_uri,
+        name_prefix = name_prefix, key = key, format = format,
+        distributed = distributed)
+    res <- run_query(database, q_str, ...)
     tibble::as_tibble(res)
 }
-
-#' @export
-export <- function(object, ...) {
-    UseMethod("export")
-}
-
-.S3method("export", "tbl_kusto", export.tbl_kusto)
 
 #' @keywords internal
 #' @export

@@ -1,7 +1,6 @@
 # AzureKusto 1.1.0
 
-* New function `export_storage()` and dplyr-style `export()` verb function to
-  export query results to Azure Storage.
+* New function `export()` to export query results to Azure Storage.
 * `server` argument of `kusto_database_endpoint` can be just cluster name and no
   longer needs to be the fully qualified URI. E.g. can pass either
   `server = "help"` or `server = "https://help.kusto.windows.net"`

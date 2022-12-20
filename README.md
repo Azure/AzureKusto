@@ -188,14 +188,14 @@ MyFunctionDate %>%
 
 ### Exporting to storage
 
-(New in 1.1.0) The function `export_storage()` and dplyr-style verb `export()`
-enable you to export a query result to Azure Storage in one step.
+(New in 1.1.0) The function `export()` enables you to export a query result to
+Azure Storage in one step.
 
 ```r
-export_storage(
+export(
     database = Samples,
-    query = "StormEvents | summarize EventCount = count() by State | order by State",
     storage_uri = "https://mystorage.blob.core.windows.net/StormEvents",
+    query = "StormEvents | summarize EventCount = count() by State | order by State",
     name_prefix = "events",
     format = "parquet"
 )
