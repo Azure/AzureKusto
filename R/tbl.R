@@ -84,8 +84,8 @@ group_by.tbl_kusto_abstract <- function(.data, ..., add = FALSE)
     {
         return(.data)
     }
-
-    groups <- group_by_prepare(.data, .dots = dots, add = add)
+    # Updated for dplyr deprecation of .dots and add params
+    groups <- group_by_prepare(.data, !!!dots, .add = add)
     names <- vapply(groups$groups, as_string, character(1))
     add_op_single("group_by",
                   groups$data,
