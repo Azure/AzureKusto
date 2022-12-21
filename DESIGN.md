@@ -45,6 +45,8 @@ implements the `sql_render` generic.
 
 The MSSQL backend `backend-mssql.R` for example implements the generic
 `sql_query_select` by calling `sql_select_clauses`, which is non-exported.
+`sql_format_clauses` is another non-exported one called by backends. We will
+need to reimplement this for KQL anyway.
 
 The methods dbplyr adds for `DBIConnection` are:
 
@@ -102,3 +104,5 @@ The methods dbplyr adds for `DBIConnection` are:
 - `supports_star_without_alias`
 - `supports_window_clause`
 - `values_prepare`
+
+The SQL-sepcific ones are mostly in `db-sql.R`
