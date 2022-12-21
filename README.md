@@ -5,7 +5,7 @@
 ![R-CMD-check](https://github.com/Azure/AzureKusto/workflows/R-CMD-check/badge.svg)
 
 R interface to Kusto, also known as
-[Azure Data Explorer](https://azure.microsoft.com/en-us/services/data-explorer/),
+[Azure Data Explorer](https://azure.microsoft.com/en-us/products/data-explorer/),
 a fast and highly scalable data exploration service.
 
 ## Installation

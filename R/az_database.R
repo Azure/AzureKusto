@@ -32,7 +32,7 @@
 #' [az_kusto], [kusto_database_endpoint],
 #' [create_database], [get_database], [delete_database]
 #'
-#' [Kusto/Azure Data Explorer documentation](https://docs.microsoft.com/en-us/azure/data-explorer/),
+#' [Kusto/Azure Data Explorer documentation](https://learn.microsoft.com/en-us/azure/data-explorer/),
 #'
 #' @examples
 #' \dontrun{

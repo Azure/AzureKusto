@@ -50,5 +50,5 @@ rg$create_kusto_cluster("mykusto", node_size="L16")
 \seealso{
 \link{get_kusto_cluster}, \link{delete_kusto_cluster}, \link{az_kusto}
 
-\href{https://docs.microsoft.com/en-us/azure/data-explorer/}{Kusto/Azure Data Explorer documentation}
+\href{https://learn.microsoft.com/en-us/azure/data-explorer/}{Kusto/Azure Data Explorer documentation}
 }
