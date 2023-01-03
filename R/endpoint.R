@@ -93,6 +93,13 @@ kusto_database_endpoint <- function(..., .connection_string=NULL, .query_token=N
     # fix all property names to a given (sub)set, remove quotes from quoted values
     props <- normalize_connstring_properties(props)
 
+    # Make bare cluster name into FQDN for server if it's not already
+    if (!startsWith(props$server, "https://"))
+    {
+        props$server <- paste0("https://", props$server)
+        if (!endsWith(props$server, ".kusto.windows.net"))
+            props$server <- paste0(props$server, ".kusto.windows.net")
+    }
     props$token <- find_endpoint_token(props, .query_token)
 
     props$use_integer64 <- .use_integer64
@@ -109,7 +116,7 @@ normalize_connstring_properties <- function(properties)
     property_list <- list(
         # general properties
         traceclientversion="traceclientversion",
-        server=c("server", "addr", "address", "network address", "datasource", "host"),
+        server=c("server", "addr", "address", "network address", "datasource", "host", "cluster"),
         database=c("database", "initialcatalog", "dbname"),
         tenantid=c("tenantid", "authority"),
         queryconsistency="queryconsistency",
@@ -182,7 +189,7 @@ find_endpoint_token <- function(properties, .query_token)
     {
         message("No app ID supplied; using KustoClient app")
         properties$appclientid <- .kusto_app_id
-        auth_type <- "device_code"
+        auth_type <- "authorization_code"
     }
     else auth_type <- NULL  # KustoClient needs devicecode, otherwise let get_azure_token choose
 

@@ -319,6 +319,7 @@ base_scalar <- kql_translator(
     `{` = function(x) {
         build_kql("(", x, ")")
     },
+    `$` = kql_infix("."),
     asc = function(x) {
         build_kql(x, kql(" asc"))
     },

@@ -654,3 +654,75 @@ test_that("nest nests all non-provided columns",
     q_str <- show_query(q)
     expect_equal(q_str, kql("cluster('local_df').database('local_df').['iris']\n| summarize ['SepalLength'] = make_list(['SepalLength']), ['SepalWidth'] = make_list(['SepalWidth']), ['PetalLength'] = make_list(['PetalLength']), ['PetalWidth'] = make_list(['PetalWidth']) by ['Species']"))
 })
+
+test_that("kusto export command renders correctly",
+{
+    cmd <- kusto_export_cmd(
+        query = kql_render(kql_build(dplyr::summarize(tbl_iris, ct = n()))),
+        storage_uri = "https://mystorage.blob.core.windows.net",
+        name_prefix = "my_iris",
+        key = "impersonate",
+        format = "parquet",
+        distributed = TRUE
+    )
+    expected <- ".export
+compressed
+to parquet (h@'https://mystorage.blob.core.windows.net/my_iris;impersonate')
+with (
+sizeLimit=1073741824,
+namePrefix='my_iris',
+fileExtension='parquet',
+compressionType='snappy',
+includeHeaders='firstFile',
+encoding='UTF8NoBOM',
+distributed=true
+)
+<|
+cluster('local_df').database('local_df').['iris']
+| summarize ['ct'] = count()
+"
+    expect_equal(expected, cmd)
+})
+
+test_that("kusto export command renders correctly for csv",
+{
+    cmd <- kusto_export_cmd(
+        query = kql_render(kql_build(dplyr::summarize(tbl_iris, ct = n()))),
+        storage_uri = "https://mystorage.blob.core.windows.net",
+        name_prefix = "my_iris",
+        key = "impersonate",
+        format = "csv",
+        distributed = FALSE
+    )
+    expected <- ".export
+compressed
+to csv (h@'https://mystorage.blob.core.windows.net/my_iris;impersonate')
+with (
+sizeLimit=1073741824,
+namePrefix='my_iris',
+fileExtension='csv',
+compressionType='gzip',
+includeHeaders='firstFile',
+encoding='UTF8NoBOM',
+distributed=false
+)
+<|
+cluster('local_df').database('local_df').['iris']
+| summarize ['ct'] = count()
+"
+    expect_equal(expected, cmd)
+})
+
+test_that("kusto export command errors if format not in allowed list",
+{
+    expect_error(
+        kusto_export_cmd(
+            query = kql_render(kql_build(dplyr::summarize(tbl_iris, ct = n()))),
+            storage_uri = "https://mystorage.blob.core.windows.net",
+            name_prefix = "my_iris",
+            key = "impersonate",
+            format = "avro",
+            distributed = FALSE
+        )
+    )
+})
