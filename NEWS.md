@@ -1,3 +1,8 @@
+# AzureKusto 1.1.1
+
+* Fixed bug in KQL translation of `%in%` operator so that it now works when the
+  right hand side is either a vector or a tabular expression.
+
 # AzureKusto 1.1.0
 
 * New function `export()` to export query results to Azure Storage.
