@@ -105,9 +105,14 @@ copy_env <- function(from, to = NULL, parent = parent.env(from))
 kql_infix <- function(f)
 {
     stopifnot(is.character(f))
-
     function(x, y) {
-        build_kql(x, " ", kql(f), " ", y)
+        # If y is a table/query we need to render and inline it
+        if (inherits(y, "tbl_kusto_abstract")) {
+            # KQL requires  double parens around queries as RHS of in operator
+            build_kql(x, " ", kql(f), " ((", kql(kql_render(kql_build(y))), "))")
+        } else {
+            build_kql(x, " ", kql(f), " ", y)
+        }
     }
 }
 
@@ -219,6 +224,8 @@ default_op <- function(x)
 
 }
 
+
+
 #' Scalar operator translations (infix and prefix)
 #' @export
 base_scalar <- kql_translator(
@@ -244,13 +251,10 @@ base_scalar <- kql_translator(
     `>`     = kql_infix(">"),
     `>=`    = kql_infix(">="),
 
-    `%in%` = function(x, table) {
-        if (is.kql(table) || length(table) > 1) {
-            build_kql(x, " IN ", table)
-        } else {
-            build_kql(x, " IN (", table, ")")
-        }
-    },
+    `%in%`   = kql_infix("in"),
+    `%in~%`  = kql_infix("in~"),
+    `%!in%`  = kql_infix("!in"),
+    `%!in~%` = kql_infix("!in~"),
 
     `!`     = kql_prefix("not"),
     `&`     = kql_infix("and"),
