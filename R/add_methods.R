@@ -27,7 +27,7 @@
 #' @seealso
 #' [get_kusto_cluster], [delete_kusto_cluster], [az_kusto]
 #'
-#' [Kusto/Azure Data Explorer documentation](https://docs.microsoft.com/en-us/azure/data-explorer/)
+#' [Kusto/Azure Data Explorer documentation](https://learn.microsoft.com/en-us/azure/data-explorer/)
 #'
 #' @examples
 #' \dontrun{
@@ -66,7 +66,7 @@ NULL
 #' @seealso
 #' [create_kusto_cluster], [delete_kusto_cluster], [az_kusto]
 #'
-#' [Kusto/Azure Data Explorer documentation](https://docs.microsoft.com/en-us/azure/data-explorer/)
+#' [Kusto/Azure Data Explorer documentation](https://learn.microsoft.com/en-us/azure/data-explorer/)
 #'
 #' @examples
 #' \dontrun{
@@ -104,7 +104,7 @@ NULL
 #' @seealso
 #' [create_kusto_cluster], [get_kusto_cluster], [az_kusto]
 #'
-#' [Kusto/Azure Data Explorer documentation](https://docs.microsoft.com/en-us/azure/data-explorer/)
+#' [Kusto/Azure Data Explorer documentation](https://learn.microsoft.com/en-us/azure/data-explorer/)
 #'
 #' @examples
 #' \dontrun{

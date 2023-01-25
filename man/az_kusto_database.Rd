@@ -65,5 +65,5 @@ db$get_database_endpoint(use_integer64=FALSE)
 \link{az_kusto}, \link{kusto_database_endpoint},
 \link{create_database}, \link{get_database}, \link{delete_database}
 
-\href{https://docs.microsoft.com/en-us/azure/data-explorer/}{Kusto/Azure Data Explorer documentation},
+\href{https://learn.microsoft.com/en-us/azure/data-explorer/}{Kusto/Azure Data Explorer documentation},
 }
