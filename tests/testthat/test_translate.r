@@ -713,6 +713,7 @@ cluster('local_df').database('local_df').['iris']
     expect_equal(expected, cmd)
 })
 
+
 test_that("kusto export command errors if format not in allowed list",
 {
     expect_error(
@@ -725,4 +726,72 @@ test_that("kusto export command errors if format not in allowed list",
             distributed = FALSE
         )
     )
+})
+
+test_that("%in% operator works for vectors",
+{
+    q <- tbl_iris |>
+        filter(Species %in% c("setosa", "versicolor"))
+    expected <- kql("cluster('local_df').database('local_df').['iris']
+| where ['Species'] in ('setosa', 'versicolor')")
+    q_str <- show_query(q)
+    expect_equal(q_str, expected)
+})
+
+
+test_that("%!in% operator works for vectors",
+{
+    q <- tbl_iris |>
+        filter(Species %!in% c("setosa", "versicolor"))
+    expected <- kql("cluster('local_df').database('local_df').['iris']
+| where ['Species'] !in ('setosa', 'versicolor')")
+    q_str <- show_query(q)
+    expect_equal(q_str, expected)
+})
+
+test_that("%in~% operator works for vectors",
+{
+    q <- tbl_iris |>
+        filter(Species %in~% c("setosa", "versicolor"))
+    expected <- kql("cluster('local_df').database('local_df').['iris']
+| where ['Species'] in~ ('setosa', 'versicolor')")
+    q_str <- show_query(q)
+    expect_equal(q_str, expected)
+})
+
+test_that("%in% operator works for tables",
+{
+    rhs <- select(tbl_iris, Species)
+    q <- tbl_iris |>
+        filter(Species %in% rhs)
+    expected <- kql("cluster('local_df').database('local_df').['iris']
+| where ['Species'] in ((cluster('local_df').database('local_df').['iris']
+| project ['Species']))")
+    q_str <- show_query(q)
+    expect_equal(q_str, expected)
+})
+
+
+test_that("%!in% operator works for tables",
+{
+    rhs <- select(tbl_iris, Species)
+    q <- tbl_iris |>
+        filter(Species %!in% rhs)
+    expected <- kql("cluster('local_df').database('local_df').['iris']
+| where ['Species'] !in ((cluster('local_df').database('local_df').['iris']
+| project ['Species']))")
+    q_str <- show_query(q)
+    expect_equal(q_str, expected)
+})
+
+test_that("%in~% operator works for tables",
+{
+    rhs <- select(tbl_iris, Species)
+    q <- tbl_iris |>
+        filter(Species %in~% rhs)
+    expected <- kql("cluster('local_df').database('local_df').['iris']
+| where ['Species'] in~ ((cluster('local_df').database('local_df').['iris']
+| project ['Species']))")
+    q_str <- show_query(q)
+    expect_equal(q_str, expected)
 })
