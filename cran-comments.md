@@ -1,12 +1,11 @@
 # CRAN Comments for AzureKusto
 
-## Resubmission
-
-This is a resubmission. In this version I have:
-
-- Fixed hyperlinks in the documentation that pointed to 301 redirects.
-- Updated vignettes/AzureKusto.Rmd to match new content in README.md
-
 ## R CMD check results
 
-There were no ERRORs, WARNINGs or NOTEs.
+There were no ERRORs or WARNINGs.
+
+There was one NOTE:
+
+> N checking for detritus in the temp directory
+> Found the following files/directories:
+> 'lastMiKTeXException'
