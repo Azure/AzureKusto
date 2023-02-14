@@ -4,7 +4,7 @@
 \alias{nest.tbl_kusto_abstract}
 \title{Nest method for Kusto tables}
 \usage{
-nest.tbl_kusto_abstract(.data, ...)
+\method{nest}{tbl_kusto_abstract}(.data, ...)
 }
 \arguments{
 \item{.data}{A kusto tbl.}

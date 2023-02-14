@@ -4,7 +4,7 @@
 \alias{unnest.tbl_kusto_abstract}
 \title{Unnest method for Kusto tables}
 \usage{
-unnest.tbl_kusto_abstract(.data, ..., .id = NULL)
+\method{unnest}{tbl_kusto_abstract}(.data, ..., .id = NULL)
 }
 \arguments{
 \item{.data}{A Kusto tbl.}

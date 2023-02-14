@@ -27,13 +27,13 @@ Imports:
     AzureRMR (>= 2.0.0),
     tibble,
     dplyr,
+    tidyr,
     tidyselect (>= 0.2.4),
     DBI (>= 1.0.0)
 Suggests:
     bit64,
     knitr,
     testthat,
-    tidyr,
     AzureGraph,
     AzureStor (>= 2.0.0),
     rmarkdown
