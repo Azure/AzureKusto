@@ -94,9 +94,9 @@ group_by.tbl_kusto_abstract <- function(.data, ..., add = FALSE)
 }
 
 #' @export
-ungroup.tbl_kusto_abstract <- function(.data, ...)
+ungroup.tbl_kusto_abstract <- function(x, ...)
 {
-    add_op_single("ungroup", .data)
+    add_op_single("ungroup", x)
 }
 
 #' Summarise method for Kusto tables
@@ -183,9 +183,9 @@ head.tbl_kusto_abstract <- function(x, n = 6L, ...)
 }
 
 #' @export
-slice_sample.tbl_kusto_abstract <- function(x, n = 6L, ...)
+slice_sample.tbl_kusto_abstract <- function(.data, ..., n = 6L, prop, by, weight_by, replace)
 {
-    add_op_single("slice_sample", x, args = list(n = n))
+    add_op_single("slice_sample", .data, args = list(n = n))
 }
 
 #' Join methods for Kusto tables
@@ -334,10 +334,11 @@ group_vars.tbl_kusto_abstract <- function(x)
 
 #' Translate a sequence of dplyr operations on a tbl into a Kusto query string.
 #' @export
-#' @param tbl A tbl_kusto or tbl_kusto_abstract instance
-show_query.tbl_kusto_abstract <- function(tbl)
+#' @param x A tbl_kusto or tbl_kusto_abstract instance
+#' @param ... needed for agreement with generic. Not otherwise used.
+show_query.tbl_kusto_abstract <- function(x, ...)
 {
-    qry <- kql_build(tbl)
+    qry <- kql_build(x)
     kql_render(qry)
 }
 
@@ -364,14 +365,14 @@ tbl_kusto <- function(kusto_database, table_name, ...)
 #' Compile the preceding dplyr operations into a kusto query, execute it on the remote server,
 #' and return the result as a tibble.
 #' @export
-#' @param tbl An instance of class tbl_kusto representing a Kusto table
+#' @param x An instance of class tbl_kusto representing a Kusto table
 #' @param ... needed for agreement with generic. Not otherwise used.
-collect.tbl_kusto <- function(tbl, ...)
+collect.tbl_kusto <- function(x, ...)
 {
-    q <- kql_build(tbl)
+    q <- kql_build(x)
     q_str <- kql_render(q)
-    params <- c(tbl$params, list(...))
-    params$database <- tbl$src
+    params <- c(x$params, list(...))
+    params$database <- x$src
     params$qry_cmd <- q_str
     res <- do.call(run_query, params)
     tibble::as_tibble(res)
@@ -384,10 +385,10 @@ generate_table_name <- function() {
 #' Execute the query, store the results in a table, and return a reference to the new table
 #' @export
 #' @param tbl An instance of class tbl_kusto representing a Kusto table
+#' @param ... other parameters passed to the query
 #' @param name The name for the Kusto table to be created.
 #' If name is omitted, the table will be named Rtbl_ + 8 random lowercase letters
-#' @param ... other parameters passed to the query
-compute.tbl_kusto <- function(tbl, name=generate_table_name(), ...)
+compute.tbl_kusto <- function(tbl, ..., name = generate_table_name())
 {
     q <- kql_build(tbl)
     q_str <- kql_render(q)
