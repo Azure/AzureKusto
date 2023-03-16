@@ -12,7 +12,10 @@
   ptype = NULL,
   names_sep = NULL,
   names_repair = NULL,
-  .id = NULL
+  .drop = NULL,
+  .id = NULL,
+  .sep = NULL,
+  .preserve = NULL
 )
 }
 \arguments{
@@ -35,9 +38,9 @@ to \code{df \%>\% mutate(y = fun(x, y, z)) \%>\% unnest(y)}.}
 
 \item{names_repair}{Needed for agreement with generic. Not otherwise used.}
 
-\item{.id}{Data frame identifier - if supplied, will create a new column with name .id, giving a unique identifier. This is most useful if the list column is named.}
-
 \item{.drop}{Needed for agreement with generic. Not otherwise used.}
+
+\item{.id}{Data frame identifier - if supplied, will create a new column with name .id, giving a unique identifier. This is most useful if the list column is named.}
 
 \item{.sep}{Needed for agreement with generic. Not otherwise used.}
 

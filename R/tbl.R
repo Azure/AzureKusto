@@ -155,7 +155,8 @@ summarise.tbl_kusto_abstract <- function(.data, ..., .strategy = NULL, .shufflek
 #' @param .preserve Needed for agreement with generic. Not otherwise used.
 #' @export
 unnest.tbl_kusto_abstract <- function(data, cols, ..., keep_empty = FALSE, ptype = NULL,
-                                      names_sep = NULL, names_repair = NULL, .id = NULL) {
+                                      names_sep = NULL, names_repair = NULL, .drop = NULL,
+                                      .id = NULL, .sep = NULL, .preserve = NULL) {
     # dots <- quos(...)
     dots <- enquo(cols)
     add_op_single("unnest", data, dots = dots, args = list(.id = .id))
