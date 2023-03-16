@@ -116,7 +116,7 @@ ungroup.tbl_kusto_abstract <- function(x, ...) {
 #' ## Kusto extensions:
 #' summarise(tbl1, mx = mean(x), .strategy = "broadcast") # a broadcast summarise
 #'
-#' summarise(tbl1, mx = mean(x), .shufflekeys = c("var1", "var2")) # shuffle summarise with shuffle keys
+#' summarise(tbl1, mx = mean(x), .shufflekeys = c("var1", "var2")) # a shuffle summarise with keys
 #'
 #' summarise(tbl1, mx = mean(x), .num_partitions = 5) # no. of partitions for a shuffle summarise
 #' }
