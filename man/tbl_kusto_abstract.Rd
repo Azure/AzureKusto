@@ -14,6 +14,8 @@ library(dplyr)
 df <- data.frame(x = 1, y = 2)
 
 df <- tbl_kusto_abstract(df, "table1")
-df \%>\% summarise(x = sd(x)) \%>\% show_query()
+df \%>\%
+    summarise(x = sd(x)) \%>\%
+    show_query()
 }
 \keyword{internal}

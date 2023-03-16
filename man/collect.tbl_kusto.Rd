@@ -5,10 +5,10 @@
 \title{Compile the preceding dplyr operations into a kusto query, execute it on the remote server,
 and return the result as a tibble.}
 \usage{
-\method{collect}{tbl_kusto}(tbl, ...)
+\method{collect}{tbl_kusto}(x, ...)
 }
 \arguments{
-\item{tbl}{An instance of class tbl_kusto representing a Kusto table}
+\item{x}{An instance of class tbl_kusto representing a Kusto table}
 
 \item{...}{needed for agreement with generic. Not otherwise used.}
 }

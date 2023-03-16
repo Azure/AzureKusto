@@ -32,14 +32,14 @@ This method is the same as other summarise methods, with the exception of the \c
 tbl1 <- tbl_kusto(db, "table1")
 
 ## standard dplyr syntax:
-summarise(tbl1, mx=mean(x))
+summarise(tbl1, mx = mean(x))
 
 ## Kusto extensions:
-summarise(tbl1, mx=mean(x), .strategy="broadcast") # a broadcast summarise
+summarise(tbl1, mx = mean(x), .strategy = "broadcast") # a broadcast summarise
 
-summarise(tbl1, mx=mean(x), .shufflekeys=c("var1", "var2")) # shuffle summarise with shuffle keys
+summarise(tbl1, mx = mean(x), .shufflekeys = c("var1", "var2")) # shuffle summarise with shuffle keys
 
-summarise(tbl1, mx=mean(x), .num_partitions=5)     # no. of partitions for a shuffle summarise
+summarise(tbl1, mx = mean(x), .num_partitions = 5) # no. of partitions for a shuffle summarise
 }
 
 }

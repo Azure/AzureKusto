@@ -4,10 +4,12 @@
 \alias{show_query.tbl_kusto_abstract}
 \title{Translate a sequence of dplyr operations on a tbl into a Kusto query string.}
 \usage{
-\method{show_query}{tbl_kusto_abstract}(tbl)
+\method{show_query}{tbl_kusto_abstract}(x, ...)
 }
 \arguments{
-\item{tbl}{A tbl_kusto or tbl_kusto_abstract instance}
+\item{x}{A tbl_kusto or tbl_kusto_abstract instance}
+
+\item{...}{needed for agreement with generic. Not otherwise used.}
 }
 \description{
 Translate a sequence of dplyr operations on a tbl into a Kusto query string.

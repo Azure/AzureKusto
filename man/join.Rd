@@ -19,66 +19,76 @@
   x,
   y,
   by = NULL,
+  copy = NULL,
   suffix = c(".x", ".y"),
+  ...,
+  keep = NULL,
   .strategy = NULL,
   .shufflekeys = NULL,
   .num_partitions = NULL,
-  .remote = NULL,
-  ...
+  .remote = NULL
 )
 
 \method{left_join}{tbl_kusto_abstract}(
   x,
   y,
   by = NULL,
+  copy = NULL,
   suffix = c(".x", ".y"),
+  ...,
+  keep = NULL,
   .strategy = NULL,
   .shufflekeys = NULL,
   .num_partitions = NULL,
-  .remote = NULL,
-  ...
+  .remote = NULL
 )
 
 \method{right_join}{tbl_kusto_abstract}(
   x,
   y,
   by = NULL,
+  copy = NULL,
   suffix = c(".x", ".y"),
+  ...,
+  keep = NULL,
   .strategy = NULL,
   .shufflekeys = NULL,
   .num_partitions = NULL,
-  .remote = NULL,
-  ...
+  .remote = NULL
 )
 
 \method{full_join}{tbl_kusto_abstract}(
   x,
   y,
   by = NULL,
+  copy = NULL,
   suffix = c(".x", ".y"),
+  ...,
+  keep = NULL,
   .strategy = NULL,
   .shufflekeys = NULL,
   .num_partitions = NULL,
-  .remote = NULL,
-  ...
+  .remote = NULL
 )
 
 \method{semi_join}{tbl_kusto_abstract}(
   x,
   y,
   by = NULL,
+  copy = NULL,
+  ...,
   suffix = c(".x", ".y"),
   .strategy = NULL,
   .shufflekeys = NULL,
   .num_partitions = NULL,
-  .remote = NULL,
-  ...
+  .remote = NULL
 )
 
 \method{anti_join}{tbl_kusto_abstract}(
   x,
   y,
   by = NULL,
+  copy = NULL,
   suffix = c(".x", ".y"),
   .strategy = NULL,
   .shufflekeys = NULL,
@@ -92,7 +102,13 @@
 
 \item{by}{The columns to join on.}
 
+\item{copy}{Needed for agreement with generic. Not otherwise used.}
+
 \item{suffix}{The suffixes to use for deduplicating column names.}
+
+\item{...}{Other arguments passed to lower-level functions.}
+
+\item{keep}{Needed for agreement with generic. Not otherwise used. Kusto retains keys from both sides of joins.}
 
 \item{.strategy}{A join strategy hint to pass to Kusto. Currently the values supported are "shuffle" and "broadcast".}
 
@@ -101,8 +117,6 @@
 \item{.num_partitions}{The number of partitions for a shuffle query.}
 
 \item{.remote}{A join strategy hint to use for cross-cluster joins. Can be "left", "right", "local" or "auto" (the default).}
-
-\item{...}{Other arguments passed to lower-level functions.}
 }
 \description{
 These methods are the same as other joining methods, with the exception of the \code{.strategy}, \code{.shufflekeys} and \code{.num_partitions} optional arguments. They provide hints to the Kusto engine on how to execute the join, and can sometimes be useful to speed up a query. See the Kusto documentation for more details.
@@ -117,11 +131,11 @@ tbl2 <- tbl_kusto(db, "table2")
 left_join(tbl1, tbl2)
 
 # Kusto extensions:
-left_join(tbl1, tbl2, .strategy="broadcast") # a broadcast join
+left_join(tbl1, tbl2, .strategy = "broadcast") # a broadcast join
 
-left_join(tbl1, tbl2, .shufflekeys=c("var1", "var2")) # shuffle join with shuffle keys
+left_join(tbl1, tbl2, .shufflekeys = c("var1", "var2")) # shuffle join with shuffle keys
 
-left_join(tbl1, tbl2, .num_partitions=5)     # no. of partitions for a shuffle join
+left_join(tbl1, tbl2, .num_partitions = 5) # no. of partitions for a shuffle join
 }
 
 }

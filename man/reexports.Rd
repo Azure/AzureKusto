@@ -15,6 +15,6 @@ These objects are imported from other packages. Follow the links
 below to see their documentation.
 
 \describe{
-  \item{dplyr}{\code{\link[dplyr]{filter}}, \code{\link[dplyr:reexports]{intersect}}, \code{\link[dplyr:reexports]{setdiff}}, \code{\link[dplyr:reexports]{setequal}}, \code{\link[dplyr:reexports]{union}}}
+  \item{dplyr}{\code{\link[dplyr]{filter}}, \code{\link[dplyr:setops]{intersect}}, \code{\link[dplyr:setops]{setdiff}}, \code{\link[dplyr:setops]{setequal}}, \code{\link[dplyr:setops]{union}}}
 }}
 

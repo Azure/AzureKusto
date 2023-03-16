@@ -4,14 +4,44 @@
 \alias{unnest.tbl_kusto_abstract}
 \title{Unnest method for Kusto tables}
 \usage{
-\method{unnest}{tbl_kusto_abstract}(.data, ..., .id = NULL)
+\method{unnest}{tbl_kusto_abstract}(
+  data,
+  cols,
+  ...,
+  keep_empty = FALSE,
+  ptype = NULL,
+  names_sep = NULL,
+  names_repair = NULL,
+  .id = NULL
+)
 }
 \arguments{
-\item{.data}{A Kusto tbl.}
+\item{data}{A Kusto tbl.}
 
-\item{...}{Specification of columns to unnest.}
+\item{cols}{Specification of columns to unnest.}
+
+\item{...}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}:
+previously you could write \code{df \%>\% unnest(x, y, z)}.
+Convert to \code{df \%>\% unnest(c(x, y, z))}. If you previously created a new
+variable in \code{unnest()} you'll now need to do it explicitly with \code{mutate()}.
+Convert \code{df \%>\% unnest(y = fun(x, y, z))}
+to \code{df \%>\% mutate(y = fun(x, y, z)) \%>\% unnest(y)}.}
+
+\item{keep_empty}{Needed for agreement with generic. Not otherwise used. Kusto does not keep empty rows.}
+
+\item{ptype}{Needed for agreement with generic. Not otherwise used.}
+
+\item{names_sep}{Needed for agreement with generic. Not otherwise used.}
+
+\item{names_repair}{Needed for agreement with generic. Not otherwise used.}
 
 \item{.id}{Data frame identifier - if supplied, will create a new column with name .id, giving a unique identifier. This is most useful if the list column is named.}
+
+\item{.drop}{Needed for agreement with generic. Not otherwise used.}
+
+\item{.sep}{Needed for agreement with generic. Not otherwise used.}
+
+\item{.preserve}{Needed for agreement with generic. Not otherwise used.}
 }
 \description{
 This method takes a list column and expands it so that each element of the list gets its own row.
