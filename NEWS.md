@@ -1,3 +1,8 @@
+# AzureKusto 1.1.2
+
+* Import S3 generics `tidyr::nest()` and `tidyr::unnest()`
+* Fix S3 method consistency issues with r-devel
+
 # AzureKusto 1.1.1
 
 * Fixed bug in KQL translation of `%in%` operator so that it now works when the
