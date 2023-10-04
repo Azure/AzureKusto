@@ -1,3 +1,7 @@
+# AzureKusto 1.1.3
+
+* Fix test that broke on Linux due to upgrading the tzdata system package.
+
 # AzureKusto 1.1.2
 
 * Import S3 generics `tidyr::nest()` and `tidyr::unnest()`

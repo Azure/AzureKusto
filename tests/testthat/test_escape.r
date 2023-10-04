@@ -56,6 +56,6 @@ test_that("can escape integer64 values", {
 # Times -------------------------------------------------------------------
 
 test_that("times are converted to ISO 8601", {
-  x <- ISOdatetime(2000, 1, 2, 3, 4, 5, tz = "US/Central")
+  x <- ISOdatetime(2000, 1, 2, 3, 4, 5, tz = "America/Chicago")
   expect_equal(escape(x), kql("'2000-01-02T09:04:05Z'"))
 })
