@@ -31,7 +31,7 @@ This is a list of properties recognised by \code{kusto_database_endpoint}, and t
 
 General properties:
 \itemize{
-\item server: The URI of the server, usually of the form 'https://{clustername}.{location}.kusto.windows.net'.
+\item server: The URI of the server, usually of the form 'https://clustername.location.kusto.windows.net'.
 \itemize{
 \item addr, address, network address, datasource, host
 }
