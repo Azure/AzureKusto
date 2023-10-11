@@ -9,7 +9,7 @@
 #' This is a list of properties recognised by `kusto_database_endpoint`, and their alternate names. Property names not in this list will generate an error. Note that not all properties that are recognised are currently supported by AzureKusto.
 #'
 #' General properties:
-#' - server: The URI of the server, usually of the form 'https://{clustername}.{location}.kusto.windows.net'.
+#' - server: The URI of the server, usually of the form 'https://clustername.location.kusto.windows.net'.
 #'   * addr, address, network address, datasource, host
 #' - database: The database.
 #'   * initialcatalog, dbname
