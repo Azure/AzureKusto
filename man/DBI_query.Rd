@@ -68,5 +68,5 @@ DBI::dbFetch(res)
 }
 }
 \seealso{
-\link{dbConnect}, \link{dbReadTable}, \link{dbWriteTable}, \link{run_query}
+\link[DBI:dbConnect]{DBI::dbConnect}, \link[DBI:dbReadTable]{DBI::dbReadTable}, \link[DBI:dbWriteTable]{DBI::dbWriteTable}, \link{run_query}
 }

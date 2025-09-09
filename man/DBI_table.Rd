@@ -70,5 +70,5 @@ DBI::dbRemoveTable(db, "mtcars")
 }
 }
 \seealso{
-\link{AzureKusto-connection}, \link{dbConnect}, \link{run_query}, \link{ingest_local}
+\link{AzureKusto-connection}, \link[DBI:dbConnect]{DBI::dbConnect}, \link{run_query}, \link{ingest_local}
 }

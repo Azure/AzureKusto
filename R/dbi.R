@@ -1,9 +1,9 @@
 #' DBI interface to Kusto
 #'
 #' AzureKusto implements a subset of the DBI specification for interfacing with databases in R. The following methods are supported:
-#' - Connections: [dbConnect], [dbDisconnect], [dbCanConnect]
-#' - Table management: [dbExistsTable], [dbCreateTable], [dbRemoveTable], [dbReadTable], [dbWriteTable]
-#' - Querying: [dbGetQuery], [dbSendQuery], [dbFetch], [dbSendStatement], [dbExecute], [dbListFields], [dbColumnInfo]
+#' - Connections: [DBI::dbConnect], [DBI::dbDisconnect], [DBI::dbCanConnect]
+#' - Table management: [DBI::dbExistsTable], [DBI::dbCreateTable], [DBI::dbRemoveTable], [DBI::dbReadTable], [DBI::dbWriteTable]
+#' - Querying: [DBI::dbGetQuery], [DBI::dbSendQuery], [DBI::dbFetch], [DBI::dbSendStatement], [DBI::dbExecute], [DBI::dbListFields], [DBI::dbColumnInfo]
 #'
 #' Kusto is quite different to the SQL databases that DBI targets, which affects the behaviour of certain DBI methods and renders other moot.
 #'
@@ -90,7 +90,7 @@ AzureKusto <- function()
 #' For `dbDisconnect`, always TRUE, invisibly.
 #'
 #' @seealso
-#' [kusto-DBI], [dbReadTable], [dbWriteTable], [dbGetQuery], [dbSendStatement], [kusto_database_endpoint]
+#' [kusto-DBI], [DBI::dbReadTable], [DBI::dbWriteTable], [DBI::dbGetQuery], [DBI::dbSendStatement], [kusto_database_endpoint]
 #'
 #' @examples
 #' \dontrun{
@@ -154,7 +154,7 @@ setMethod("dbDisconnect", "AzureKustoDriver", function(conn, ...)
 #' For `dbReadTable`, an in-memory data frame containing the table.
 #'
 #' @seealso
-#' [AzureKusto-connection], [dbConnect], [run_query], [ingest_local]
+#' [AzureKusto-connection], [DBI::dbConnect], [run_query], [ingest_local]
 #'
 #' @examples
 #' \dontrun{
@@ -277,7 +277,7 @@ setMethod("dbExistsTable", "AzureKustoConnection", function(conn, name, ...)
 #' `dbSendStatement` and `dbExecute` are meant for running Kusto control commands, and will throw an error if passed a regular query. `dbExecute` also returns the entire result of running the command, rather than simply a row count.
 #'
 #' @seealso
-#' [dbConnect], [dbReadTable], [dbWriteTable], [run_query]
+#' [DBI::dbConnect], [DBI::dbReadTable], [DBI::dbWriteTable], [run_query]
 #' @examples
 #' \dontrun{
 #'

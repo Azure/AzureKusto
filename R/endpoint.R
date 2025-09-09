@@ -256,7 +256,7 @@ print.kusto_database_endpoint <- function(x, ...)
 #'   exists.
 #' @param method For local ingestion, the method to use. "inline", "streaming", or "indirect".
 #' @param ... other parameters passed to the query
-#' @seealso [collect()] for the opposite action; downloading remote data into a local tbl.
+#' @seealso [dplyr::collect()] for the opposite action; downloading remote data into a local tbl.
 copy_to.kusto_database_endpoint <- function(dest, df, name=deparse(substitute(df)), overwrite = FALSE, method = "inline", ...)
 {
     if (!is.data.frame(df) && !inherits(df, "tbl_kusto"))

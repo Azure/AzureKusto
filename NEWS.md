@@ -1,3 +1,8 @@
+# AzureKusto 1.1.4
+
+* Add package anchors to references in Roxygen comments to fix "targets missing package
+anchors" note during R CMD check.
+
 # AzureKusto 1.1.3
 
 * Fix test that broke on Linux due to upgrading the tzdata system package.

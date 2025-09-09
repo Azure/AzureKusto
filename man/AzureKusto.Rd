@@ -54,5 +54,5 @@ DBI::dbCanConnect(AzureKusto(),
 }
 }
 \seealso{
-\link{kusto-DBI}, \link{dbReadTable}, \link{dbWriteTable}, \link{dbGetQuery}, \link{dbSendStatement}, \link{kusto_database_endpoint}
+\link{kusto-DBI}, \link[DBI:dbReadTable]{DBI::dbReadTable}, \link[DBI:dbWriteTable]{DBI::dbWriteTable}, \link[DBI:dbGetQuery]{DBI::dbGetQuery}, \link[DBI:dbSendStatement]{DBI::dbSendStatement}, \link{kusto_database_endpoint}
 }

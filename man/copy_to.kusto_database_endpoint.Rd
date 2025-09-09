@@ -34,5 +34,5 @@ This function uploads a local data frame into a remote data source, creating the
 If the table exists, it will append the data to the existing table. If not, it will create a new table.
 }
 \seealso{
-\code{\link[=collect]{collect()}} for the opposite action; downloading remote data into a local tbl.
+\code{\link[dplyr:compute]{dplyr::collect()}} for the opposite action; downloading remote data into a local tbl.
 }

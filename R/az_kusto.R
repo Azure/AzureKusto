@@ -17,7 +17,7 @@
 #' - `get_ingestion_token(tenant, ...)`: Obtain an authentication token for this cluster's ingestion endpoint. Accepts further arguments that will be passed to [get_kusto_token].
 #'
 #' @section Initialization:
-#' Initializing a new object of this class can either retrieve an existing Kusto cluster, or create a new cluster on the host. Generally, the best way to initialize an object is via the `get_kusto_cluster` and `create_kusto_cluster` methods of the [az_resource_group] class, which handle the details automatically.
+#' Initializing a new object of this class can either retrieve an existing Kusto cluster, or create a new cluster on the host. Generally, the best way to initialize an object is via the `get_kusto_cluster` and `create_kusto_cluster` methods of the [AzureRMR::az_resource_group] class, which handle the details automatically.
 #'
 #' @section Databases:
 #' A Kusto cluster can have several databases, which are represented in AzureKusto via [az_kusto_database] R6 objects. The `az_kusto` class provides the `create_database`, `get_database`, `delete_database` and `list_databases` methods for creating, deleting and retrieving databases. It's recommended to use these methods rather than calling `az_kusto_database$new()` directly.

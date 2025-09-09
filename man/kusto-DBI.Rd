@@ -8,9 +8,9 @@
 \description{
 AzureKusto implements a subset of the DBI specification for interfacing with databases in R. The following methods are supported:
 \itemize{
-\item Connections: \link{dbConnect}, \link{dbDisconnect}, \link{dbCanConnect}
-\item Table management: \link{dbExistsTable}, \link{dbCreateTable}, \link{dbRemoveTable}, \link{dbReadTable}, \link{dbWriteTable}
-\item Querying: \link{dbGetQuery}, \link{dbSendQuery}, \link{dbFetch}, \link{dbSendStatement}, \link{dbExecute}, \link{dbListFields}, \link{dbColumnInfo}
+\item Connections: \link[DBI:dbConnect]{DBI::dbConnect}, \link[DBI:dbDisconnect]{DBI::dbDisconnect}, \link[DBI:dbCanConnect]{DBI::dbCanConnect}
+\item Table management: \link[DBI:dbExistsTable]{DBI::dbExistsTable}, \link[DBI:dbCreateTable]{DBI::dbCreateTable}, \link[DBI:dbRemoveTable]{DBI::dbRemoveTable}, \link[DBI:dbReadTable]{DBI::dbReadTable}, \link[DBI:dbWriteTable]{DBI::dbWriteTable}
+\item Querying: \link[DBI:dbGetQuery]{DBI::dbGetQuery}, \link[DBI:dbSendQuery]{DBI::dbSendQuery}, \link[DBI:dbFetch]{DBI::dbFetch}, \link[DBI:dbSendStatement]{DBI::dbSendStatement}, \link[DBI:dbExecute]{DBI::dbExecute}, \link[DBI:dbListFields]{DBI::dbListFields}, \link[DBI:dbColumnInfo]{DBI::dbColumnInfo}
 }
 }
 \details{
